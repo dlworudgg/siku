@@ -64,6 +64,24 @@ class _MyListPageState extends State<MyListPage>  with SingleTickerProviderState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'My List',
+          style : TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: AppColors.textDark
+          ),
+        ),
+        actions: [Padding(
+          padding: const EdgeInsets.only(right: 24.0),
+          child: Avatar.small(url:Helpers.randomPictureUrl()),
+        ),
+        ],
+      ),
       body: AnimatedList(
         key: _listKey,
         itemBuilder: (BuildContext context, int index,
