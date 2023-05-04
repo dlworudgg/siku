@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:siku/screens/home_screen.dart';
 import 'package:siku/screens/map_screen.dart';
+import 'package:siku/screens/login_screen.dart';
 import 'package:siku/theme.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:location/location.dart';
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget{
       // theme : ThemeData(
       //     primaryColor: Colors.white
       // ),
-      home: HomeScreen(),
+      home: LoginPage()
+      // HomeScreen(),
     );
   }
 }
