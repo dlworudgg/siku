@@ -8,7 +8,7 @@ class MyTextField extends StatelessWidget {
 
 
   const MyTextField({super.key,
-  required, this.controller, required this.hintText, required this.obscureText
+  required this.controller, required this.hintText, required this.obscureText
   });
 
 
@@ -29,10 +29,10 @@ class MyTextField extends StatelessWidget {
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.cardLight),
           ),
-          fillColor: AppColors.cardLight,
+          fillColor: Colors.grey.shade200,
           filled: true,
           hintText: hintText,
-
+          hintStyle: TextStyle(color: Colors.grey[500])
         ),
       ),
     );

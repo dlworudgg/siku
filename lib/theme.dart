@@ -13,7 +13,7 @@ abstract class AppColors {
   static const textHighlight = secondary;
   static const cardLight = Color(0xFFF9FAFE);
   static const cardDark = Color(0xFF303334);
-  // static const button =Color(0xFF1B1E1F);
+  static const black =Color(0xFF1B1E1F);
 }
 
 abstract class _LightColors {
