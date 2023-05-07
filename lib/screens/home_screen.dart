@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:siku/theme.dart';
@@ -8,9 +9,9 @@ import 'package:siku/screens/map_screen.dart';
 import '../widgets/avatar.dart';
 import '../widgets/glowing_action_button.dart';
 
-
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
+
 
 
   @override
@@ -32,13 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
   //   'My List',
   // ];
 
-  void _onNavigationItemSelected(index){
+  void _onNavigationItemSelected(index) {
     // title.value = pageTitles[index];
     pageIndex.value = index;
   }
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       // appBar: AppBar(
       //
@@ -65,14 +70,30 @@ class _HomeScreenState extends State<HomeScreen> {
       // ),
       body: Stack(children: [
         ValueListenableBuilder(
-          valueListenable : pageIndex,
-          builder: (BuildContext context, int value, _){
+          valueListenable: pageIndex,
+          builder: (BuildContext context, int value, _) {
             return pages[value];
           },
         ),
         // bottomNavigationBar: _BottomNavigationBar(
         //     onItemSelected: _onNavigationItemSelected,
         // ),
+        Positioned(
+          top: 50,
+          left: 30,
+
+          child: FloatingActionButton(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            onPressed: signUserOut,
+            // tooltip: 'Press the circle button',
+            child: const Icon(Icons.logout),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+          ),
+        ),
+
         Positioned(
           bottom: 16,
           left: 0,
@@ -81,11 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onItemSelected: _onNavigationItemSelected,
           ),
         ),
+
       ]),
     );
   }
-
-
 }
 
 // class _BottomNavigationBar extends StatefulWidget {
@@ -216,8 +236,6 @@ class _HomeScreenState extends State<HomeScreen> {
 //   }
 // }
 
-
-
 class _BottomNavigationButton extends StatefulWidget {
   _BottomNavigationButton({
     super.key,
@@ -227,16 +245,17 @@ class _BottomNavigationButton extends StatefulWidget {
   ValueChanged<int> onItemSelected;
 
   @override
-  State<_BottomNavigationButton> createState() => _BottomNavigationButtonState();
+  State<_BottomNavigationButton> createState() =>
+      _BottomNavigationButtonState();
 }
 
 class _BottomNavigationButtonState extends State<_BottomNavigationButton> {
   var selectedIndex = 0;
   bool myListDoubleTapped = false;
+
   void handleItemSelected(int index) {
-    if ( (index == 2 && selectedIndex == 2 && !myListDoubleTapped) ||
-        (index == 1 && selectedIndex == 1 && !myListDoubleTapped)
-    ) {
+    if ((index == 2 && selectedIndex == 2 && !myListDoubleTapped) ||
+        (index == 1 && selectedIndex == 1 && !myListDoubleTapped)) {
       myListDoubleTapped = true;
       index = 0;
     } else {
@@ -248,18 +267,21 @@ class _BottomNavigationButtonState extends State<_BottomNavigationButton> {
     });
     widget.onItemSelected(index);
   }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(top : false,
-      bottom : true,
+    return SafeArea(
+      top: false,
+      bottom: true,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildRoundedRectButton(index:1,
+          _buildRoundedRectButton(
+            index: 1,
             label: 'Siku',
             icon: CupertinoIcons.group,
             isSelected: (selectedIndex == 1),
-            onTap : handleItemSelected,
+            onTap: handleItemSelected,
             // onDoubleTap: cancelItemSelected,
           ),
           // Padding(
@@ -278,22 +300,23 @@ class _BottomNavigationButtonState extends State<_BottomNavigationButton> {
           // ),
           // _
 
-          _buildRoundedRectButton(index:2,
+          _buildRoundedRectButton(
+            index: 2,
             label: 'My List',
             icon: CupertinoIcons.list_bullet,
             isSelected: (selectedIndex == 2),
-            onTap : handleItemSelected,
+            onTap: handleItemSelected,
             // onDoubleTap: cancelItemSelected,
           ),
-        ],),
+        ],
+      ),
     );
   }
 }
 
-
-
 class _buildRoundedRectButton extends StatelessWidget {
-  _buildRoundedRectButton({Key? key,
+  _buildRoundedRectButton({
+    Key? key,
     required this.index,
     required this.label,
     required this.icon,
@@ -302,47 +325,51 @@ class _buildRoundedRectButton extends StatelessWidget {
     // required this.onDoubleTap,
   }) : super(key: key);
 
-
-
   final int index;
   final String label;
   final IconData icon;
   final bool isSelected;
   ValueChanged<int> onTap;
+
   // ValueChanged<int>  onDoubleTap;
-
-
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () {onTap(index);
+      onTap: () {
+        onTap(index);
       },
-      onDoubleTap: (){
+      onDoubleTap: () {
         onTap(0);
       },
-      child:  Container(
+      child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(width : 2, color:AppColors.iconLight ),
+          border: Border.all(width: 2, color: AppColors.iconLight),
           color: AppColors.textLigth,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon,
-              size:25,
-              color : isSelected ? AppColors.secondary : null,
+            Icon(
+              icon,
+              size: 25,
+              color: isSelected ? AppColors.secondary : null,
             ),
             SizedBox(width: 10),
-            Text(label, style: isSelected ?  const TextStyle(fontSize: 15, fontWeight: FontWeight.normal,
-              color:AppColors.secondary,)
-                : const TextStyle(fontSize: 15),
+            Text(
+              label,
+              style: isSelected
+                  ? const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                      color: AppColors.secondary,
+                    )
+                  : const TextStyle(fontSize: 15),
             ),
           ],
-
         ),
       ),
     );

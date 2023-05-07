@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:siku/theme.dart';
 import 'package:siku/components/textfields.dart';
@@ -8,12 +9,17 @@ import '../components/login_button.dart';
 import '../components/login_square_tile.dart';
 
 class LoginPage extends StatelessWidget {
-   LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
 
-  final usernameController = TextEditingController();
+  final emailnameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void signUserIn() {}
+  void signUserIn() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailnameController.text,
+         password: passwordController.text,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +28,10 @@ class LoginPage extends StatelessWidget {
       body:
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children:  [
+        children: [
           const SizedBox(
-            height: 20
-              ),
+              height: 20
+          ),
           // const Text('Share your favorite spots',
           // style: TextStyle(color : AppColors.textDark ,
           //       fontSize: 16),
@@ -48,11 +54,11 @@ class LoginPage extends StatelessWidget {
           //   //   ),
           //   // )
           // ),
-           const SizedBox(
+          const SizedBox(
               height: 25
           ),
           MyTextField(
-            controller: usernameController,
+            controller: emailnameController,
             hintText: 'Username',
             obscureText: false,
           ),
@@ -73,7 +79,7 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text('Forgot Password?',
-                style : TextStyle(color: Colors.grey[700]) ),
+                    style: TextStyle(color: Colors.grey[700])),
               ],
             ),
           ),
@@ -81,29 +87,29 @@ class LoginPage extends StatelessWidget {
               height: 40
           ),
           LoginButton(
-            onTap: signUserIn
+              onTap: signUserIn
           ),
           const SizedBox(
               height: 50
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child:  Row(
-              children:  const [
+            child: Row(
+              children: const [
                 Expanded(child: Divider(
                   thickness: 0.5,
-                    color: AppColors.iconLight ,
+                  color: AppColors.iconLight,
                 )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Text(
+                  child: Text(
                       'Or continue with',
-                      style: TextStyle(color: AppColors.iconLight )
-                    ),
+                      style: TextStyle(color: AppColors.iconLight)
+                  ),
                 ),
                 Expanded(child: Divider(
                   thickness: 0.5,
-                  color: AppColors.iconLight ,
+                  color: AppColors.iconLight,
                 )
                 ),
                 SizedBox(
@@ -119,11 +125,11 @@ class LoginPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              SquareTile(imagePath : 'lib/images/Google.png'),
+              SquareTile(imagePath: 'lib/images/Google.png'),
 
-              SizedBox(width: 20) ,
+              SizedBox(width: 20),
 
-              SquareTile(imagePath : 'lib/images/Apple.png'),
+              SquareTile(imagePath: 'lib/images/Apple.png'),
             ],
           ),
           const SizedBox(
@@ -132,20 +138,20 @@ class LoginPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            Text('Not a member?',
-              style: TextStyle(color: Colors.grey[700])
-            ),
+              Text('Not a member?',
+                  style: TextStyle(color: Colors.grey[700])
+              ),
               const SizedBox(width: 5),
               const Text('Register now',
-              style: TextStyle(
-                color:Colors.blue, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.blue, fontWeight: FontWeight.bold),
               ),
-          ],
-    )
+            ],
+          )
         ],
       ),
       // ),
-        );
-      }
-    }
+    );
+  }
+}
 

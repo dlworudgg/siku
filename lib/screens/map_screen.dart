@@ -23,6 +23,15 @@ class _MapScreenState extends State<MapScreen> {
 
   late GoogleMapController _googleMapController;
 
+  void _resetCameraPosition() {
+    _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target:  LatLng(40.7178, -74.0431),
+      zoom: 11.5,
+    )
+    )
+    );
+  }
+
   //
   // final LatLng southwestBound = const LatLng(40.7, -74.1); // Set your southwest bound
   // final LatLng northeastBound = const LatLng(40.8, -74.2); // Set your northeast bound
@@ -36,22 +45,32 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  GoogleMap(
+      body: Stack(
+        children: [GoogleMap(
           mapType: MapType.normal,
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           initialCameraPosition: _initialCameraPosition,
           onMapCreated: (controller) => _googleMapController = controller,
         ),
-        // Positioned(
-        //   bottom: 16,
-        //   left: 0,
-        //   right: 0,
-        //   child: _BottomNavigationButton(
-        //     onItemSelected: _onNavigationItemSelected,
-        //   ),
-        // ),
-        // Positioned(bottom: 130,
+
+          Positioned(
+            bottom: 120,
+            left: 30,
+
+            child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              onPressed: _resetCameraPosition,
+              // tooltip: 'Press the circle button',
+              child: const Icon(Icons.center_focus_strong),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+            ),
+          ),
+
+          // Positioned(bottom: 130,
         //   left: 270,
         //   right: 0, child:  FloatingActionButton(
         //           // backgroundColor: Theme.of(context).primaryColor,
@@ -92,6 +111,8 @@ class _MapScreenState extends State<MapScreen> {
       //     onPressed: () => _googleMapController.animateCamera(
       //         CameraUpdate.newCameraPosition(_initialCameraPosition)),
       //     child: const Icon(Icons.center_focus_strong)),
+      ]
+      )
     );
   }
 }
