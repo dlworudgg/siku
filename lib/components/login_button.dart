@@ -5,9 +5,11 @@ import '../theme.dart';
 class LoginButton extends StatelessWidget {
 
   final Function() ? onTap;
-
+  final String text;
   const LoginButton({super.key,
-    required this.onTap}) ;
+    required this.onTap,
+    required this.text,
+  }) ;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +22,9 @@ class LoginButton extends StatelessWidget {
         color: AppColors.black,
         borderRadius: BorderRadius.circular(8),
       ),
-      child : const Center(
-        child : Text("Sign In",
-        style: TextStyle(
+      child :  Center(
+        child : Text(text,
+        style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
           fontSize: 16,

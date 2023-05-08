@@ -22,6 +22,10 @@ class MyTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
           obscureText: obscureText,
+        //   enableSuggestions: false,
+        //   autocorrect: false,
+        // keyboardType: TextInputType.text,
+        // smartDashesType: SmartDashesType.disabled,
         decoration: InputDecoration(
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.textLigth),

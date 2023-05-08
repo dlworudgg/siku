@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
+import 'login_or_register_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class AuthPage extends StatelessWidget {
             return HomeScreen();
           }
           else {
-            return LoginPage();
+            return LoginOrRegisterPage();
           }
         }
       ),
