@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:siku/pages/auth_page.dart';
 import 'package:siku/screens/home_screen.dart';
 import 'package:siku/screens/map_screen.dart';
@@ -12,10 +13,14 @@ import 'firebase_options.dart';
 
 //
 void main()  async {
-WidgetsFlutterBinding.ensureInitialized();
-await Firebase.initializeApp(
-  options : DefaultFirebaseOptions.currentPlatform,
-);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options : DefaultFirebaseOptions.currentPlatform,
+  );
+  await Hive.initFlutter();
+
+  var my_list = await Hive.openBox('my list');
+
   runApp(MaterialApp(home: MyApp()));
 }
 
