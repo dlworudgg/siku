@@ -6,6 +6,8 @@ import '../helpers.dart';
 import '../pages/messaging_page.dart';
 import '../pages/my_list.dart';
 import 'package:siku/screens/map_screen.dart';
+import 'package:siku/screens/search_screen.dart';
+
 import '../widgets/avatar.dart';
 import '../widgets/glowing_action_button.dart';
 
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     MapScreen(),
     MessagesPage(),
     MyListPage(),
+    SearchScreen(),
   ];
 
   // final pageTitles = const [
@@ -78,8 +81,24 @@ class _HomeScreenState extends State<HomeScreen> {
         // bottomNavigationBar: _BottomNavigationBar(
         //     onItemSelected: _onNavigationItemSelected,
         // ),
+
         Positioned(
-          top: 50,
+          top: 100,
+          left: 30,
+          child: Expanded(
+            child: TextFormField(
+              onTap: (){
+                // setState(() {
+                //   pageIndex = 4;
+                // });
+                SearchScreen();
+              }
+          ),
+          ),
+        ),
+
+        Positioned(
+          top: 100,
           left: 30,
 
           child: FloatingActionButton(
@@ -106,6 +125,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ]),
     );
   }
+
+
 }
 
 // class _BottomNavigationBar extends StatefulWidget {
@@ -273,41 +294,43 @@ class _BottomNavigationButtonState extends State<_BottomNavigationButton> {
     return SafeArea(
       top: false,
       bottom: true,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildRoundedRectButton(
-            index: 1,
-            label: 'Siku',
-            icon: CupertinoIcons.group,
-            isSelected: (selectedIndex == 1),
-            onTap: handleItemSelected,
-            // onDoubleTap: cancelItemSelected,
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 8.0, right:8.0, top: 10),
-          //   child: GlowingActionButton(
-          //     color: AppColors.textDark,
-          //     icon: CupertinoIcons.map,
-          //     onPressed: () {
-          //       setState(() {
-          //         selectedIndex = 0;
-          //       });
-          //       widget.onItemSelected(0);
-          //
-          //     },
-          //   ),
-          // ),
-          // _
+      child:
 
-          _buildRoundedRectButton(
-            index: 2,
-            label: 'My List',
-            icon: CupertinoIcons.list_bullet,
-            isSelected: (selectedIndex == 2),
-            onTap: handleItemSelected,
-            // onDoubleTap: cancelItemSelected,
-          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildRoundedRectButton(
+                index: 1,
+                label: 'Siku',
+                icon: CupertinoIcons.group,
+                isSelected: (selectedIndex == 1),
+                onTap: handleItemSelected,
+                // onDoubleTap: cancelItemSelected,
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 8.0, right:8.0, top: 10),
+              //   child: GlowingActionButton(
+              //     color: AppColors.textDark,
+              //     icon: CupertinoIcons.map,
+              //     onPressed: () {
+              //       setState(() {
+              //         selectedIndex = 0;
+              //       });
+              //       widget.onItemSelected(0);
+              //
+              //     },
+              //   ),
+              // ),
+              // _
+
+              _buildRoundedRectButton(
+                index: 2,
+                label: 'My List',
+                icon: CupertinoIcons.list_bullet,
+                isSelected: (selectedIndex == 2),
+                onTap: handleItemSelected,
+                // onDoubleTap: cancelItemSelected,
+              ),
         ],
       ),
     );

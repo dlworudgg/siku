@@ -20,7 +20,7 @@ class _search_barState extends State<search_bar> {
     return TextFormField(
       controller: searchTextController,
       onFieldSubmitted: (_) {
-        _onSearch();
+        searchPlace();
       },
       textCapitalization: TextCapitalization.words ,
       decoration: InputDecoration(hintText: 'Search Here'),
