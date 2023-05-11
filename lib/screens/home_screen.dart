@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     MapScreen(),
     MessagesPage(),
     MyListPage(),
-    SearchScreen(),
+    // SearchScreen(),
   ];
 
   // final pageTitles = const [
@@ -82,26 +82,14 @@ class _HomeScreenState extends State<HomeScreen> {
         //     onItemSelected: _onNavigationItemSelected,
         // ),
 
-        Positioned(
-          top: 100,
-          left: 30,
-          child: Expanded(
-            child: TextFormField(
-              onTap: (){
-                // setState(() {
-                //   pageIndex = 4;
-                // });
-                SearchScreen();
-              }
-          ),
-          ),
-        ),
+
 
         Positioned(
-          top: 100,
+          bottom: 200,
           left: 30,
 
           child: FloatingActionButton(
+            heroTag: null,
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
             onPressed: signUserOut,
@@ -369,7 +357,7 @@ class _buildRoundedRectButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(width: 2, color: AppColors.iconLight),
           color: AppColors.textLigth,
         ),

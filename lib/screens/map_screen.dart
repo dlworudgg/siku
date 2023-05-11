@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
 import '../pages/messaging_page.dart';
 import '../pages/my_list.dart';
@@ -53,6 +54,52 @@ class _MapScreenState extends State<MapScreen> {
           initialCameraPosition: _initialCameraPosition,
           onMapCreated: (controller) => _googleMapController = controller,
         ),
+          Positioned(
+            top: 60.0,
+            left: 16.0,
+            right: 16.0,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                );
+              },
+              child: AbsorbPointer(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Search here',
+                    fillColor: AppColors.cardLight,
+                    filled: true,
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  // textInputAction: TextInputAction.search,
+                ),
+              ),
+            ),
+          ),
+          // Positioned(
+          //   top: 100,
+          //   left: 30,
+          //   child: Row(
+          //     children: [
+          //       Expanded(
+          //         child: TextFormField(
+          //             onTap: (){
+          //               // setState(() {
+          //               //   pageIndex = 4;
+          //               // });
+          //               SearchScreen();
+          //             }
+          //         // ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           Positioned(
             bottom: 120,
