@@ -33,11 +33,38 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  void _onSearchTap() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // This allows the bottom sheet to expand to its full height
+      builder: (BuildContext context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height,
+            maxWidth: MediaQuery.of(context).size.width,
+          ),
+          child: SearchScreen(),
+        );
+      },
+    );
+  }
+  // void _onSearchTap() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return SearchScreen();
+  //     },
+  //   );
+  // }
+  // void _onSearchTap() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => SearchScreen(),
+  //     fullscreenDialog: true,
   //
-  // final LatLng southwestBound = const LatLng(40.7, -74.1); // Set your southwest bound
-  // final LatLng northeastBound = const LatLng(40.8, -74.2); // Set your northeast bound
-
-
+  //     ),
+  //   );
+  // }
 
 
 
@@ -59,12 +86,14 @@ class _MapScreenState extends State<MapScreen> {
             left: 16.0,
             right: 16.0,
             child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
-                );
-              },
+
+              onTap: _onSearchTap,
+              // onTap: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => SearchScreen()),
+              //   );
+              // },
               child: AbsorbPointer(
                 child: TextFormField(
                   decoration: InputDecoration(

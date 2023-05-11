@@ -27,10 +27,11 @@ class _SearchScreenState extends State<SearchScreen> {
             filled: true,
             prefixIcon: InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+                Navigator.pop(context);
+                // Navigator.push(
+                  // context,
+                  // MaterialPageRoute(builder: (context) => HomeScreen()),
+                // );
               },
               child: const Icon(Icons.arrow_back_ios),
             ),
