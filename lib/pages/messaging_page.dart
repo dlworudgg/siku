@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:siku/theme.dart';
 import '../helpers.dart';
@@ -64,54 +65,60 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
         ],
       ),
-      body: AnimatedList(
-        key: _listKey,
-        itemBuilder: (BuildContext context, int index,
-            Animation<double> animation) {
-          return _buildItem(items[index], animation);
-        },
-        initialItemCount: items.length,
+      // body: AnimatedList(
+      //   key: _listKey,
+      //   itemBuilder: (BuildContext context, int index,
+      //       Animation<double> animation) {
+      //     return _buildItem(items[index], animation);
+      //   },
+      //   initialItemCount: items.length,
+      // ),
+      //
+      body: Stack(
+        children: [
+          AnimatedList(
+            key: _listKey,
+            itemBuilder: (BuildContext context, int index,
+                Animation<double> animation) {
+              return _buildItem(items[index], animation);
+            },
+            initialItemCount: items.length,
+          ),
+      Positioned(
+          bottom: 40,
+          left: 0,
+          right: 0,
+          child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child : ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon : const Icon(CupertinoIcons.group,size : 40, color: AppColors.secondary),
+                  label: const Text('Siku',
+                      style: TextStyle( fontSize: 18, fontWeight: FontWeight.bold,
+                        color: AppColors.secondary,)
+                  ),
+                  style : ElevatedButton.styleFrom(
+                      backgroundColor:AppColors.cardLight,
+                      foregroundColor: Colors.black,
+
+                      elevation : 0 ,
+                      fixedSize:  const Size(double.infinity, 50),
+                      shape : const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      side: const BorderSide(
+                        width: 1.0,
+                        color: Colors.grey,)
+                  )
+              )
+          )
+          ),
+        ],
       ),
     );
   }
-
-//   Widget _buildItem(Item item, Animation<double> animation) {
-//     return SizeTransition(
-//       sizeFactor: animation,
-//       child: Padding(
-//         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-//         child: InkWell(
-//           onTap: () {},
-//           borderRadius: BorderRadius.circular(25),
-//         child: Container(
-//         height: 100,
-//         margin: const EdgeInsets.symmetric(horizontal: 8),
-//         decoration: BoxDecoration(
-//         border: Border(
-//         bottom: BorderSide(
-//         color: Theme.of(context).dividerColor,
-//         width: 0.5,
-//         ),
-//         ),
-//
-//         ),
-//           // child: Container(
-//           //   padding: EdgeInsets.all(16),
-//           //   decoration: BoxDecoration(
-//           //     borderRadius: BorderRadius.circular(25),
-//           //     color: Colors.blue.shade200,
-//           child: Text(
-//             item.name,
-//             style: TextStyle(fontSize: 18, color: Colors.black),
-//           ),
-//             ),
-//
-//           // ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 
   Widget _buildItem(Item item, Animation<double> animation) {

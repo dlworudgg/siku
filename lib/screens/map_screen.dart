@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,7 +7,7 @@ import 'package:siku/theme.dart';
 import '../pages/messaging_page.dart';
 import '../pages/my_list.dart';
 import '../widgets/glowing_action_button.dart';
-
+import 'dart:ui';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -32,7 +33,9 @@ class _MapScreenState extends State<MapScreen> {
     )
     );
   }
-
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+  }
   void _onSearchTap() {
     showModalBottomSheet(
       context: context,
@@ -44,6 +47,23 @@ class _MapScreenState extends State<MapScreen> {
             maxWidth: MediaQuery.of(context).size.width,
           ),
           child: SearchScreen(),
+        );
+      },
+    );
+  }
+
+
+  void _onMenuTap() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // This allows the bottom sheet to expand to its full height
+      builder: (BuildContext context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height,
+            maxWidth: MediaQuery.of(context).size.width,
+          ),
+          child:  MessagesPage(),
         );
       },
     );
@@ -111,6 +131,57 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
+          Positioned(
+            bottom: 200,
+            left: 30,
+
+            child: FloatingActionButton(
+              heroTag: null,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              onPressed: signUserOut,
+              // tooltip: 'Press the circle button',
+              child: const Icon(Icons.logout),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+            ),
+          ),
+
+          Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child : ElevatedButton.icon(
+                      onPressed: () {
+                        _onMenuTap();
+                      },
+                      icon : const Icon(CupertinoIcons.group,size : 40),
+                      label: const Text('Siku',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                      ),
+                      style : ElevatedButton.styleFrom(
+                          backgroundColor:AppColors.cardLight,
+                          foregroundColor: Colors.black,
+
+                          elevation : 0 ,
+                          fixedSize:  const Size(double.infinity, 50),
+                          shape : const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        side: const BorderSide(
+                          width: 1.0,
+                          color: Colors.grey,)
+                      )
+                  )
+              )
+
+
+          ),
+
+
           // Positioned(
           //   top: 100,
           //   left: 30,

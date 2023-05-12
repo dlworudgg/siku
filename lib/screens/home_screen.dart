@@ -39,11 +39,27 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onNavigationItemSelected(index) {
     // title.value = pageTitles[index];
     pageIndex.value = index;
+    // _onMenuTap(index);
   }
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
 
+  // void _onMenuTap(value) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true, // This allows the bottom sheet to expand to its full height
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         constraints: BoxConstraints(
+  //           maxHeight: MediaQuery.of(context).size.height,
+  //           maxWidth: MediaQuery.of(context).size.width,
+  //         ),
+  //         child: pages[value],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           valueListenable: pageIndex,
           builder: (BuildContext context, int value, _) {
             return pages[value];
+            // _onMenuTap(value);
           },
         ),
         // bottomNavigationBar: _BottomNavigationBar(
@@ -116,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 }
-
+//
 // class _BottomNavigationBar extends StatefulWidget {
 //   _BottomNavigationBar({
 //     super.key,
@@ -295,21 +312,7 @@ class _BottomNavigationButtonState extends State<_BottomNavigationButton> {
                 onTap: handleItemSelected,
                 // onDoubleTap: cancelItemSelected,
               ),
-              // Padding(
-              //   padding: const EdgeInsets.only(left: 8.0, right:8.0, top: 10),
-              //   child: GlowingActionButton(
-              //     color: AppColors.textDark,
-              //     icon: CupertinoIcons.map,
-              //     onPressed: () {
-              //       setState(() {
-              //         selectedIndex = 0;
-              //       });
-              //       widget.onItemSelected(0);
-              //
-              //     },
-              //   ),
-              // ),
-              // _
+
 
               _buildRoundedRectButton(
                 index: 2,

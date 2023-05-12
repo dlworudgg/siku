@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
+import '../screens/map_screen.dart';
 import 'login_or_register_page.dart';
 
 class AuthPage extends StatelessWidget {
@@ -15,7 +16,7 @@ class AuthPage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context,snapshot) {
           if (snapshot.hasData){
-            return HomeScreen();
+            return MapScreen();
           }
           else {
             return LoginOrRegisterPage();
