@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../components/location_list_tile.dart';
 import '../theme.dart';
 import 'home_screen.dart';
 
@@ -11,6 +12,18 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+
+  void placeAutoComplete(String query){
+    Uri url = Uri.https(
+       "maps.googleapis.com",
+        'maps/api/place/autocomplete/json',
+      {
+        "input" : query,
+        "key" : key
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +55,22 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           // textInputAction: TextInputAction.search,
+        ),
+      ),
+      Positioned(
+        top: 60.0,
+        left: 16.0,
+        right: 16.0,
+        child: Column(
+          LocationListTile(
+            press () {},
+            location : ,
+          ),
+          // const Divider(
+          //   height:4,
+          //   thickness: 4,
+          //   color : Colors.grey[300].
+          // ),
         ),
       ),
     ]
