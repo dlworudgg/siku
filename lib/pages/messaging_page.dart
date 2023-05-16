@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:siku/theme.dart';
@@ -44,26 +45,26 @@ class _MessagesPageState extends State<MessagesPage> {
     });
   }
 
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
 
-        backgroundColor: Colors.transparent,
+        // backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[700],
         elevation: 0,
-        title: const Text(
-          'Siku',
-          style : TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: AppColors.textDark
-          ),
-        ),
-        actions: [Padding(
-          padding: const EdgeInsets.only(right: 24.0),
-          child: Avatar.small(url:Helpers.randomPictureUrl()),
-        ),
-        ],
+        // title: const Text(
+        //   'Siku',
+        //   style : TextStyle(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: 16,
+        //       color: AppColors.textDark
+        //   ),
+        // ),
+
       ),
       // body: AnimatedList(
       //   key: _listKey,
@@ -86,10 +87,10 @@ class _MessagesPageState extends State<MessagesPage> {
           ),
       Positioned(
           bottom: 40,
-          left: 0,
+          left: 10,
           right: 0,
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 16.0, right: 110.0, bottom: 16.0),
               child : ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
@@ -114,6 +115,30 @@ class _MessagesPageState extends State<MessagesPage> {
                   )
               )
           )
+          ),
+
+          Positioned(
+            bottom: 56,
+            right: 30,
+            child: ElevatedButton(
+              onPressed: signUserOut,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: AppColors.cardLight, // foreground color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                side: BorderSide(
+                  width: 1.0,
+                  color: Colors.grey,
+                ),
+                elevation: 0,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 7.3, top : 7.3), // Padding for the child widget
+                child: Avatar.small(url: Helpers.randomPictureUrl()),
+              ),
+            ),
           ),
         ],
       ),

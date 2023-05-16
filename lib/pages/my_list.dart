@@ -93,43 +93,6 @@ class _MyListPageState extends State<MyListPage>  with SingleTickerProviderState
     );
   }
 
-//   Widget _buildItem(Item item, Animation<double> animation) {
-//     return SizeTransition(
-//       sizeFactor: animation,
-//       child: Padding(
-//         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-//         child: InkWell(
-//           onTap: () {},
-//           borderRadius: BorderRadius.circular(25),
-//         child: Container(
-//         height: 100,
-//         margin: const EdgeInsets.symmetric(horizontal: 8),
-//         decoration: BoxDecoration(
-//         border: Border(
-//         bottom: BorderSide(
-//         color: Theme.of(context).dividerColor,
-//         width: 0.5,
-//         ),
-//         ),
-//
-//         ),
-//           // child: Container(
-//           //   padding: EdgeInsets.all(16),
-//           //   decoration: BoxDecoration(
-//           //     borderRadius: BorderRadius.circular(25),
-//           //     color: Colors.blue.shade200,
-//           child: Text(
-//             item.name,
-//             style: TextStyle(fontSize: 18, color: Colors.black),
-//           ),
-//             ),
-//
-//           // ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 
   Widget _buildItem(Item item, Animation<double> animation) {

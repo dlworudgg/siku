@@ -12,6 +12,8 @@ class AuthService{
     );
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+
   //
   // signInWithApple() async{
   //   final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();

@@ -6,10 +6,7 @@ import '../helpers.dart';
 import '../pages/messaging_page.dart';
 import '../pages/my_list.dart';
 import 'package:siku/screens/map_screen.dart';
-import 'package:siku/screens/search_screen.dart';
 
-import '../widgets/avatar.dart';
-import '../widgets/glowing_action_button.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -100,23 +97,23 @@ class _HomeScreenState extends State<HomeScreen> {
         // ),
 
 
-
-        Positioned(
-          bottom: 200,
-          left: 30,
-
-          child: FloatingActionButton(
-            heroTag: null,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            onPressed: signUserOut,
-            // tooltip: 'Press the circle button',
-            child: const Icon(Icons.logout),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
-            ),
-          ),
-        ),
+        //
+        // Positioned(
+        //   bottom: 200,
+        //   left: 30,
+        //
+        //   child: FloatingActionButton(
+        //     heroTag: null,
+        //     backgroundColor: Colors.white,
+        //     foregroundColor: Colors.black,
+        //     onPressed: signUserOut,
+        //     // tooltip: 'Press the circle button',
+        //     child: const Icon(Icons.logout),
+        //     shape: RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(50.0),
+        //     ),
+        //   ),
+        // ),
 
         Positioned(
           bottom: 16,
