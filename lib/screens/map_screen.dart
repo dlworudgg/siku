@@ -4,13 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
+import '../models/autocomplete_prediction.dart';
 import '../pages/messaging_page.dart';
 import '../pages/my_list.dart';
 import '../widgets/glowing_action_button.dart';
 import 'dart:ui';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({Key? key}) : super(key: key);
+  final double? lat;
+  final double? lng;
+
+  const MapScreen({Key? key, this.lat, this.lng}) : super(key: key);
+
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -19,20 +24,105 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   static const _initialCameraPosition = CameraPosition(
     target: LatLng(40.7178, -74.0431),
-    zoom: 11.5,
+    zoom: 14.5,
   );
 
 
   late GoogleMapController _googleMapController;
+  Set<Marker> _markers = {};
+
+  void _onMapCreated(GoogleMapController controller) {
+    _googleMapController = controller;
+
+    if (widget.lat != null && widget.lng != null) {
+      _googleMapController.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(widget.lat!, widget.lng!),
+          14.5,
+        ),
+      );
+
+      setState(() {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('selected_location'),
+            position: LatLng(widget.lat!, widget.lng!),
+          ),
+        );
+      });
+    }
+  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   // If lat and lng are provided, initialize the marker
+  //   if (widget.lat != null && widget.lng != null) {
+  //     _selectedLocationMarker = Marker(
+  //       markerId: MarkerId('selectedLocation'),
+  //       position: LatLng(widget.lat!, widget.lng!),
+  //     );
+  //   }
+  // }
+  //
+  // @override
+  // void didUpdateWidget(MapScreen oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //
+  //   // If lat and lng are updated, update the marker and move the camera
+  //   if (widget.lat != oldWidget.lat || widget.lng != oldWidget.lng) {
+  //     _selectedLocationMarker = Marker(
+  //       markerId: MarkerId('selectedLocation'),
+  //       position: LatLng(widget.lat!, widget.lng!),
+  //     );
+  //     _googleMapController.moveCamera(
+  //       CameraUpdate.newLatLng(LatLng(widget.lat!, widget.lng!)),
+  //     );
+  //   }
+  // }
 
   void _resetCameraPosition() {
     _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
       target:  LatLng(40.7178, -74.0431),
-      zoom: 11.5,
+      zoom: 14.5,
     )
     )
     );
   }
+
+  // void _moveCameraToSelectedPlace(double latitude, double longitude) {
+  //   _googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+  //     target: LatLng(latitude, longitude),
+  //     zoom: 15.0,
+  //   )));
+  // }
+  // void _showLocationDetails(AutocompletePrediction selectedPlace) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         height: MediaQuery.of(context).size.height * 0.4,
+  //         child: Column(
+  //           children: [
+  //             Text(selectedPlace.structuredFormatting?.mainText ?? ""),
+  //             Text(selectedPlace.structuredFormatting?.secondaryText ?? ""),
+  //             // TODO: Add review data
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  // void _onPlaceSelected(AutocompletePrediction selectedPlace) {
+  //   // TODO: Retrieve the latitude and longitude of the selected place
+  //   double latitude = 0; // replace with the actual latitude
+  //   double longitude = 0; // replace with the actual longitude
+  //
+  //   _moveCameraToSelectedPlace(latitude, longitude);
+  //   _showLocationDetails(selectedPlace);
+  // }
+
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
@@ -99,7 +189,9 @@ class _MapScreenState extends State<MapScreen> {
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           initialCameraPosition: _initialCameraPosition,
-          onMapCreated: (controller) => _googleMapController = controller,
+          // onMapCreated: (controller) => _googleMapController = controller,
+          onMapCreated: _onMapCreated,
+          markers: _markers,
         ),
           Positioned(
             top: 60.0,
@@ -117,7 +209,7 @@ class _MapScreenState extends State<MapScreen> {
               child: AbsorbPointer(
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: 'Search here',
+                    hintText: 'Search Restaurants Here',
                     fillColor: AppColors.cardLight,
                     filled: true,
                     prefixIcon: const Icon(Icons.search),

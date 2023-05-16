@@ -99,14 +99,19 @@
 //     );
 //   }
 // }
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/services/network_utility.dart';
 
 import '../components/location_list_tile.dart';
 import '../models/autocomplete_prediction.dart';
 import '../models/place_auto_complete_response.dart';
+import '../models/place_detail_response.dart';
 import '../theme.dart';
 import 'home_screen.dart';
+import 'map_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -117,6 +122,8 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   List<AutocompletePrediction> placePredictions = [];
+  List<PlaceDetailResponse> placeDetails = [];
+
   Future<void> placeAutoComplete(String query) async {
     Uri uri = Uri.https(
       "maps.googleapis.com",
@@ -138,6 +145,44 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  //
+  // Future<void> placeDetailResponse(String placeId) async {
+  //   Uri uri = Uri.https(
+  //     "maps.googleapis.com",
+  //     'maps/api/place/details/json',
+  //     {
+  //       "input": placeId,
+  //       "key": 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
+  //     },
+  //   );
+  //   String? response = await NetworkUtility.fetchUrl(uri);
+  //   if (response != null) {
+  //     PlaceDetailResponse placeDetailResponse = PlaceDetailResponse.fromJson(jsonDecode(response));
+  //     if (placeDetailResponse.result != null) {
+  //       setState(() {
+  //         placeDetails = placeDetailResponse.result as List<PlaceDetailResponse>;
+  //       });
+  //     }
+  //   }
+  // }
+  Future<Result> placeDetailResponse(String placeId) async {
+    Uri uri = Uri.https(
+      "maps.googleapis.com",
+      'maps/api/place/details/json',
+      {
+        "placeid": placeId, // placeid instead of input
+        "key": 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
+      },
+    );
+    String? response = await NetworkUtility.fetchUrl(uri);
+    if (response != null) {
+      PlaceDetailResponse placeDetailResponse = PlaceDetailResponse.fromJson(jsonDecode(response));
+      return placeDetailResponse.result; // return the result
+    }
+    throw Exception("Failed to fetch place details"); // throw an exception if the request fails
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,14 +197,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 placeAutoComplete(value);
               },
               decoration: InputDecoration(
-                hintText: 'Search here',
+                hintText: 'Search Restaurants Here',
                 fillColor: AppColors.cardLight,
                 filled: true,
                 prefixIcon: InkWell(
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: const Icon(Icons.arrow_back_ios),
+                  child: const Icon(Icons.arrow_back_ios, color : Colors.blue),
                 ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
@@ -176,10 +221,28 @@ class _SearchScreenState extends State<SearchScreen> {
             child: ListView.builder(
               itemCount: placePredictions.length,
               itemBuilder: (context, index) => LocationListTile(
-                press: () {
-                  print("1");
+                press: () async {
+                  AutocompletePrediction selected_prediction = placePredictions[index];
+                  String? placeId = selected_prediction.placeId;
+                  if (placeId != null) {
+                    Result selected_detail = await placeDetailResponse(placeId);
+
+                  print(selected_detail.geometry.location.lat);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapScreen(
+                            lat: selected_detail.geometry.location.lat,
+                            lng: selected_detail.geometry.location.lng
+                        ),
+                      ),
+                    );
+                  }
                 },
-                location: placePredictions[index].description!,
+                // location: placePredictions[index].description!,
+                location: placePredictions[index].structuredFormatting?.secondaryText ?? "",
+                mainText : placePredictions[index].structuredFormatting?.mainText ?? "",
+
               ),
             ),
           ),
