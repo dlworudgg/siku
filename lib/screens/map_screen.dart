@@ -8,9 +8,11 @@ import '../helpers.dart';
 import '../models/autocomplete_prediction.dart';
 import '../pages/messaging_page.dart';
 import '../pages/my_list.dart';
+import '../services/auth_service.dart';
 import '../widgets/avatar.dart';
 import '../widgets/glowing_action_button.dart';
 import 'dart:ui';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   final double? lat;
@@ -30,8 +32,11 @@ class _MapScreenState extends State<MapScreen> {
   );
 
 
+  // var imageUrl = my_list.get('googleProfileImageUrl');
+
   late GoogleMapController _googleMapController;
   Set<Marker> _markers = {};
+  bool isMarkerOnMap = false;
 
   void _onMapCreated(GoogleMapController controller) {
     _googleMapController = controller;
@@ -51,6 +56,7 @@ class _MapScreenState extends State<MapScreen> {
             position: LatLng(widget.lat!, widget.lng!),
           ),
         );
+        isMarkerOnMap = true; // set isMarkerOnMap to true when a marker is added
       });
     }
   }
@@ -63,12 +69,68 @@ class _MapScreenState extends State<MapScreen> {
     )
     )
     );
+    setState(() {
+      isMarkerOnMap = false; // reset isMarkerOnMap to false when camera position is reset
+    });
   }
 
+  void _resetMarkerOnMap() {
+    setState(() {
+      isMarkerOnMap = false; // reset isMarkerOnMap to false when markers are reset
+      _markers.clear(); // clear all markers from the set
+    });
+  }
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
+
+  void _showSignOutDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('User Name'), // Replace 'User Name' with the actual user name
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Divider(color: Colors.grey),
+                Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.black), // This is the prefix icon
+                    SizedBox(width: 10), // Add some space between the icon and the button
+                    TextButton(
+                      child: Text('Sign Out'),
+                      onPressed: () {
+                        signUserOut();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+  /////////
+
+  // AuthService authService = AuthService.instance;
+  // String? imageUrl; // Ensure this line is present to declare imageUrl
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadProfileImage();
+  // }
+  // void loadProfileImage() async {
+  //   imageUrl = await AuthService.instance.getProfileImageUrl();
+  //   setState(() {});
+  // }
+  // /////////
+
+
   void _onSearchTap() {
     showModalBottomSheet(
       context: context,
@@ -103,8 +165,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 
 
-  // @override
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,7 +181,8 @@ class _MapScreenState extends State<MapScreen> {
           Positioned(
             top: 60.0,
             left: 16.0,
-            right: 16.0,
+            // right: 16.0,
+            right: 50.0,
             child: GestureDetector(
 
               onTap: _onSearchTap,
@@ -137,7 +198,7 @@ class _MapScreenState extends State<MapScreen> {
                     hintText: 'Search Restaurants Here',
                     fillColor: AppColors.cardLight,
                     filled: true,
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Icon(isMarkerOnMap ? Icons.arrow_back_ios : Icons.search, color: isMarkerOnMap ? Colors.blue : Colors.grey),
                     // suffixIcon: GestureDetector(
                     //   onTap: () {
                     //     print("1");
@@ -148,6 +209,7 @@ class _MapScreenState extends State<MapScreen> {
                     // ),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
+                      // borderSide: BorderSide(color: Colors.black, width: 1.0),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -157,6 +219,32 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
 
+
+
+          Positioned(
+            top: 60.0,
+            left: 370.0,
+            right: 16.0,
+            child: GestureDetector(
+
+              onTap: _resetMarkerOnMap,
+              child: AbsorbPointer(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    fillColor: AppColors.cardLight,
+                    filled: true,
+                    prefixIcon: Icon(isMarkerOnMap ? Icons.close : Icons.search, color: isMarkerOnMap ? Colors.grey : Colors.transparent),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      // borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  // textInputAction: TextInputAction.search,
+                ),
+              ),
+            ),
+          ),
 
           Positioned(
               bottom: 40,
@@ -196,7 +284,7 @@ class _MapScreenState extends State<MapScreen> {
             bottom: 56,
             right: 30,
             child: ElevatedButton(
-              onPressed: signUserOut,
+              onPressed: () => _showSignOutDialog(context),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
                 backgroundColor: AppColors.cardLight, // foreground color

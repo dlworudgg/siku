@@ -9,18 +9,21 @@ import 'package:siku/theme.dart';
 // import 'package:location/location.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
-
+import 'package:siku/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options : DefaultFirebaseOptions.currentPlatform,
   );
-  await Hive.initFlutter();
+  // await Hive.initFlutter();
 
-  var my_list = await Hive.openBox('my list');
-
+  // var my_list = await Hive.openBox('my list');
+  // // AuthService authService = AuthService();
+  // String? imageUrl = await authService.getProfileImageUrl();
+  // await my_list.put('googleProfileImageUrl', imageUrl);
+  // my_list.close();
   runApp(MaterialApp(home: MyApp()));
 }
 
