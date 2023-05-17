@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
+import '../constants.dart';
 import '../helpers.dart';
 import '../models/autocomplete_prediction.dart';
 import '../pages/messaging_page.dart';
@@ -13,12 +14,14 @@ import '../widgets/avatar.dart';
 import '../widgets/glowing_action_button.dart';
 import 'dart:ui';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../models/place_detail_response.dart';
 
 class MapScreen extends StatefulWidget {
   final double? lat;
   final  double? lng;
+  final  Result? place_detail;
 
-  const MapScreen({Key? key, this.lat, this.lng}) : super(key: key);
+  const MapScreen({Key? key, this.lat, this.lng, this.place_detail}) : super(key: key);
 
 
   @override
@@ -44,7 +47,7 @@ class _MapScreenState extends State<MapScreen> {
     if (widget.lat != null && widget.lng != null) {
       _googleMapController.animateCamera(
         CameraUpdate.newLatLngZoom(
-          LatLng(widget.lat!, widget.lng!),
+          LatLng(widget.lat! -0.012, widget.lng!),
           14.5,
         ),
       );
@@ -58,6 +61,7 @@ class _MapScreenState extends State<MapScreen> {
         );
         isMarkerOnMap = true; // set isMarkerOnMap to true when a marker is added
       });
+      _showPlaceDetail();
     }
   }
 
@@ -114,21 +118,7 @@ class _MapScreenState extends State<MapScreen> {
         }
     );
   }
-  /////////
 
-  // AuthService authService = AuthService.instance;
-  // String? imageUrl; // Ensure this line is present to declare imageUrl
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   loadProfileImage();
-  // }
-  // void loadProfileImage() async {
-  //   imageUrl = await AuthService.instance.getProfileImageUrl();
-  //   setState(() {});
-  // }
-  // /////////
 
 
   void _onSearchTap() {
@@ -163,6 +153,82 @@ class _MapScreenState extends State<MapScreen> {
       },
     );
   }
+
+  void _showPlaceDetail() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // This allows you to control the size of the bottom sheet
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.6, // This allows the bottom sheet to take up 60% of the screen
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+            ),
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView( // wrap your Column in a SingleChildScrollView
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.place_detail!.name,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    widget.place_detail!.formattedAddress,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 10),
+                  for (var text in widget.place_detail!.weekdayText)
+                    Text(
+                      text,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                        widget.place_detail!.rating.toStringAsFixed(1), // display the rating number
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      SizedBox(width: 10),
+                      ...List<Widget>.generate(5, (index) {
+                        return Icon(
+                          index < widget.place_detail!.rating.round() ? Icons.star : Icons.star_border, // choose the icon based on the rating
+                          color: Colors.pink,
+                        );
+                      }),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  if (widget.place_detail!.photos.isNotEmpty)
+                    Image.network(
+                      'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.place_detail!.photos[0]}&key=$googleMapKey',
+                      fit: BoxFit.cover,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+
+
+
 
 
   @override

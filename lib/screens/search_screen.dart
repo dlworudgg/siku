@@ -106,6 +106,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/services/network_utility.dart';
 
 import '../components/location_list_tile.dart';
+import '../constants.dart';
 import '../models/autocomplete_prediction.dart';
 import '../models/place_auto_complete_response.dart';
 import '../models/place_detail_response.dart';
@@ -130,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
       'maps/api/place/autocomplete/json',
       {
         "input": query,
-        "key": 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
+        "key": googleMapKey,
       },
     );
     String? response = await NetworkUtility.fetchUrl(uri);
@@ -227,13 +228,14 @@ class _SearchScreenState extends State<SearchScreen> {
                   if (placeId != null) {
                     Result selected_detail = await placeDetailResponse(placeId);
 
-                  print(selected_detail.geometry.location.lat);
+                  // print(selected_detail.geometry.location.lat);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MapScreen(
                             lat: selected_detail.geometry.location.lat,
-                            lng: selected_detail.geometry.location.lng
+                            lng: selected_detail.geometry.location.lng,
+                            place_detail: selected_detail,
                         ),
                       ),
                     );
