@@ -243,6 +243,7 @@ class _MapScreenState extends State<MapScreen> {
           // onMapCreated: (controller) => _googleMapController = controller,
           onMapCreated: _onMapCreated,
           markers: _markers,
+          // onMarkerTapped: _onMarkerTapped,
         ),
           Positioned(
             top: 60.0,
