@@ -172,7 +172,7 @@ class _SearchScreenState extends State<SearchScreen> {
       'maps/api/place/details/json',
       {
         "placeid": placeId, // placeid instead of input
-        "key": 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
+        "key": googleMapKey,
       },
     );
     String? response = await NetworkUtility.fetchUrl(uri);
