@@ -211,10 +211,23 @@ class _MapScreenState extends State<MapScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
+                  // if (widget.place_detail!.photos.isNotEmpty)
+                  //   Image.network(
+                  //     'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.place_detail!.photos[0]}&key=$googleMapKey',
+                  //     fit: BoxFit.cover,
+                  //   ),
                   if (widget.place_detail!.photos.isNotEmpty)
-                    Image.network(
-                      'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.place_detail!.photos[0]}&key=$googleMapKey',
-                      fit: BoxFit.cover,
+                    SizedBox(
+                      height: 200,  // You can adjust the size of the image slider here
+                      child: PageView.builder(
+                        itemCount: widget.place_detail!.photos.length,
+                        itemBuilder: (context, index) {
+                          return Image.network(
+                            'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.place_detail!.photos[index]}&key=$googleMapKey',
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
                     ),
                 ],
               ),
