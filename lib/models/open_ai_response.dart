@@ -173,7 +173,7 @@ class RestaurantInfo {
   });
 }
 
-RestaurantInfo processText(String text) {
+String processText(String text) {
   // Extract sections using regular expressions
   final nationalityRegex = RegExp(r'Nationality of Restaurant:\s*(.*)');
   final suggestedMenuRegex = RegExp(r'Suggested Menu of Restaurant:\s*(.*)');
@@ -196,11 +196,9 @@ RestaurantInfo processText(String text) {
   final summary = summaryMatch?.group(1) ?? 'Not available';
 
   // Return the extracted values as a class
-  return RestaurantInfo(
-    nationality: nationality,
-    suggestedMenu: suggestedMenu,
-    goodSide: goodSide,
-    downside: downside,
-    summary: summary,
-  );
+  return 'Nationality: $nationality\n'
+      'Suggested Menu: $suggestedMenu\n'
+      'Good Side: $goodSide\n'
+      'Downside: $downside\n'
+      'Summary: $summary';
 }

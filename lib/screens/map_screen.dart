@@ -186,6 +186,7 @@ class _MapScreenState extends State<MapScreen> {
         ),
       ),
       builder: (BuildContext context) {
+        RestaurantInfo restaurantInfo =processText(widget.summary.choices?[0].message.content);
         return FractionallySizedBox(
           heightFactor: 0.7,
           // This allows the bottom sheet to take up 60% of the screen
@@ -220,7 +221,7 @@ class _MapScreenState extends State<MapScreen> {
                   //     style: TextStyle(fontSize: 16),
                   //   ),
                   Text(
-                    processText(summary.choices?[0].message.content),
+                    processText(widget.summary?.choices?[0].message.content ?? ''),
                         style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 10),
