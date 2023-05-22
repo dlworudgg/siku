@@ -108,6 +108,7 @@ import 'package:siku/services/network_utility.dart';
 import '../components/location_list_tile.dart';
 import '../constants.dart';
 import '../models/autocomplete_prediction.dart';
+import '../models/open_ai_response.dart';
 import '../models/place_auto_complete_response.dart';
 import '../models/place_detail_response.dart';
 import '../theme.dart';
@@ -172,7 +173,7 @@ class _SearchScreenState extends State<SearchScreen> {
       'maps/api/place/details/json',
       {
         "placeid": placeId, // placeid instead of input
-        "key": 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
+        "key": googleMapKey,
       },
     );
     String? response = await NetworkUtility.fetchUrl(uri);
@@ -223,19 +224,22 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: placePredictions.length,
               itemBuilder: (context, index) => LocationListTile(
                 press: () async {
-                  AutocompletePrediction selected_prediction = placePredictions[index];
-                  String? placeId = selected_prediction.placeId;
+                  AutocompletePrediction selectedPrediction = placePredictions[index];
+                  String? placeId = selectedPrediction.placeId;
                   if (placeId != null) {
-                    Result selected_detail = await placeDetailResponse(placeId);
-
+                    Result selectedDetail = await placeDetailResponse(placeId);
+                    // here process ai to generate
+                    // print(selectedDetail.photosList!.photos![1].photoReference);
+                    ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
                   // print(selected_detail.geometry.location.lat);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MapScreen(
-                            lat: selected_detail.geometry.location.lat,
-                            lng: selected_detail.geometry.location.lng,
-                            place_detail: selected_detail,
+                            lat: selectedDetail.geometry?.location?.lat,
+                            lng: selectedDetail.geometry?.location?.lng,
+                            placeDetail: selectedDetail,
+                            summary: GPTResponse,
                         ),
                       ),
                     );
