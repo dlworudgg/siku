@@ -114,6 +114,8 @@ import '../models/place_detail_response.dart';
 import '../theme.dart';
 import 'home_screen.dart';
 import 'map_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -125,6 +127,9 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   List<AutocompletePrediction> placePredictions = [];
   List<PlaceDetailResponse> placeDetails = [];
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
 
   Future<void> placeAutoComplete(String query) async {
     Uri uri = Uri.https(
@@ -138,7 +143,7 @@ class _SearchScreenState extends State<SearchScreen> {
     String? response = await NetworkUtility.fetchUrl(uri);
     if (response != null) {
       PlaceAutocompleteResponse result =
-      PlaceAutocompleteResponse.parseAutocompleteResult(response);
+          PlaceAutocompleteResponse.parseAutocompleteResult(response);
       if (result.predictions != null) {
         setState(() {
           placePredictions = result.predictions!;
@@ -178,12 +183,13 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     String? response = await NetworkUtility.fetchUrl(uri);
     if (response != null) {
-      PlaceDetailResponse placeDetailResponse = PlaceDetailResponse.fromJson(jsonDecode(response));
+      PlaceDetailResponse placeDetailResponse =
+          PlaceDetailResponse.fromJson(jsonDecode(response));
       return placeDetailResponse.result; // return the result
     }
-    throw Exception("Failed to fetch place details"); // throw an exception if the request fails
+    throw Exception(
+        "Failed to fetch place details"); // throw an exception if the request fails
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +212,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: const Icon(Icons.arrow_back_ios, color : Colors.blue),
+                  child: const Icon(Icons.arrow_back_ios, color: Colors.blue),
                 ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
@@ -224,31 +230,74 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: placePredictions.length,
               itemBuilder: (context, index) => LocationListTile(
                 press: () async {
-                  AutocompletePrediction selectedPrediction = placePredictions[index];
+                  AutocompletePrediction selectedPrediction =
+                      placePredictions[index];
                   String? placeId = selectedPrediction.placeId;
                   if (placeId != null) {
-                    Result selectedDetail = await placeDetailResponse(placeId);
-                    // here process ai to generate
-                    // print(selectedDetail.photosList!.photos![1].photoReference);
-                    ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
-                  // print(selected_detail.geometry.location.lat);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapScreen(
-                            lat: selectedDetail.geometry?.location?.lat,
-                            lng: selectedDetail.geometry?.location?.lng,
-                            placeDetail: selectedDetail,
-                            summary: GPTResponse,
-                        ),
-                      ),
-                    );
+
+                    DocumentSnapshot snapshot = await firestore.collection('PlacesInformation').doc(placeId).get();
+                if (snapshot.exists) {
+                // Document exists in Firestore. Use the saved data.
+                // print('Document exists on the database');
+                // Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+                // // Object data = snapshot.data()!;
+                // GeoPoint geoPoint = data['geometry'] as GeoPoint;
+                // print(geoPoint.latitude); // Use 'latitude' instead of 'lat'
+                // print(geoPoint.longitude);
+                // // print(data['geometry']);
+                // print(data);
+                  Result selectedDetail = await placeDetailResponse(placeId);
+                  await firestore.collection('PlacesInformation')
+                      .doc(placeId)
+                      .set({
+                    // TODO: Add the fields you want to save in Firestore. Example:
+                    'result': selectedDetail,
+                    // Add more fields as needed
+                  });
+
+                // TODO: Use the data as needed
+                } else {
+                  // Document does not exist in Firestore. Fetch data from API and save it in Firestore
+                  print('Document does not exist on the database');
+                  Result selectedDetail = await placeDetailResponse(placeId);
+
+                  ChatCompletionResponse GPTResponse = await processPlaceDetailAI(
+                      selectedDetail);
+
+                  // Save the data in Firestore for future use
+                  await firestore.collection('PlacesInformation')
+                      .doc(placeId)
+                      .set({
+                    // TODO: Add the fields you want to save in Firestore. Example:
+                    'name': selectedDetail.name,
+                    // Add more fields as needed
+                  });
+                }
+                    // Result selectedDetail = await placeDetailResponse(placeId);
+                    // ChatCompletionResponse GPTResponse =
+                    //     await processPlaceDetailAI(selectedDetail);
+                    // print(selected_detail.geometry.location.lat);
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => MapScreen(
+                    //       lat: selectedDetail.geometry?.location?.lat,
+                    //       lng: selectedDetail.geometry?.location?.lng,
+                    //       placeDetail: selectedDetail,
+                    //       summary: GPTResponse,
+                    //     ),
+                    //   ),
+                    // );
                   }
                 },
                 // location: placePredictions[index].description!,
-                location: placePredictions[index].structuredFormatting?.secondaryText ?? "",
-                mainText : placePredictions[index].structuredFormatting?.mainText ?? "",
-
+                location: placePredictions[index]
+                        .structuredFormatting
+                        ?.secondaryText ??
+                    "",
+                mainText:
+                    placePredictions[index].structuredFormatting?.mainText ??
+                        "",
               ),
             ),
           ),
@@ -257,3 +306,5 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
+
+
