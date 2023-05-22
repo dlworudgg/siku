@@ -76,7 +76,10 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
   prompt += reviews;
 
   prompt +=  """
-This is json file about some restaurant. Can you guess the what is the nationality of this restaurant’ food is and what are the menu they are focusing on. If you can not guess what is the answer then please leave it as N/A. Can you give some summary that explains on what kind of this place is and atmosphere of this place and what are the good thing and bad things of this place? In the summary try to avoid the information provided in the section prior.And please provide detailed information 
+This is json file about some restaurant. Can you guess the what is the nationality of this restaurant’ food is and what are the menu they are focusing on. 
+If you can not guess what is the answer then please leave it as N/A. Can you give some summary that explains on what kind of this place is and atmosphere of this place and what are the good thing and bad things of this place?
+ In the summary try to avoid the information provided in the section prior. 
+ Please provide detailed information and if information is not enough, add your own rich details and go beyond the obvious.
 
 Answer should follow bellow format.
 
