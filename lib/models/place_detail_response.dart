@@ -92,17 +92,37 @@ class Result {
     );
   }
 
-//
-//   factory Result.fromMap(Map<String, dynamic> map) {
-//     return Result(
-//       name: map['name'],
-//       formattedAddress: map['formatted_address'],
-//       geometry: map['geometry'] != null
-//           ? Geometry.fromJson(map['geometry'] as Map<String, dynamic>)
-//           : null,
-// // ... continue with other properties
-//     );
-//   }
+
+  factory Result.fromMap(Map<String, dynamic> map) {
+    return Result(
+      name: map['name'],
+      formattedAddress: map['formatted_address'],
+      geometry: map['geometry'] != null
+          ? Geometry.fromJson(map['geometry'] as Map<String, dynamic>)
+          : null,
+      weekdayText: (map['weekday_text'] as List<dynamic>?)?.cast<String>(),
+      // photos: (json['photos']?.map((item) => item['photo_reference'] as String)?.toList()),
+      photosList: map['photos'] != null ? PhotosList.fromJson({'photo': json['photos']}) : null,
+      rating: map['rating'] as double?,
+      editorialSummary: map['editorial_summary'] != null ? EditorialSummary.fromJson(map['editorial_summary'] as Map<String, dynamic>) : null,
+      priceLevel: map['price_level'] as int?,
+      reservable: map['reservable'] as bool?,
+      types: (map['types'] as List<dynamic>?)?.cast<String>(),
+      userRatingsTotal: map['user_ratings_total'] as int?,
+      website: map['website'] as String?,
+      // reviews: (map['reviews']?.map((json) => Review.fromJson(json as Map<String, dynamic>))?.toList()),
+      reviewList: map['reviews'] != null ? ReviewsList.fromJson({'review': map['reviews']}) : null,
+      delivery: map['delivery'] as bool?,
+      servesBeer: map['serves_beer'] as bool?,
+      servesBrunch: map['serves_brunch'] as bool?,
+      servesDinner: map['serves_dinner'] as bool?,
+      servesLunch: map['serves_lunch'] as bool?,
+      servesVegetarianFood: map['serves_vegetarian_food'] as bool?,
+      servesWine: map['serves_wine'] as bool?,
+      takeout: map['serves_wine'] as bool?
+// ... continue with other properties
+    );
+  }
 }
 
 
