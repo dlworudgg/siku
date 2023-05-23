@@ -229,76 +229,53 @@ class _SearchScreenState extends State<SearchScreen> {
             child: ListView.builder(
               itemCount: placePredictions.length,
               itemBuilder: (context, index) => LocationListTile(
-                press: () async {
-                  AutocompletePrediction selectedPrediction =
-                      placePredictions[index];
-                  String? placeId = selectedPrediction.placeId;
-                  if (placeId != null) {
-
-                    DocumentSnapshot snapshot = await firestore.collection('PlacesInformation').doc(placeId).get();
-                if (snapshot.exists) {
-                // Document exists in Firestore. Use the saved data.
-                // print('Document exists on the database');
-                // Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-                // // Object data = snapshot.data()!;
-                // GeoPoint geoPoint = data['geometry'] as GeoPoint;
-                // print(geoPoint.latitude); // Use 'latitude' instead of 'lat'
-                // print(geoPoint.longitude);
-                // // print(data['geometry']);
-                // print(data);
-                  Result selectedDetail = await placeDetailResponse(placeId);
-                  await firestore.collection('PlacesInformation')
-                      .doc(placeId)
-                      .set({
-                    // TODO: Add the fields you want to save in Firestore. Example:
-                    'result': selectedDetail,
-                    // Add more fields as needed
-                  });
-
-                // TODO: Use the data as needed
-                } else {
-                  // Document does not exist in Firestore. Fetch data from API and save it in Firestore
-                  print('Document does not exist on the database');
-                  Result selectedDetail = await placeDetailResponse(placeId);
-
-                  ChatCompletionResponse GPTResponse = await processPlaceDetailAI(
-                      selectedDetail);
-
-                  // Save the data in Firestore for future use
-                  await firestore.collection('PlacesInformation')
-                      .doc(placeId)
-                      .set({
-                    // TODO: Add the fields you want to save in Firestore. Example:
-                    'name': selectedDetail.name,
-                    // Add more fields as needed
-                  });
-                }
-                    // Result selectedDetail = await placeDetailResponse(placeId);
-                    // ChatCompletionResponse GPTResponse =
-                    //     await processPlaceDetailAI(selectedDetail);
-                    // print(selected_detail.geometry.location.lat);
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => MapScreen(
-                    //       lat: selectedDetail.geometry?.location?.lat,
-                    //       lng: selectedDetail.geometry?.location?.lng,
-                    //       placeDetail: selectedDetail,
-                    //       summary: GPTResponse,
-                    //     ),
-                    //   ),
-                    // );
-                  }
-                },
-                // location: placePredictions[index].description!,
-                location: placePredictions[index]
-                        .structuredFormatting
-                        ?.secondaryText ??
-                    "",
-                mainText:
-                    placePredictions[index].structuredFormatting?.mainText ??
-                        "",
-              ),
+                  press: () async {
+                    Result selectedDetail; // Declare here
+                    AutocompletePrediction selectedPrediction =
+                    placePredictions[index];
+                    String? placeId = selectedPrediction.placeId;
+                    if (placeId != null) {
+                      DocumentSnapshot snapshot = await firestore.collection('PlacesInformation').doc(placeId).get();
+                      if (snapshot.exists) {
+                        // Document exists in Firestore. Use the saved data.
+                        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+                        selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
+                        // TODO: Use the data as needed
+                      } else {
+                        // Document does not exist in Firestore. Fetch data from API and save it in Firestore
+                        selectedDetail = await placeDetailResponse(placeId);
+                        ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
+                        // Save the data in Firestore for future use
+                        await firestore.collection('PlacesInformation')
+                            .doc(placeId)
+                            .set({
+                          'name': selectedDetail.name,
+                          // Add more fields as needed
+                        });
+                      }
+                      // This is assuming processPlaceDetailAI only needs selectedDetail, you might need to adjust it as per your needs
+                      ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapScreen(
+                            lat: selectedDetail.geometry?.location?.lat,
+                            lng: selectedDetail.geometry?.location?.lng,
+                            placeDetail: selectedDetail,
+                            summary: GPTResponse,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  location: placePredictions[index]
+                      .structuredFormatting
+                      ?.secondaryText ??
+                      "",
+                  mainText:
+                  placePredictions[index].structuredFormatting?.mainText ??
+                      "",
+                ),
             ),
           ),
         ],
