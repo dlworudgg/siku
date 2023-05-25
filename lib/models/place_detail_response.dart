@@ -102,7 +102,7 @@ class Result {
           : null,
       weekdayText: (map['weekday_text'] as List<dynamic>?)?.cast<String>(),
       // photos: (json['photos']?.map((item) => item['photo_reference'] as String)?.toList()),
-      photosList: map['photos'] != null ? PhotosList.fromJson({'photo': json['photos']}) : null,
+      photosList: map['photos'] != null ? PhotosList.fromJson({'photo': map['photos']}) : null,
       rating: map['rating'] as double?,
       editorialSummary: map['editorial_summary'] != null ? EditorialSummary.fromJson(map['editorial_summary'] as Map<String, dynamic>) : null,
       priceLevel: map['price_level'] as int?,
