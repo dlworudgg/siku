@@ -21,7 +21,9 @@ class MapScreen extends StatefulWidget {
   final ChatCompletionResponse? summary;
 
   const MapScreen(
-      {Key? key, this.lat, this.lng, this.placeDetail, this.summary})
+      {Key? key, this.lat, this.lng, this.placeDetail
+        , this.summary
+      })
       : super(key: key);
 
   @override
@@ -156,6 +158,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _showPlaceDetail() {
+    // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(placeDetail);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -183,8 +186,9 @@ class _MapScreenState extends State<MapScreen> {
               child: Column(
                 children: [
                   TabBar(
+                    indicatorColor: Colors.black,
                     tabs: [
-                      Tab(text: 'Info'), // name the tabs as you wish
+                      Tab(text:'Info'), // name the tabs as you wish
                       Tab(text: 'Summary'),
                     ],
                   ),
@@ -456,7 +460,7 @@ class _MapScreenState extends State<MapScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            processText(widget.summary?.choices?[0].message.content ?? ''),
+            processText(widget.summary?.choices[0].message.content ?? ''),
             style: TextStyle(fontSize: 16),
           ),
           // add more widgets here if needed

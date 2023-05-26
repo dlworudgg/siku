@@ -240,18 +240,16 @@ class _SearchScreenState extends State<SearchScreen> {
                         // Document exists in Firestore. Use the saved data.
                         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
                         selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
-                        // TODO: Use the data as needed
+
                       } else {
                         // Document does not exist in Firestore. Fetch data from API and save it in Firestore
                         selectedDetail = await placeDetailResponse(placeId);
-                        ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
+                        // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
                         // Save the data in Firestore for future use
+
                         await firestore.collection('PlacesInformation')
                             .doc(placeId)
-                            .set({
-                          'name': selectedDetail.name,
-                          // Add more fields as needed
-                        });
+                            .set(selectedDetail.toMap());
                       }
                       // This is assuming processPlaceDetailAI only needs selectedDetail, you might need to adjust it as per your needs
                       ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
