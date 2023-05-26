@@ -96,13 +96,13 @@ class Result {
   factory Result.fromMap(Map<String, dynamic> map) {
     return Result(
       name: map['name'],
-      formattedAddress: map['formatted_address'],
+      formattedAddress: map['formattedAddress'],
       geometry: map['geometry'] != null
           ? Geometry.fromJson(map['geometry'] as Map<String, dynamic>)
           : null,
-      weekdayText: (map['weekday_text'] as List<dynamic>?)?.cast<String>(),
+      weekdayText: (map['weekdayText'] as List<dynamic>?)?.cast<String>(),
       // photos: (json['photos']?.map((item) => item['photo_reference'] as String)?.toList()),
-      photosList: map['photos'] != null ? PhotosList.fromJson({'photo': map['photos']}) : null,
+      photosList: map['photoslist'] != null ? PhotosList.fromJson2({'photo' :map['photoslist']}) : null,
       rating: map['rating'] as double?,
       editorialSummary: map['editorial_summary'] != null ? EditorialSummary.fromJson(map['editorial_summary'] as Map<String, dynamic>) : null,
       priceLevel: map['price_level'] as int?,
@@ -119,10 +119,54 @@ class Result {
       servesLunch: map['serves_lunch'] as bool?,
       servesVegetarianFood: map['serves_vegetarian_food'] as bool?,
       servesWine: map['serves_wine'] as bool?,
-      takeout: map['serves_wine'] as bool?
+      takeout: map['takeout'] as bool?
 // ... continue with other properties
     );
   }
+
+  Map<String, dynamic> toMap() {
+    List<Map<String, dynamic>> photos = [];
+    photosList?.photos?.forEach((photo) {
+      photos.add({
+        'height': photo.height,
+        'photoReference': photo.photoReference,
+        'width': photo.width,
+      });
+    });
+
+    List<Map<String, dynamic>> reviews = [];
+    reviewList?.review?.forEach((review) {
+      reviews.add({
+        'rating': review.rating,
+        'text': review.text,
+      });
+    });
+
+    return {
+      'name': name,
+      'formatted_address': formattedAddress,
+      'geometry': {'location': {'lat': geometry?.location?.lat, 'lng': geometry?.location?.lng}},
+      'weekdayText': weekdayText,
+      'photoslist': photos,
+      'rating': rating,
+      'editorial_summary': {'overview': editorialSummary?.overview},
+      'price_level': priceLevel,
+      'reservable': reservable,
+      'types': types,
+      'user_ratings_total': userRatingsTotal,
+      'website': website,
+      'reviews': reviews,
+      'delivery': delivery,
+      'serves_beer': servesBeer,
+      'serves_brunch': servesBrunch,
+      'serves_dinner': servesDinner,
+      'serves_lunch': servesLunch,
+      'serves_vegetarian_food': servesVegetarianFood,
+      'serves_wine': servesWine,
+      'takeout': takeout,
+    };
+  }
+
 }
 
 
@@ -186,7 +230,18 @@ class Photo {
       width: json['width'] as int?,
     );
   }
+  factory Photo.fromJson2(Map<String, dynamic> json) {
+    return Photo(
+      height: json['height'] as int?,
+      htmlAttributions: json['html_attributions'] != null
+          ? List<String>.from(json['html_attributions'].map((x) => x as String))
+          : null,
+      photoReference: json['photoReference'] as String?,
+      width: json['width'] as int?,
+    );
+  }
 }
+
 
 class PhotosList {
   final List<Photo>? photos;
@@ -199,6 +254,14 @@ class PhotosList {
     return PhotosList(
       photos: json['photo'] != null
           ? List<Photo>.from(json['photo'].map((x) => Photo.fromJson(x)))
+          : null,
+    );
+  }
+
+  factory PhotosList.fromJson2(Map<String, dynamic> json) {
+    return PhotosList(
+      photos: json['photo'] != null
+          ? List<Photo>.from(json['photo'].map((x) => Photo.fromJson2(x)))
           : null,
     );
   }
