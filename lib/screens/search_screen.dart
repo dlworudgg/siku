@@ -260,7 +260,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             lat: selectedDetail.geometry?.location?.lat,
                             lng: selectedDetail.geometry?.location?.lng,
                             placeDetail: selectedDetail,
-                            summary: GPTResponse,
+                            // summary: GPTResponse,
                           ),
                         ),
                       );

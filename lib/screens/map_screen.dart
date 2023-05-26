@@ -18,11 +18,11 @@ class MapScreen extends StatefulWidget {
   final double? lat;
   final double? lng;
   final Result? placeDetail;
-  final ChatCompletionResponse? summary;
+  // final ChatCompletionResponse? summary;
 
   const MapScreen(
       {Key? key, this.lat, this.lng, this.placeDetail
-        , this.summary
+        // , this.summary
       })
       : super(key: key);
 
@@ -454,20 +454,49 @@ class _MapScreenState extends State<MapScreen> {
     ]));
   }
 
+  // Widget _buildSummaryTab() {
+  //   ChatCompletionResponse GPTResponse = await processPlaceDetailAI(widget.placeDetail);
+  //   return SingleChildScrollView(
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         // Text(
+  //         //   processText(widget.summary?.choices[0].message.content ?? ''),
+  //         //   style: TextStyle(fontSize: 16),
+  //         // ),
+  //         // add more widgets here if needed
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _buildSummaryTab() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            processText(widget.summary?.choices[0].message.content ?? ''),
-            style: TextStyle(fontSize: 16),
-          ),
-          // add more widgets here if needed
-        ],
-      ),
+    return FutureBuilder<ChatCompletionResponse>(
+      future: processPlaceDetailAI(widget.placeDetail!),
+      builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Handle the error
+          return Text('Error: ${snapshot.error}');
+        } else {
+          ChatCompletionResponse GPTResponse = snapshot.data!;
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Add widgets here to display the data
+                // Text(
+                //   processText(GPTResponse.choices[0].message.content ?? ''),
+                //   style: TextStyle(fontSize: 16),
+                // ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
