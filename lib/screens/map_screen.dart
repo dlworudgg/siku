@@ -20,6 +20,7 @@ class MapScreen extends StatefulWidget {
   final Result? placeDetail;
   // final ChatCompletionResponse? summary;
 
+
   const MapScreen(
       {Key? key, this.lat, this.lng, this.placeDetail
         // , this.summary
