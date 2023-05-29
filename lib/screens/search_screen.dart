@@ -231,6 +231,7 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) => LocationListTile(
                   press: () async {
                     Result selectedDetail; // Declare here
+                    Result additionalDetail; // Declare here
                     AutocompletePrediction selectedPrediction =
                     placePredictions[index];
                     String? placeId = selectedPrediction.placeId;
@@ -240,6 +241,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         // Document exists in Firestore. Use the saved data.
                         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
                         selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
+                        additionalDetail = await placeDetailResponse(placeId);
 
                       } else {
                         // Document does not exist in Firestore. Fetch data from API and save it in Firestore
