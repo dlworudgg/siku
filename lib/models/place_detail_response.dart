@@ -142,6 +142,7 @@ class Result {
       });
     });
 
+
     return {
       'name': name,
       'formatted_address': formattedAddress,
