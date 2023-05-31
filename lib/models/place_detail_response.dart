@@ -148,6 +148,7 @@ class Result {
       'formatted_address': formattedAddress,
       'geometry': {'location': {'lat': geometry?.location?.lat, 'lng': geometry?.location?.lng}},
       'weekdayText': weekdayText,
+
       'photoslist': photos,
       'rating': rating,
       'editorial_summary': {'overview': editorialSummary?.overview},
