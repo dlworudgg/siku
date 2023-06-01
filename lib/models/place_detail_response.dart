@@ -26,8 +26,8 @@ class Result {
   final List<String>? types;
   final int? userRatingsTotal;
   final String? website;
-  // final List<Review>? reviews;
-  final ReviewsList? reviewList;
+  late final List<Reviews>? reviews;
+  // final ReviewsList? reviewList;
   final bool? delivery;
   final bool? servesBeer;
   final bool? servesBrunch;
@@ -51,8 +51,8 @@ class Result {
     this.types,
     this.userRatingsTotal,
     this.website,
-    // this.reviews,
-    this.reviewList,
+    this.reviews,
+    // this.reviewList,
     this.delivery,
     this.servesBeer,
     this.servesBrunch,
@@ -80,7 +80,8 @@ class Result {
       userRatingsTotal: json['user_ratings_total'] as int?,
       website: json['website'] as String?,
       // reviews: (json['reviews']?.map((json) => Review.fromJson(json as Map<String, dynamic>))?.toList()),
-      reviewList: json['reviews'] != null ? ReviewsList.fromJson({'review': json['reviews']}) : null,
+      // reviews: json['reviews'] != null ? Reviews.fromJson(json['reviews']): null,
+      reviews: json['reviews'] != null ? (json['reviews'] as List<dynamic>).map((item) => Reviews.fromJson(item as Map<String, dynamic>)).toList() : null,
       delivery: json['delivery'] as bool?,
       servesBeer: json['serves_beer'] as bool?,
       servesBrunch: json['serves_brunch'] as bool?,
@@ -111,8 +112,9 @@ class Result {
       userRatingsTotal: map['user_ratings_total'] as int?,
       website: map['website'] as String?,
       // reviews: (map['reviews']?.map((json) => Review.fromJson(json as Map<String, dynamic>))?.toList()),
-      reviewList: map['reviews'] != null ? ReviewsList.fromJson({'review': map['reviews']}) : null,
-      delivery: map['delivery'] as bool?,
+      // reviews: map['reviews'] != null ? Reviews.fromJson(map['reviews']) : null,
+        reviews: map['reviews'] != null ? (map['reviews'] as List<dynamic>).map((item) => Reviews.fromJson(item as Map<String, dynamic>)).toList() : null,
+        delivery: map['delivery'] as bool?,
       servesBeer: map['serves_beer'] as bool?,
       servesBrunch: map['serves_brunch'] as bool?,
       servesDinner: map['serves_dinner'] as bool?,
@@ -134,14 +136,22 @@ class Result {
       });
     });
 
+    // List<Map<String, dynamic>> reviews = [];
+    // reviewList?.review?.forEach((review) {
+    //   reviews.add({
+    //     'rating': review.rating,
+    //     'text': review.text,
+    //   });
+    // });
+
     List<Map<String, dynamic>> reviews = [];
-    reviewList?.review?.forEach((review) {
+    this.reviews?.forEach((review) {
       reviews.add({
         'rating': review.rating,
         'text': review.text,
+        'author_url': review.authorUrl,
       });
     });
-
 
     return {
       'name': name,
@@ -271,33 +281,26 @@ class PhotosList {
 
 
 
-class Review{
+class Reviews{
   final String? text;
-  final double? rating;
+  final int? rating;
+  final String? authorUrl;
 
-  Review({this.text, this.rating});
+  Reviews({this.text, this.rating, this.authorUrl});
 
-  factory Review.fromJson(Map<String, dynamic> json) {
-    return Review(
+  factory Reviews.fromJson(Map<String, dynamic> json) {
+    return Reviews(
       text: json['text'] as String?,
-      rating: json['rating'] as double?,
+      rating: json['rating'] as int?,
+      authorUrl: json['author_url'] as String?,
     );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'text': text,
+      'rating': rating,
+      'author_url': authorUrl,
+    };
   }
 }
 
-
-class ReviewsList {
-  final List<Review>? review;
-
-  ReviewsList({
-    required this.review,
-  });
-
-  factory ReviewsList.fromJson(Map<String, dynamic> json) {
-    return ReviewsList(
-      review: json['reviews'] != null
-          ? List<Review>.from(json['reviews'].map((x) => Review.fromJson(x)))
-          : null,
-    );
-  }
-}
