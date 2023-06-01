@@ -198,7 +198,8 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         _buildInfoTab(),
                         // function that returns the widget for Info tab
-                        _buildSummaryTab(),
+                        // _buildSummaryTab(),
+                        _buildInfoTab(),
                         // function that returns the widget for Summary tab
                       ],
                     ),
