@@ -26,7 +26,7 @@ class Result {
   final List<String>? types;
   final int? userRatingsTotal;
   final String? website;
-  final List<Reviews>? reviews;
+  late final List<Reviews>? reviews;
   // final ReviewsList? reviewList;
   final bool? delivery;
   final bool? servesBeer;
@@ -283,7 +283,7 @@ class PhotosList {
 
 class Reviews{
   final String? text;
-  final double? rating;
+  final int? rating;
   final String? authorUrl;
 
   Reviews({this.text, this.rating, this.authorUrl});
@@ -291,25 +291,16 @@ class Reviews{
   factory Reviews.fromJson(Map<String, dynamic> json) {
     return Reviews(
       text: json['text'] as String?,
-      rating: json['rating'] as double?,
+      rating: json['rating'] as int?,
       authorUrl: json['author_url'] as String?,
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      'text': text,
+      'rating': rating,
+      'author_url': authorUrl,
+    };
+  }
 }
 
-
-// class ReviewsList {
-//   final List<Review>? review;
-//
-//   ReviewsList({
-//     required this.review,
-//   });
-//
-//   factory ReviewsList.fromJson(Map<String, dynamic> json) {
-//     return ReviewsList(
-//       review: json['reviews'] != null
-//           ? List<Review>.from(json['reviews'].map((x) => Review.fromJson(x)))
-//           : null,
-//     );
-//   }
-// }

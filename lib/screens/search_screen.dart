@@ -1,104 +1,4 @@
-// import 'package:flutter/material.dart';
-// import 'package:siku/services/network_utility.dart';
-//
-// import '../components/location_list_tile.dart';
-// import '../models/autocomplete_prediction.dart';
-// import '../models/place_auto_complete_response.dart';
-// import '../theme.dart';
-// import 'home_screen.dart';
-//
-// class SearchScreen extends StatefulWidget {
-//   const SearchScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   State<SearchScreen> createState() => _SearchScreenState();
-// }
-//
-// class _SearchScreenState extends State<SearchScreen> {
-//
-//   List<AutocompletePrediction> placePredictions = [];
-//   Future<void> placeAutoComplete(String query) async {
-//     Uri uri = Uri.https(
-//        "maps.googleapis.com",
-//         'maps/api/place/autocomplete/json',
-//       {
-//         "input" : query,
-//         "key" : 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
-//       }
-//     );
-//     String? response = await NetworkUtility.fetchUrl(uri);
-//     if (response!= null){
-//       PlaceAutocompleteResponse result =
-//           PlaceAutocompleteResponse.parseAutocompleteResult(response);
-//       if (result.predictions != null){
-//         setState(() {
-//           placePredictions = result.predictions!;
-//         });
-//       }
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         body: Stack(children: [
-//       Positioned(
-//         top: 60.0,
-//         left: 16.0,
-//         right: 16.0,
-//         child: TextFormField(
-//
-//           decoration: InputDecoration(
-//             hintText: 'Search here',
-//             fillColor: AppColors.cardLight,
-//             filled: true,
-//             prefixIcon: InkWell(
-//               onTap: () {
-//                 Navigator.pop(context);
-//                 // Navigator.push(
-//                   // context,
-//                   // MaterialPageRoute(builder: (context) => HomeScreen()),
-//                 // );
-//               },
-//               child: const Icon(Icons.arrow_back_ios),
-//             ),
-//
-//             border: OutlineInputBorder(
-//               borderSide: BorderSide.none,
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//           ),
-//           // textInputAction: TextInputAction.search,
-//         ),
-//       ),
-//       Positioned(
-//         top: 60.0,
-//         left: 16.0,
-//         right: 16.0,
-//         child: Column(
-//           Expanded(
-//             child: ListView.builder (
-//               itemCount: placePredictions.length,
-//               itemBuilder: (context, index) =>
-//                 LocationListTile(
-//                   press () {print("1")},
-//                   location : placePredictions[index].description!,
-//                 ),
-//             ),
-//           )
-//
-//           // const Divider(
-//           //   height:4,
-//           //   thickness: 4,
-//           //   color : Colors.grey[300].
-//           // ),
-//         ),
-//       ),
-//     ]
-//         )
-//     );
-//   }
-// }
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -152,26 +52,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  //
-  // Future<void> placeDetailResponse(String placeId) async {
-  //   Uri uri = Uri.https(
-  //     "maps.googleapis.com",
-  //     'maps/api/place/details/json',
-  //     {
-  //       "input": placeId,
-  //       "key": 'AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo',
-  //     },
-  //   );
-  //   String? response = await NetworkUtility.fetchUrl(uri);
-  //   if (response != null) {
-  //     PlaceDetailResponse placeDetailResponse = PlaceDetailResponse.fromJson(jsonDecode(response));
-  //     if (placeDetailResponse.result != null) {
-  //       setState(() {
-  //         placeDetails = placeDetailResponse.result as List<PlaceDetailResponse>;
-  //       });
-  //     }
-  //   }
-  // }
   Future<Result> placeDetailResponse(String placeId) async {
     Uri uri = Uri.https(
       "maps.googleapis.com",
@@ -190,6 +70,38 @@ class _SearchScreenState extends State<SearchScreen> {
     throw Exception(
         "Failed to fetch place details"); // throw an exception if the request fails
   }
+
+
+  List<Reviews> mergeReviews(List<Reviews>? a, List<Reviews>? b) {
+    if (a == null) return b ?? [];
+    if (b == null) return a;
+
+    var mergedReviews = List<Reviews>.from(a);  // Make a copy of a
+
+    var aUrls = a.map((review) => review.authorUrl).toSet();
+    for (var review in b) {
+      if (!aUrls.contains(review.authorUrl)) {
+        mergedReviews.add(review);
+      }
+    }
+
+    return mergedReviews;
+  }
+
+  bool areReviewsDifferent(List<Reviews>? a, List<Reviews>? b) {
+    if (a == null && b == null) return false;
+    if (a == null || b == null) return true;
+
+    var aUrls = a.map((review) => review.authorUrl).toSet();
+    for (var review in b) {
+      if (!aUrls.contains(review.authorUrl)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -243,14 +155,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
                         // additionalDetail = await placeDetailResponse(placeId);
                         additionalDetail = await placeDetailResponse(placeId);
-                        print(additionalDetail.photosList?.photos?[0].width);
-                        print(additionalDetail.reviewList?.review?[0].rating);
-                        for (var review in additionalDetail.reviewList!.review!) {
-                          print(review);
+                        if (areReviewsDifferent(selectedDetail.reviews, additionalDetail.reviews)) {
+                          print('different');
+                          selectedDetail.reviews = mergeReviews(selectedDetail.reviews, additionalDetail.reviews);
+                          await firestore.collection('PlacesInformation').doc(placeId).update({'reviews': selectedDetail.reviews?.map((review) => review.toMap()).toList()});
                         }
-                        Map<String, dynamic> additionalDetailMap = additionalDetail.toMap();
-
-
                       } else {
                         // Document does not exist in Firestore. Fetch data from API and save it in Firestore
                         selectedDetail = await placeDetailResponse(placeId);
