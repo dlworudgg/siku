@@ -65,8 +65,8 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
       'Website: ${placeDetail.website ?? 'Not available'}\n';
 
   String reviews = 'Reviews:\n';
-  if (placeDetail.reviewList?.review != null) {
-    for (var review in placeDetail.reviewList!.review!) {
+  if (placeDetail.reviews != null) {
+    for (var review in placeDetail.reviews!) {
       reviews +=
       'Review - ${review.text}, Rating - ${review.rating}\n';
     }

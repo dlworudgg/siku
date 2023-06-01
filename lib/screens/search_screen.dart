@@ -241,7 +241,15 @@ class _SearchScreenState extends State<SearchScreen> {
                         // Document exists in Firestore. Use the saved data.
                         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
                         selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
+                        // additionalDetail = await placeDetailResponse(placeId);
                         additionalDetail = await placeDetailResponse(placeId);
+                        print(additionalDetail.photosList?.photos?[0].width);
+                        print(additionalDetail.reviewList?.review?[0].rating);
+                        for (var review in additionalDetail.reviewList!.review!) {
+                          print(review);
+                        }
+                        Map<String, dynamic> additionalDetailMap = additionalDetail.toMap();
+
 
                       } else {
                         // Document does not exist in Firestore. Fetch data from API and save it in Firestore
@@ -254,7 +262,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             .set(selectedDetail.toMap());
                       }
                       // This is assuming processPlaceDetailAI only needs selectedDetail, you might need to adjust it as per your needs
-                      ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
+                      // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
