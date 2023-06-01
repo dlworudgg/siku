@@ -51,24 +51,29 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     }
   }
+  Future<Result> placeDetailResponse(String placeId, {bool sortByNewest = false}) async {
+    Map<String, String> parameters = {
+      "placeid": placeId,
+      "key": googleMapKey,
+    };
 
-  Future<Result> placeDetailResponse(String placeId) async {
+    if (sortByNewest) {
+      parameters['reviews_sort'] = 'newest';
+    }
+
     Uri uri = Uri.https(
       "maps.googleapis.com",
       'maps/api/place/details/json',
-      {
-        "placeid": placeId, // placeid instead of input
-        "key": googleMapKey,
-      },
+      parameters,
     );
+
     String? response = await NetworkUtility.fetchUrl(uri);
     if (response != null) {
       PlaceDetailResponse placeDetailResponse =
-          PlaceDetailResponse.fromJson(jsonDecode(response));
-      return placeDetailResponse.result; // return the result
+      PlaceDetailResponse.fromJson(jsonDecode(response));
+      return placeDetailResponse.result;
     }
-    throw Exception(
-        "Failed to fetch place details"); // throw an exception if the request fails
+    throw Exception("Failed to fetch place details");
   }
 
 
@@ -154,17 +159,17 @@ class _SearchScreenState extends State<SearchScreen> {
                         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
                         selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
                         // additionalDetail = await placeDetailResponse(placeId);
-                        additionalDetail = await placeDetailResponse(placeId);
+                        additionalDetail = await placeDetailResponse(placeId, sortByNewest: true);
                         if (areReviewsDifferent(selectedDetail.reviews, additionalDetail.reviews)) {
-                          print('different');
-                          selectedDetail.reviews = mergeReviews(selectedDetail.reviews, additionalDetail.reviews);
+                          selectedDetail = selectedDetail.withReviews(mergeReviews(selectedDetail.reviews, additionalDetail.reviews));
                           await firestore.collection('PlacesInformation').doc(placeId).update({'reviews': selectedDetail.reviews?.map((review) => review.toMap()).toList()});
                         }
                       } else {
                         // Document does not exist in Firestore. Fetch data from API and save it in Firestore
                         selectedDetail = await placeDetailResponse(placeId);
-                        // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
+                        Result selectedNewestDetail = await placeDetailResponse(placeId, sortByNewest: true);
                         // Save the data in Firestore for future use
+                        selectedDetail = selectedDetail.withReviews(mergeReviews(selectedDetail.reviews, selectedNewestDetail.reviews));
 
                         await firestore.collection('PlacesInformation')
                             .doc(placeId)

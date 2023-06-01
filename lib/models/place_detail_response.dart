@@ -26,7 +26,7 @@ class Result {
   final List<String>? types;
   final int? userRatingsTotal;
   final String? website;
-  late final List<Reviews>? reviews;
+  final List<Reviews>? reviews;
   // final ReviewsList? reviewList;
   final bool? delivery;
   final bool? servesBeer;
@@ -176,6 +176,32 @@ class Result {
       'serves_wine': servesWine,
       'takeout': takeout,
     };
+  }
+
+  Result withReviews(List<Reviews> newReviews) {
+    return Result(
+      name: name,
+      formattedAddress: formattedAddress,
+      geometry: geometry,
+      weekdayText: weekdayText,
+      photosList: photosList,
+      rating: rating,
+      editorialSummary: editorialSummary,
+      priceLevel: priceLevel,
+      reservable: reservable,
+      types: types,
+      userRatingsTotal: userRatingsTotal,
+      website: website,
+      reviews: newReviews, // here we replace the old reviews with the new ones
+      delivery: delivery,
+      servesBeer: servesBeer,
+      servesBrunch: servesBrunch,
+      servesDinner: servesDinner,
+      servesLunch: servesLunch,
+      servesVegetarianFood: servesVegetarianFood,
+      servesWine: servesWine,
+      takeout: takeout,
+    );
   }
 
 }
