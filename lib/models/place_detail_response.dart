@@ -36,6 +36,7 @@ class Result {
   final bool? servesVegetarianFood;
   final bool? servesWine;
   final bool? takeout;
+  final String? placeId;
 
   Result({
     this.name,
@@ -61,6 +62,7 @@ class Result {
     this.servesVegetarianFood,
     this.servesWine,
     this.takeout,
+    this.placeId,
   });
 
 
@@ -90,6 +92,7 @@ class Result {
       servesVegetarianFood: json['serves_vegetarian_food'] as bool?,
       servesWine: json['serves_wine'] as bool?,
       takeout: json['takeout'] as bool?,
+      placeId : json['place_id'] as String?,
     );
   }
 
@@ -121,7 +124,8 @@ class Result {
       servesLunch: map['serves_lunch'] as bool?,
       servesVegetarianFood: map['serves_vegetarian_food'] as bool?,
       servesWine: map['serves_wine'] as bool?,
-      takeout: map['takeout'] as bool?
+      takeout: map['takeout'] as bool?,
+      placeId : map['place_id'] as String?,
 // ... continue with other properties
     );
   }
@@ -175,6 +179,7 @@ class Result {
       'serves_vegetarian_food': servesVegetarianFood,
       'serves_wine': servesWine,
       'takeout': takeout,
+      'place_id': placeId,
     };
   }
 
@@ -201,6 +206,7 @@ class Result {
       servesVegetarianFood: servesVegetarianFood,
       servesWine: servesWine,
       takeout: takeout,
+      placeId: placeId,
     );
   }
 

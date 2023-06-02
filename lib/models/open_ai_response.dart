@@ -3,59 +3,17 @@ import 'package:http/http.dart' as http;
 import 'package:siku/models/place_detail_response.dart';
 import '../constants.dart';
 
-//
-// void processPlaceDetailAI(Result placeDetail) async {
-//   var headers = {
-//     'Authorization': 'Bearer $openAiKey',
-//     'Content-Type': 'application/json',
-//   };
-//
-//   late String prompt;
-//
-//   // For this demonstration, let's assume that `results` and `reviews` are predefined.
-//   // In a real application, you should replace these with actual data.
-//
-//
-//
-//   var data = {
-//     'model': 'gpt-3.5-turbo',
-//     'messages': [{'role': 'user', 'content': prompt}],
-//     'max_tokens': 3000,
-//   };
-//
-//   var body = json.encode(data);
-//
-//   var response = await http.post(
-//     Uri.parse('https://api.openai.com/v1/chat/completions'),
-//     headers: headers,
-//     body: body,
-//   );
-//
-//   print('Response status: ${response.statusCode}');
-//   print('Response body: ${response.body}');
-// }
 Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
   var headers = {
     'Authorization': 'Bearer $openAiKey',
     'Content-Type': 'application/json',
   };
-  //
-  // String prompt = 'Place Name: ${placeDetail.name}\n'
-  //     'Formatted Address: ${placeDetail.formattedAddress}\n'
-  //     'Coordinates: Latitude - ${placeDetail.geometry?.location?.lat}, Longitude - ${placeDetail.geometry?.location?.lng}\n'
-  //     'Opening Hours: ${placeDetail.weekdayText?.join(', ')}\n'
-  //     'Rating: ${placeDetail.rating}\n'
-  //     'Editorial Summary: ${placeDetail.editorialSummary?.overview}\n'
-  //     'Price Level: ${placeDetail.priceLevel}\n'
-  //     'Reservable: ${placeDetail.reservable}\n'
-  //     'Types: ${placeDetail.types?.join(', ')}\n'
-  //     'User Ratings Total: ${placeDetail.userRatingsTotal}\n'
-  //     'Website: ${placeDetail.website}\n';
+
 
   String prompt = 'Place Name: ${placeDetail.name != null ? placeDetail.name! : 'Not available'}\n'
       'Formatted Address: ${placeDetail.formattedAddress ?? 'Not available'}\n'
-      'Coordinates: Latitude - ${placeDetail.geometry?.location?.lat ?? 'Not available'}, Longitude - ${placeDetail.geometry?.location?.lng ?? 'Not available'}\n'
-      'Opening Hours: ${placeDetail.weekdayText?.join(', ') ?? 'Not available'}\n'
+      // 'Coordinates: Latitude - ${placeDetail.geometry?.location?.lat ?? 'Not available'}, Longitude - ${placeDetail.geometry?.location?.lng ?? 'Not available'}\n'
+      // 'Opening Hours: ${placeDetail.weekdayText?.join(', ') ?? 'Not available'}\n'
       'Rating: ${placeDetail.rating ?? 'Not available'}\n'
       'Editorial Summary: ${placeDetail.editorialSummary?.overview ?? 'Not available'}\n'
       'Price Level: ${placeDetail.priceLevel ?? 'Not available'}\n'
@@ -65,21 +23,28 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
       'Website: ${placeDetail.website ?? 'Not available'}\n';
 
   String reviews = 'Reviews:\n';
+  for ( var review in placeDetail.reviews!){
+    print(review.text);
+  }
+
   if (placeDetail.reviews != null) {
-    for (var review in placeDetail.reviews!) {
-      reviews +=
-      'Review - ${review.text}, Rating - ${review.rating}\n';
+    for ( var review in placeDetail.reviews!){
+      reviews += 'Review - ${review.text}, Rating - ${review.rating}\n';
     }
   } else {
     reviews += 'No reviews available.';
   }
+
   prompt += reviews;
 
   prompt +=  """
+  
+  
 This is json file about some restaurant. Can you guess the what is the nationality of this restaurant’ food is and what are the menu they are focusing on. 
-If you can not guess what is the answer then please leave it as N/A. Can you give some summary that explains on what kind of this place is and atmosphere of this place and what are the good thing and bad things of this place?
+If you can not guess what is the answer then please leave it as N/A. Be precise on the 'Nationality of Restaurant' and 'Suggested Menu'.
+Can you give some summary that explains on what kind of this place is and atmosphere of this place and what are the good thing and bad things of this place?
  In the summary try to avoid the information provided in the section prior. 
- Please provide detailed information and if information is not enough, add your own rich details and go beyond the obvious.
+ Please provide detailed information and if information is not enough, add your own rich details and go beyond the obvious within correct information.
 
 Answer should follow bellow format.
 
@@ -92,10 +57,13 @@ Downside Side of Restaurant:
 
 Overall Summary of Restaurant:""";
 
+  // print(prompt);
+  // print(placeDetail.placeId);
   var data = {
     'model': 'gpt-3.5-turbo',
     'messages': [{'role': 'user', 'content': prompt}],
     'max_tokens': 3000,
+    'temperature' : 0,
   };
 
   var body = json.encode(data);
@@ -108,7 +76,7 @@ Overall Summary of Restaurant:""";
   final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
   final ChatCompletionResponse responseBody =
   ChatCompletionResponse.fromJson(jsonResponse);
-
+  // print(responseBody.choices.message.content);
   return responseBody;
 }
 
@@ -121,7 +89,9 @@ class ChatCompletionResponse {
   });
 
   factory ChatCompletionResponse.fromJson(Map<String, dynamic> json) {
-    final choicesList = json['choices'] as List<dynamic>;
+    // final choicesList = json['choices'] as List<dynamic>;
+    // final choices = choicesList.map((choice) => Choice.fromJson(choice)).toList();
+    final choicesList = (json['choices'] as List<dynamic>?) ?? [];
     final choices = choicesList.map((choice) => Choice.fromJson(choice)).toList();
 
     return ChatCompletionResponse(
@@ -162,6 +132,7 @@ class Message {
 
 class RestaurantInfo {
   final String nationality;
+  final String subCategory;
   final String suggestedMenu;
   final String goodSide;
   final String downside;
@@ -169,6 +140,7 @@ class RestaurantInfo {
 
   RestaurantInfo({
     required this.nationality,
+    required this.subCategory,
     required this.suggestedMenu,
     required this.goodSide,
     required this.downside,
@@ -176,9 +148,10 @@ class RestaurantInfo {
   });
 }
 
-String processText(String text) {
+Map<String, String> processText(String text) {
   // Extract sections using regular expressions
   final nationalityRegex = RegExp(r'Nationality of Restaurant:\s*(.*)');
+  final subCategoryRegex = RegExp(r'Sub-category of Restaurant:\s*(.*)');
   final suggestedMenuRegex = RegExp(r'Suggested Menu of Restaurant:\s*(.*)');
   final goodSideRegex = RegExp(r'Good Side of Restaurant:\s*(.*)');
   final downsideRegex = RegExp(r'Downside Side of Restaurant:\s*(.*)');
@@ -186,6 +159,7 @@ String processText(String text) {
 
   // Extracted values
   final nationalityMatch = nationalityRegex.firstMatch(text);
+  final subCategoryMatch = subCategoryRegex.firstMatch(text);
   final suggestedMenuMatch = suggestedMenuRegex.firstMatch(text);
   final goodSideMatch = goodSideRegex.firstMatch(text);
   final downsideMatch = downsideRegex.firstMatch(text);
@@ -193,15 +167,30 @@ String processText(String text) {
 
   // Process and use the extracted values
   final nationality = nationalityMatch?.group(1) ?? 'Not available';
+  final subCategory =  subCategoryMatch?.group(1) ?? 'Not available';
   final suggestedMenu = suggestedMenuMatch?.group(1) ?? 'Not available';
   final goodSide = goodSideMatch?.group(1) ?? 'Not available';
   final downside = downsideMatch?.group(1) ?? 'Not available';
   final summary = summaryMatch?.group(1) ?? 'Not available';
 
+
   // Return the extracted values as a class
-  return 'Nationality: $nationality\n'
-      'Suggested Menu: $suggestedMenu\n'
-      'Good Side: $goodSide\n'
-      'Downside: $downside\n'
-      'Summary: $summary';
+//   return 'Nationality: $nationality\n'
+//       'Suggested Menu: $suggestedMenu\n'
+//       'Good Side: $goodSide\n'
+//       'Downside: $downside\n'
+//       'Summary: $summary';
+// }
+// Return the extracted values as a Map
+  return {
+    'Nationality': nationality,
+    'Sub-Category' : subCategory,
+    'Suggested Menu': suggestedMenu,
+    'Good Side': goodSide,
+    'Downside': downside,
+    'Summary': summary,
+  };
 }
+
+
+
