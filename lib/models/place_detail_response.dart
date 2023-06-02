@@ -26,7 +26,7 @@ class Result {
   final List<String>? types;
   final int? userRatingsTotal;
   final String? website;
-  late final List<Reviews>? reviews;
+  final List<Reviews>? reviews;
   // final ReviewsList? reviewList;
   final bool? delivery;
   final bool? servesBeer;
@@ -36,6 +36,7 @@ class Result {
   final bool? servesVegetarianFood;
   final bool? servesWine;
   final bool? takeout;
+  final String? placeId;
 
   Result({
     this.name,
@@ -61,6 +62,7 @@ class Result {
     this.servesVegetarianFood,
     this.servesWine,
     this.takeout,
+    this.placeId,
   });
 
 
@@ -90,6 +92,7 @@ class Result {
       servesVegetarianFood: json['serves_vegetarian_food'] as bool?,
       servesWine: json['serves_wine'] as bool?,
       takeout: json['takeout'] as bool?,
+      placeId : json['place_id'] as String?,
     );
   }
 
@@ -121,7 +124,8 @@ class Result {
       servesLunch: map['serves_lunch'] as bool?,
       servesVegetarianFood: map['serves_vegetarian_food'] as bool?,
       servesWine: map['serves_wine'] as bool?,
-      takeout: map['takeout'] as bool?
+      takeout: map['takeout'] as bool?,
+      placeId : map['place_id'] as String?,
 // ... continue with other properties
     );
   }
@@ -175,7 +179,35 @@ class Result {
       'serves_vegetarian_food': servesVegetarianFood,
       'serves_wine': servesWine,
       'takeout': takeout,
+      'place_id': placeId,
     };
+  }
+
+  Result withReviews(List<Reviews> newReviews) {
+    return Result(
+      name: name,
+      formattedAddress: formattedAddress,
+      geometry: geometry,
+      weekdayText: weekdayText,
+      photosList: photosList,
+      rating: rating,
+      editorialSummary: editorialSummary,
+      priceLevel: priceLevel,
+      reservable: reservable,
+      types: types,
+      userRatingsTotal: userRatingsTotal,
+      website: website,
+      reviews: newReviews, // here we replace the old reviews with the new ones
+      delivery: delivery,
+      servesBeer: servesBeer,
+      servesBrunch: servesBrunch,
+      servesDinner: servesDinner,
+      servesLunch: servesLunch,
+      servesVegetarianFood: servesVegetarianFood,
+      servesWine: servesWine,
+      takeout: takeout,
+      placeId: placeId,
+    );
   }
 
 }

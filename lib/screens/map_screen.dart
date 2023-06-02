@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -198,8 +199,8 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         _buildInfoTab(),
                         // function that returns the widget for Info tab
-                        // _buildSummaryTab(),
-                        _buildInfoTab(),
+                        _buildSummaryTab(),
+                        // _buildInfoTab(),
                         // function that returns the widget for Summary tab
                       ],
                     ),
@@ -210,144 +211,6 @@ class _MapScreenState extends State<MapScreen> {
           ),
         );
 
-        // String restaurantInfo = processText(widget.summary.choices?[0].message.content);
-        // return FractionallySizedBox(
-        //   heightFactor: 0.7,
-        //   // This allows the bottom sheet to take up 60% of the screen
-        //   child: Container(
-        //     decoration: BoxDecoration(
-        //       color: Colors.white,
-        //       borderRadius: BorderRadius.only(
-        //         topLeft: Radius.circular(25),
-        //         topRight: Radius.circular(25),
-        //       ),
-        //     ),
-        //     padding: EdgeInsets.all(20),
-        //     child: SingleChildScrollView( // wrap your Column in a SingleChildScrollView
-        //       child: Column(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           Text(
-        //             widget.placeDetail!.name ?? '',
-        //             // If name is null, use empty string
-        //             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        //           ),
-        //
-        //           SizedBox(height: 10),
-        //           Text(
-        //             widget.placeDetail!.formattedAddress ?? '',
-        //             style: TextStyle(fontSize: 18),
-        //           ),
-        //           SizedBox(height: 10),
-        //           // for (var text in widget.placeDetail!.weekdayText ?? [])
-        //           //   Text(
-        //           //     text,
-        //           //     style: TextStyle(fontSize: 16),
-        //           //   ),
-        //           Text(
-        //             processText(widget.summary?.choices?[0].message.content ?? ''),
-        //                 style: TextStyle(fontSize: 16),
-        //           ),
-        //           SizedBox(height: 10),
-        //           Row(
-        //             children: [
-        //               Text(
-        //                 widget.placeDetail!.rating != null
-        //                     ? widget.placeDetail!.rating!.toStringAsFixed(1)
-        //                     : "0", // Or any default value you'd like
-        //                 style: TextStyle(fontSize: 18),
-        //               ),
-        //
-        //               SizedBox(width: 10),
-        //               ...List<Widget>.generate(5, (index) {
-        //                 return Icon(
-        //                   widget.placeDetail!.rating != null &&
-        //                       index < widget.placeDetail!.rating!.round()
-        //                       ? Icons.star
-        //                       : Icons.star_border,
-        //                   // choose the icon based on the rating
-        //                   color: Colors.pink,
-        //                 );
-        //               }),
-        //             ],
-        //           ),
-        //           SizedBox(height: 10),
-        //           // if (widget.place_detail!.photos.isNotEmpty)
-        //           //   Image.network(
-        //           //     'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.place_detail!.photos[0]}&key=$googleMapKey',
-        //           //     fit: BoxFit.cover,
-        //           //   ),
-        //           // if (widget.place_detail!.photosList?.photos?.isNotEmpty ?? false)
-        //           //   SizedBox(
-        //           //     height: 200,  // You can adjust the size of the image slider here
-        //           //     child: PageView.builder(
-        //           //       itemCount: widget.place_detail!.photosList?.photos?.length ?? 0,
-        //           //       itemBuilder: (context, index) {
-        //           //         return widget.place_detail!.photosList?.photos?[index] != null
-        //           //             ? Image.network(
-        //           //           'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.place_detail!.photosList?.photos?[index]}&key=$googleMapKey',
-        //           //           fit: BoxFit.cover,
-        //           //         )
-        //           //             : Container(); // or any placeholder widget
-        //           //       },
-        //           //     ),
-        //           //   ),
-        //           if (widget.placeDetail!.photosList?.photos?.isNotEmpty ??
-        //               false)
-        //             SizedBox(
-        //                 height: 400,
-        //                 // You can adjust the size of the image slider here
-        //                 child: GridView.custom(
-        //                   gridDelegate: SliverQuiltedGridDelegate(
-        //                     crossAxisCount: 4,
-        //                     mainAxisSpacing: 4,
-        //                     crossAxisSpacing: 2,
-        //                     repeatPattern: QuiltedGridRepeatPattern.inverted,
-        //                     pattern: [
-        //                       QuiltedGridTile(2, 2),
-        //                       QuiltedGridTile(1, 1),
-        //                       QuiltedGridTile(1, 1),
-        //                       QuiltedGridTile(1, 2),
-        //                       QuiltedGridTile(2, 2),
-        //                       QuiltedGridTile(1, 1),
-        //                       QuiltedGridTile(1, 1),
-        //                     ],
-        //                   ),
-        //                   //       itemBuilder:
-        //                   childrenDelegate: SliverChildBuilderDelegate(
-        //                         (context, index) {
-        //                       if (index < widget.placeDetail!.photosList!.photos!.length) {
-        //                         final photo = widget.placeDetail!.photosList!.photos![index].photoReference;
-        //                         final height = widget.placeDetail!.photosList!.photos![index].height;
-        //                         final width = widget.placeDetail!.photosList!.photos![index].width;
-        //                         return Image.network(
-        //                           // 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=$width&maxheight=$height&photoreference=$photo&key=$googleMapKey',
-        //                           'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photo&key=$googleMapKey',
-        //                           fit: BoxFit.cover,
-        //                         );
-        //                       }
-        //                     },
-        //                   ),
-        //                 )
-        //               // child: PageView.builder(
-        //               //   itemCount: widget.place_detail!.photosList!.photos!.length,
-        //               //   itemBuilder: (context, index) {
-        //               //     final photo = widget.place_detail!.photosList!.photos![index].photoReference;
-        //               //     final height = widget.place_detail!.photosList!.photos![index].height;
-        //               //     final width = widget.place_detail!.photosList!.photos![index].width;
-        //               //     return Image.network(
-        //               //       'https://maps.googleapis.com/maps/api/place/photo?maxwidth=$width&maxheight=$height&photoreference=$photo&key=$googleMapKey',
-        //               //       fit: BoxFit.cover,
-        //               //     );
-        //               //   },
-        //               // ),
-        //             ),
-        //
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // );
       },
     );
   }
@@ -380,6 +243,12 @@ class _MapScreenState extends State<MapScreen> {
                 widget.placeDetail!.formattedAddress ?? '',
                 style: TextStyle(fontSize: 18),
               ),
+            //   SizedBox(height: 10),
+            // for ( var review in widget.placeDetail!.reviews! ?? [])
+            //   Text(
+            //    review.text,
+            //     style: TextStyle(fontSize: 18),
+            //   ),
               SizedBox(height: 10),
               for (var text in widget.placeDetail!.weekdayText ?? [])
                 Text(
@@ -456,48 +325,194 @@ class _MapScreenState extends State<MapScreen> {
     ]));
   }
 
-  // Widget _buildSummaryTab() {
-  //   ChatCompletionResponse GPTResponse = await processPlaceDetailAI(widget.placeDetail);
-  //   return SingleChildScrollView(
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         // Text(
-  //         //   processText(widget.summary?.choices[0].message.content ?? ''),
-  //         //   style: TextStyle(fontSize: 16),
-  //         // ),
-  //         // add more widgets here if needed
-  //       ],
-  //     ),
-  //   );
-  // }
   Widget _buildSummaryTab() {
-    return FutureBuilder<ChatCompletionResponse>(
-      future: processPlaceDetailAI(widget.placeDetail!),
-      builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
+    return FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get(),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          // Handle the error
           return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData && snapshot.data!.exists) {
+          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+
+          Map<String, String> AIResponseText = {
+            'Nationality': data['Nationality'] as String,
+            'Sub-Category': data['Sub-Category'] as String,
+            'Suggested Menu': data['Suggested Menu'] as String,
+            'Good Side': data['Good Side'] as String,
+            'Downside': data['Downside'] as String,
+            'Summary': data['Summary'] as String,
+          };
+          // Handle the Firestore data
+          // This assumes your Firestore data structure matches what processPlaceDetailAI() returns
+          // Replace with your actual code as necessary
+          // Map<String, String> AIResponseText = processText('summary');
+          return buildResponseWidgets(AIResponseText);
         } else {
-          ChatCompletionResponse GPTResponse = snapshot.data!;
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Add widgets here to display the data
-                // Text(
-                //   processText(GPTResponse.choices[0].message.content ?? ''),
-                //   style: TextStyle(fontSize: 16),
-                // ),
-              ],
-            ),
+          // Document with placeId not found in Firestore, run processPlaceDetailAI
+          return FutureBuilder<ChatCompletionResponse>(
+            future: processPlaceDetailAI(widget.placeDetail!),
+            builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                ChatCompletionResponse GPTResponse = snapshot.data!;
+                Map<String, String> AIResponseText;
+                if (GPTResponse.choices.isNotEmpty) {
+                  AIResponseText = processText(
+                      GPTResponse.choices[0].message.content ?? '');
+                } else {
+                  AIResponseText = processText(
+                      'Not Available');
+                }
+                // Save result to Firestore
+                FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(AIResponseText);
+                return buildResponseWidgets(AIResponseText);
+              }
+            },
           );
         }
       },
     );
   }
+
+  Widget buildResponseWidgets(Map<String, String> AIResponseText) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.placeDetail!.name ?? '',
+            // If name is null, use empty string
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            AIResponseText['Nationality']!,
+            style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),
+          ),
+          // Remaining code goes here...
+          Text(
+            AIResponseText['Sub-Category']!,
+            style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.8)),
+          ),
+          SizedBox(height: 10),
+          Text(
+            AIResponseText['Summary']!,
+            style: TextStyle(fontSize: 16),
+          ),
+
+          SizedBox(height: 10),
+          const Text(
+            "Main Menu",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            AIResponseText['Suggested Menu']!,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 10),
+          const Text(
+            "Good Things About This Place",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            AIResponseText['Good Side']!,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 10),
+          const Text(
+            "Bad Things About This Place",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            AIResponseText['Downside']!,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //
+  // Widget _buildSummaryTab() {
+  //   return FutureBuilder<ChatCompletionResponse>(
+  //     future: processPlaceDetailAI(widget.placeDetail!),
+  //     builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return CircularProgressIndicator();
+  //       } else if (snapshot.hasError) {
+  //         // Handle the error
+  //         return Text('Error: ${snapshot.error}');
+  //       } else {
+  //         ChatCompletionResponse GPTResponse = snapshot.data!;
+  //         Map<String, String> AIResponseText;
+  //         if (GPTResponse.choices.isNotEmpty) {
+  //           AIResponseText = processText(
+  //               GPTResponse.choices[0].message.content ?? '');
+  //         } else {
+  //           AIResponseText = processText(
+  //              'Not Available');
+  //         }
+  //         return SingleChildScrollView(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 widget.placeDetail!.name ?? '',
+  //                 // If name is null, use empty string
+  //                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //               ),
+  //               Text(
+  //                 AIResponseText['Nationality']!,
+  //                 style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),
+  //               ),
+  //               Text(
+  //                 AIResponseText['Sub-Category']!,
+  //                 style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.8)),
+  //               ),
+  //               SizedBox(height: 10),
+  //               Text(
+  //                 AIResponseText['Summary']!,
+  //                 style: TextStyle(fontSize: 16),
+  //               ),
+  //
+  //               SizedBox(height: 10),
+  //               const Text(
+  //                 "Main Menu",
+  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //               ),
+  //               Text(
+  //                 AIResponseText['Suggested Menu']!,
+  //                 style: TextStyle(fontSize: 16),
+  //               ),
+  //               SizedBox(height: 10),
+  //               const Text(
+  //                 "Good Things About This Place",
+  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //               ),
+  //               Text(
+  //                 AIResponseText['Good Side']!,
+  //                 style: TextStyle(fontSize: 16),
+  //               ),
+  //               SizedBox(height: 10),
+  //               const Text(
+  //                 "Bad Things About This Place",
+  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //               ),
+  //               Text(
+  //                 AIResponseText['Downside']!,
+  //                 style: TextStyle(fontSize: 16),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
 
   @override
