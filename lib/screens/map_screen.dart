@@ -93,6 +93,7 @@ class _MapScreenState extends State<MapScreen> {
     FirebaseAuth.instance.signOut();
   }
 
+
   void _showSignOutDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -324,13 +325,31 @@ class _MapScreenState extends State<MapScreen> {
       ),
     ]));
   }
+  final _summaryTabVisited = ValueNotifier<bool>(false);
+  Map<String, String>? _savedAIResponse;
+  @override
+  void dispose() {
+    _summaryTabVisited.dispose();  // Dispose the ValueNotifier when not needed
+    super.dispose();
+  }
 
   Widget _buildSummaryTab() {
+    if (_summaryTabVisited.value && _savedAIResponse != null) {
+      return buildResponseWidgets(_savedAIResponse!);
+    }
+
+    _summaryTabVisited.value = true;  // Mark this tab as visited
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const Center(
+              child : SizedBox(
+            width: 50,
+            height: 50,
+            child: CircularProgressIndicator(),
+          ),
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData && snapshot.data!.exists) {
@@ -355,7 +374,13 @@ class _MapScreenState extends State<MapScreen> {
             future: processPlaceDetailAI(widget.placeDetail!),
             builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const Center(
+                    child : SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(),
+                    ),
+                );
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -370,6 +395,7 @@ class _MapScreenState extends State<MapScreen> {
                 }
                 // Save result to Firestore
                 FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(AIResponseText);
+                _savedAIResponse = AIResponseText;  // Save the result
                 return buildResponseWidgets(AIResponseText);
               }
             },
