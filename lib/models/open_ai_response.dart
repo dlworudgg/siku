@@ -23,13 +23,12 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
       'Website: ${placeDetail.website ?? 'Not available'}\n';
 
   String reviews = 'Reviews:\n';
-  for ( var review in placeDetail.reviews!){
-    print(review.text);
-  }
+
 
   if (placeDetail.reviews != null) {
     for ( var review in placeDetail.reviews!){
       reviews += 'Review - ${review.text}, Rating - ${review.rating}\n';
+      print(review.rating);
     }
   } else {
     reviews += 'No reviews available.';
@@ -76,7 +75,8 @@ Overall Summary of Restaurant:""";
   final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
   final ChatCompletionResponse responseBody =
   ChatCompletionResponse.fromJson(jsonResponse);
-  // print(responseBody.choices.message.content);
+  print(responseBody.choices);
+  print(response.statusCode);
   return responseBody;
 }
 

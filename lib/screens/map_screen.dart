@@ -93,6 +93,7 @@ class _MapScreenState extends State<MapScreen> {
     FirebaseAuth.instance.signOut();
   }
 
+
   void _showSignOutDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -324,62 +325,148 @@ class _MapScreenState extends State<MapScreen> {
       ),
     ]));
   }
+  // final _summaryTabVisited = ValueNotifier<bool>(false);
+  // Map<String, String>? _savedAIResponse;
+  // @override
+  // void dispose() {
+  //   _summaryTabVisited.dispose();  // Dispose the ValueNotifier when not needed
+  //   super.dispose();
+  // }
+
+  final _summaryTabVisited = ValueNotifier<bool>(false);
+  Map<String, dynamic>? _savedAIResponse;
+
+  @override
+  void initState() {
+    super.initState();
+    _processDataInBackground();
+  }
+  void _processDataInBackground() async {
+
+    if (widget.placeDetail == null) {
+      return;
+    }
+
+    final doc = await FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get();
+    if (doc.exists) {
+      Map<String, dynamic> data  = doc.data() as Map<String, dynamic>;
+      Map<String, String> _savedAIResponse = {
+                'Nationality': data['Nationality'] as String,
+                'Sub-Category': data['Sub-Category'] as String,
+                'Suggested Menu': data['Suggested Menu'] as String,
+                'Good Side': data['Good Side'] as String,
+                'Downside': data['Downside'] as String,
+                'Summary': data['Summary'] as String,
+              };
+      _summaryTabVisited.value = true;
+    } else {
+      var result = await processPlaceDetailAI(widget.placeDetail!);
+      if (result.choices.isNotEmpty) {
+        _savedAIResponse = processText(result.choices[0].message.content ?? '');
+        FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(_savedAIResponse!);
+        _summaryTabVisited.value = true;
+      }
+    }
+  }
+  @override
+  void dispose() {
+    _summaryTabVisited.dispose();  // Dispose the ValueNotifier when not needed
+    super.dispose();
+  }
 
   Widget _buildSummaryTab() {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get(),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData && snapshot.data!.exists) {
-          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-
-          Map<String, String> AIResponseText = {
-            'Nationality': data['Nationality'] as String,
-            'Sub-Category': data['Sub-Category'] as String,
-            'Suggested Menu': data['Suggested Menu'] as String,
-            'Good Side': data['Good Side'] as String,
-            'Downside': data['Downside'] as String,
-            'Summary': data['Summary'] as String,
-          };
-          // Handle the Firestore data
-          // This assumes your Firestore data structure matches what processPlaceDetailAI() returns
-          // Replace with your actual code as necessary
-          // Map<String, String> AIResponseText = processText('summary');
-          return buildResponseWidgets(AIResponseText);
-        } else {
-          // Document with placeId not found in Firestore, run processPlaceDetailAI
-          return FutureBuilder<ChatCompletionResponse>(
-            future: processPlaceDetailAI(widget.placeDetail!),
-            builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                ChatCompletionResponse GPTResponse = snapshot.data!;
-                Map<String, String> AIResponseText;
-                if (GPTResponse.choices.isNotEmpty) {
-                  AIResponseText = processText(
-                      GPTResponse.choices[0].message.content ?? '');
-                } else {
-                  AIResponseText = processText(
-                      'Not Available');
-                }
-                // Save result to Firestore
-                FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(AIResponseText);
-                return buildResponseWidgets(AIResponseText);
-              }
-            },
-          );
+    return ValueListenableBuilder<bool>(
+      valueListenable: _summaryTabVisited,
+      builder: (context, value, child) {
+        if (_savedAIResponse != null) {
+          return buildResponseWidgets(_savedAIResponse!);
         }
+
+        return const Center(
+          child : SizedBox(
+            width: 50,
+            height: 50,
+            child: CircularProgressIndicator(),
+          ),
+        );
       },
     );
   }
+  //
+  //
+  // Widget _buildSummaryTab() {
+  //   if (_summaryTabVisited.value && _savedAIResponse != null) {
+  //     return buildResponseWidgets(_savedAIResponse!);
+  //   }
+  //
+  //   _summaryTabVisited.value = true;  // Mark this tab as visited
+  //   return FutureBuilder<DocumentSnapshot>(
+  //     future: FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get(),
+  //     builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(
+  //             child : SizedBox(
+  //           width: 50,
+  //           height: 50,
+  //           child: CircularProgressIndicator(),
+  //         ),
+  //         );
+  //       } else if (snapshot.hasError) {
+  //         return Text('Error: ${snapshot.error}');
+  //       } else if (snapshot.hasData && snapshot.data!.exists) {
+  //         Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+  //
+  //         Map<String, String> AIResponseText = {
+  //           'Nationality': data['Nationality'] as String,
+  //           'Sub-Category': data['Sub-Category'] as String,
+  //           'Suggested Menu': data['Suggested Menu'] as String,
+  //           'Good Side': data['Good Side'] as String,
+  //           'Downside': data['Downside'] as String,
+  //           'Summary': data['Summary'] as String,
+  //         };
+  //         // Handle the Firestore data
+  //         // This assumes your Firestore data structure matches what processPlaceDetailAI() returns
+  //         // Replace with your actual code as necessary
+  //         // Map<String, String> AIResponseText = processText('summary');
+  //         return buildResponseWidgets(AIResponseText);
+  //       } else {
+  //         // Document with placeId not found in Firestore, run processPlaceDetailAI
+  //         return FutureBuilder<ChatCompletionResponse>(
+  //           future: processPlaceDetailAI(widget.placeDetail!),
+  //           builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
+  //             if (snapshot.connectionState == ConnectionState.waiting) {
+  //               return const Center(
+  //                   child : SizedBox(
+  //                 width: 50,
+  //                 height: 50,
+  //                 child: CircularProgressIndicator(),
+  //                   ),
+  //               );
+  //             } else if (snapshot.hasError) {
+  //               return Text('Error: ${snapshot.error}');
+  //             } else {
+  //               ChatCompletionResponse GPTResponse = snapshot.data!;
+  //               Map<String, String> AIResponseText;
+  //               if (GPTResponse.choices.isNotEmpty) {
+  //                 AIResponseText = processText(
+  //                     GPTResponse.choices[0].message.content ?? '');
+  //               } else {
+  //                 AIResponseText = processText(
+  //                     'Not Available');
+  //               }
+  //               // Save result to Firestore
+  //               FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(AIResponseText);
+  //               _savedAIResponse = AIResponseText;  // Save the result
+  //               return buildResponseWidgets(AIResponseText);
+  //             }
+  //           },
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
-  Widget buildResponseWidgets(Map<String, String> AIResponseText) {
+  Widget buildResponseWidgets(Map<String, dynamic> _savedAIResponse) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,17 +477,17 @@ class _MapScreenState extends State<MapScreen> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
-            AIResponseText['Nationality']!,
+            _savedAIResponse['Nationality']!,
             style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),
           ),
           // Remaining code goes here...
           Text(
-            AIResponseText['Sub-Category']!,
+            _savedAIResponse['Sub-Category']!,
             style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.8)),
           ),
           SizedBox(height: 10),
           Text(
-            AIResponseText['Summary']!,
+            _savedAIResponse['Summary']!,
             style: TextStyle(fontSize: 16),
           ),
 
@@ -410,7 +497,7 @@ class _MapScreenState extends State<MapScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Text(
-            AIResponseText['Suggested Menu']!,
+            _savedAIResponse['Suggested Menu']!,
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 10),
@@ -419,7 +506,7 @@ class _MapScreenState extends State<MapScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Text(
-            AIResponseText['Good Side']!,
+            _savedAIResponse['Good Side']!,
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 10),
@@ -428,7 +515,7 @@ class _MapScreenState extends State<MapScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Text(
-            AIResponseText['Downside']!,
+            _savedAIResponse['Downside']!,
             style: TextStyle(fontSize: 16),
           ),
         ],
