@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
@@ -39,7 +40,7 @@ class _MapScreenState extends State<MapScreen> {
   );
 
   // var imageUrl = my_list.get('googleProfileImageUrl');
-
+  final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
   late GoogleMapController _googleMapController;
   Set<Marker> _markers = {};
   bool isMarkerOnMap = false;
