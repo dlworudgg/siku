@@ -2,11 +2,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/services/network_utility.dart';
 
 import '../components/location_list_tile.dart';
-import '../constants.dart';
 import '../models/autocomplete_prediction.dart';
 import '../models/open_ai_response.dart';
 import '../models/place_auto_complete_response.dart';
@@ -29,7 +29,7 @@ class _SearchScreenState extends State<SearchScreen> {
   List<PlaceDetailResponse> placeDetails = [];
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+  final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
 
   Future<void> placeAutoComplete(String query) async {
     Uri uri = Uri.https(

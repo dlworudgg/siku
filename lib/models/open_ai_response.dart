@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:siku/models/place_detail_response.dart';
-import '../constants.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart' ;
 
 Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
+
+  final String openAiKey = dotenv.get('OPEN_AI_API_KEY');
   var headers = {
     'Authorization': 'Bearer $openAiKey',
     'Content-Type': 'application/json',
@@ -21,6 +24,7 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
       'Types: ${placeDetail.types?.join(', ') ?? 'Not available'}\n'
       'User Ratings Total: ${placeDetail.userRatingsTotal ?? 'Not available'}\n'
       'Website: ${placeDetail.website ?? 'Not available'}\n';
+
 
   String reviews = 'Reviews:\n';
 
