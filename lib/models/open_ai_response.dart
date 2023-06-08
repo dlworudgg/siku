@@ -22,6 +22,7 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
       'User Ratings Total: ${placeDetail.userRatingsTotal ?? 'Not available'}\n'
       'Website: ${placeDetail.website ?? 'Not available'}\n';
 
+
   String reviews = 'Reviews:\n';
 
 
