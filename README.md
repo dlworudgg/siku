@@ -1,4 +1,4 @@
-# siku
+# SIKU
 
 A new Flutter project.
 
