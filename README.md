@@ -13,11 +13,11 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 
 [X] **Place Information Enrichment via Chat-GPT**: Employ Chat-GPT to summarize reivews, providing detailed and user-friendly data to enhance decision-making.
 
-[ ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for personalized user experience.
+[  ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for personalized user experience.
 
-[ ] **Sharing**: Enable sharing of restaurant lists and open reviews to only close friends to enhance the credbility of the reviews
+[  ] **Sharing**: Enable sharing of restaurant lists and open reviews to only close friends to enhance the credbility of the reviews
 
-[ ] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
+[  ] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
 
 ...
 
