@@ -23,4 +23,3 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 
 
 
-# SIKU
