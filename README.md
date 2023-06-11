@@ -20,6 +20,7 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 [  ] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
 
 ...
+...
 
 
 
