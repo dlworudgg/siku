@@ -326,13 +326,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
     ]));
   }
-  // final _summaryTabVisited = ValueNotifier<bool>(false);
-  // Map<String, String>? _savedAIResponse;
-  // @override
-  // void dispose() {
-  //   _summaryTabVisited.dispose();  // Dispose the ValueNotifier when not needed
-  //   super.dispose();
-  // }
+
 
   final _summaryTabVisited = ValueNotifier<bool>(false);
   Map<String, dynamic>? _savedAIResponse;
