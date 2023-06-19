@@ -24,6 +24,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
+
 class _SearchScreenState extends State<SearchScreen> {
   List<AutocompletePrediction> placePredictions = [];
   List<PlaceDetailResponse> placeDetails = [];
