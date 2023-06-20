@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:siku/pages/auth_page.dart';
-import 'package:siku/screens/home_screen.dart';
-import 'package:siku/screens/map_screen.dart';
-import 'package:siku/screens/login_screen.dart';
 import 'package:siku/theme.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:location/location.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:siku/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //
