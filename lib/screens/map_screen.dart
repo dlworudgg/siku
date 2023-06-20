@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
-import '../constants.dart';
 import '../helpers.dart';
 import '../models/open_ai_response.dart';
 import '../pages/messaging_page.dart';
@@ -387,79 +386,6 @@ class _MapScreenState extends State<MapScreen> {
       },
     );
   }
-  //
-  //
-  // Widget _buildSummaryTab() {
-  //   if (_summaryTabVisited.value && _savedAIResponse != null) {
-  //     return buildResponseWidgets(_savedAIResponse!);
-  //   }
-  //
-  //   _summaryTabVisited.value = true;  // Mark this tab as visited
-  //   return FutureBuilder<DocumentSnapshot>(
-  //     future: FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get(),
-  //     builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Center(
-  //             child : SizedBox(
-  //           width: 50,
-  //           height: 50,
-  //           child: CircularProgressIndicator(),
-  //         ),
-  //         );
-  //       } else if (snapshot.hasError) {
-  //         return Text('Error: ${snapshot.error}');
-  //       } else if (snapshot.hasData && snapshot.data!.exists) {
-  //         Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-  //
-  //         Map<String, String> AIResponseText = {
-  //           'Nationality': data['Nationality'] as String,
-  //           'Sub-Category': data['Sub-Category'] as String,
-  //           'Suggested Menu': data['Suggested Menu'] as String,
-  //           'Good Side': data['Good Side'] as String,
-  //           'Downside': data['Downside'] as String,
-  //           'Summary': data['Summary'] as String,
-  //         };
-  //         // Handle the Firestore data
-  //         // This assumes your Firestore data structure matches what processPlaceDetailAI() returns
-  //         // Replace with your actual code as necessary
-  //         // Map<String, String> AIResponseText = processText('summary');
-  //         return buildResponseWidgets(AIResponseText);
-  //       } else {
-  //         // Document with placeId not found in Firestore, run processPlaceDetailAI
-  //         return FutureBuilder<ChatCompletionResponse>(
-  //           future: processPlaceDetailAI(widget.placeDetail!),
-  //           builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
-  //             if (snapshot.connectionState == ConnectionState.waiting) {
-  //               return const Center(
-  //                   child : SizedBox(
-  //                 width: 50,
-  //                 height: 50,
-  //                 child: CircularProgressIndicator(),
-  //                   ),
-  //               );
-  //             } else if (snapshot.hasError) {
-  //               return Text('Error: ${snapshot.error}');
-  //             } else {
-  //               ChatCompletionResponse GPTResponse = snapshot.data!;
-  //               Map<String, String> AIResponseText;
-  //               if (GPTResponse.choices.isNotEmpty) {
-  //                 AIResponseText = processText(
-  //                     GPTResponse.choices[0].message.content ?? '');
-  //               } else {
-  //                 AIResponseText = processText(
-  //                     'Not Available');
-  //               }
-  //               // Save result to Firestore
-  //               FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(AIResponseText);
-  //               _savedAIResponse = AIResponseText;  // Save the result
-  //               return buildResponseWidgets(AIResponseText);
-  //             }
-  //           },
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
 
   Widget buildResponseWidgets(Map<String, dynamic> _savedAIResponse) {
     return SingleChildScrollView(
@@ -518,84 +444,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  //
-  // Widget _buildSummaryTab() {
-  //   return FutureBuilder<ChatCompletionResponse>(
-  //     future: processPlaceDetailAI(widget.placeDetail!),
-  //     builder: (BuildContext context, AsyncSnapshot<ChatCompletionResponse> snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return CircularProgressIndicator();
-  //       } else if (snapshot.hasError) {
-  //         // Handle the error
-  //         return Text('Error: ${snapshot.error}');
-  //       } else {
-  //         ChatCompletionResponse GPTResponse = snapshot.data!;
-  //         Map<String, String> AIResponseText;
-  //         if (GPTResponse.choices.isNotEmpty) {
-  //           AIResponseText = processText(
-  //               GPTResponse.choices[0].message.content ?? '');
-  //         } else {
-  //           AIResponseText = processText(
-  //              'Not Available');
-  //         }
-  //         return SingleChildScrollView(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 widget.placeDetail!.name ?? '',
-  //                 // If name is null, use empty string
-  //                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-  //               ),
-  //               Text(
-  //                 AIResponseText['Nationality']!,
-  //                 style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),
-  //               ),
-  //               Text(
-  //                 AIResponseText['Sub-Category']!,
-  //                 style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.8)),
-  //               ),
-  //               SizedBox(height: 10),
-  //               Text(
-  //                 AIResponseText['Summary']!,
-  //                 style: TextStyle(fontSize: 16),
-  //               ),
-  //
-  //               SizedBox(height: 10),
-  //               const Text(
-  //                 "Main Menu",
-  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //               ),
-  //               Text(
-  //                 AIResponseText['Suggested Menu']!,
-  //                 style: TextStyle(fontSize: 16),
-  //               ),
-  //               SizedBox(height: 10),
-  //               const Text(
-  //                 "Good Things About This Place",
-  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //               ),
-  //               Text(
-  //                 AIResponseText['Good Side']!,
-  //                 style: TextStyle(fontSize: 16),
-  //               ),
-  //               SizedBox(height: 10),
-  //               const Text(
-  //                 "Bad Things About This Place",
-  //                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //               ),
-  //               Text(
-  //                 AIResponseText['Downside']!,
-  //                 style: TextStyle(fontSize: 16),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -606,7 +454,6 @@ class _MapScreenState extends State<MapScreen> {
         myLocationButtonEnabled: false,
         zoomControlsEnabled: false,
         initialCameraPosition: _initialCameraPosition,
-        // onMapCreated: (controller) => _googleMapController = controller,
         onMapCreated: _onMapCreated,
         markers: _markers,
         // onMarkerTapped: _onMarkerTapped,
@@ -618,12 +465,6 @@ class _MapScreenState extends State<MapScreen> {
         right: 50.0,
         child: GestureDetector(
           onTap: _onSearchTap,
-          // onTap: () {
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => SearchScreen()),
-          //   );
-          // },
           child: AbsorbPointer(
             child: TextFormField(
               decoration: InputDecoration(
@@ -633,21 +474,11 @@ class _MapScreenState extends State<MapScreen> {
                 prefixIcon: Icon(
                     isMarkerOnMap ? Icons.arrow_back_ios : Icons.search,
                     color: isMarkerOnMap ? Colors.blue : Colors.grey),
-                // suffixIcon: GestureDetector(
-                //   onTap: () {
-                //     print("1");
-                //     // Action to be performed when the profile button is tapped.
-                //     // You can navigate to a new page or open a dialog/modal bottom sheet
-                //   },
-                //   child: Avatar.small(url: Helpers.randomPictureUrl()),
-                // ),
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  // borderSide: BorderSide(color: Colors.black, width: 1.0),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              // textInputAction: TextInputAction.search,
             ),
           ),
         ),
@@ -713,10 +544,10 @@ class _MapScreenState extends State<MapScreen> {
             foregroundColor: Colors.black,
             backgroundColor: AppColors.cardLight,
             // foreground color
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            side: BorderSide(
+            side: const BorderSide(
               width: 1.0,
               color: Colors.grey,
             ),
