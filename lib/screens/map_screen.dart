@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
+import '../components/saved_button.dart';
 import '../helpers.dart';
 import '../models/open_ai_response.dart';
 import '../pages/messaging_page.dart';
@@ -38,11 +39,14 @@ class _MapScreenState extends State<MapScreen> {
     zoom: 14.5,
   );
 
+
+
   // var imageUrl = my_list.get('googleProfileImageUrl');
   final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
   late GoogleMapController _googleMapController;
   Set<Marker> _markers = {};
   bool isMarkerOnMap = false;
+
 
   void _onMapCreated(GoogleMapController controller) {
     _googleMapController = controller;
@@ -234,11 +238,19 @@ class _MapScreenState extends State<MapScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.placeDetail!.name ?? '',
-                // If name is null, use empty string
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              if (widget.placeDetail != null)
+                Row(
+                  children: [
+                    Expanded( // Make sure the Text widget does not overflow
+                      child: Text(
+                        widget.placeDetail!.name ?? '', // If name is null, use empty string
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(width: 10), // Adds some spacing between the button and the name
+                    SaveButton(placeDetail: widget.placeDetail!),
+                  ],
+                ),
               SizedBox(height: 10),
               Text(
                 widget.placeDetail!.formattedAddress ?? '',
@@ -323,7 +335,9 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ),
       ),
-    ]));
+          if (widget.placeDetail != null)
+            SaveButton(placeDetail: widget.placeDetail!),
+        ]));
   }
 
 
@@ -387,6 +401,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+
   Widget buildResponseWidgets(Map<String, dynamic> _savedAIResponse) {
     return SingleChildScrollView(
       child: Column(
@@ -443,6 +458,8 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
+
+
 
 
   @override
