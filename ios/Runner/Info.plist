@@ -63,8 +63,14 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	 <key>NSLocationAlwaysUsageDescription</key>
+    <string>Needed to access location</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>YNeeded to access location</string>
 	<key>com.google.android.geo.API_KEY</key>
-	<string>AIzaSyDIvQJfzX_91txHLSxwuPyzm-avQvGCYPo</string>
+	<string>AIzaSyBRslolFvpIbBMdY2i0vDf5fUi0g2gXN9o</string>
+    <key>com.google.ios.geo.API_KEY</key>
+    <string>AIzaSyBRslolFvpIbBMdY2i0vDf5fUi0g2gXN9o</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 </dict>
