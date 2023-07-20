@@ -10,7 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options : DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   await dotenv.load(fileName: '.env');
@@ -44,26 +44,8 @@ class MyApp extends StatelessWidget{
       // ),
         debugShowCheckedModeBanner: false,
       home: AuthPage()
-      // LoginPage()
-      // HomeScreen(),
     );
   }
 }
 
-
-
-
-// class MyApp extends StatelessWidget{
-//   @override
-//   Widget build(BuildContext context){
-//     return MaterialApp(
-//       title : 'Flutter Google Map',
-//       debugShowCheckedModeBanner: false,
-//       theme : ThemeData(
-//         primaryColor: Colors.white
-//       ),
-//       home: MapScreen(),
-//     );
-//   }
-// }
 

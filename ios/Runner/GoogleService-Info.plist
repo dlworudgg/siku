@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>58688572598-s7gis95aos9pph4du2as3bcrh6smgbeh.apps.googleusercontent.com</string>
+	<string>411085167335-uggto8dibaoh2dnfsg2o71050s1prsu6.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.58688572598-s7gis95aos9pph4du2as3bcrh6smgbeh</string>
+	<string>com.googleusercontent.apps.411085167335-uggto8dibaoh2dnfsg2o71050s1prsu6</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBRslolFvpIbBMdY2i0vDf5fUi0g2gXN9o</string>
+	<string>AIzaSyC-kzaVvdp0FmOrlO6R_hCYLds6ewdy34Y</string>
 	<key>GCM_SENDER_ID</key>
-	<string>58688572598</string>
+	<string>411085167335</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.jaekyeong.siku</string>
 	<key>PROJECT_ID</key>
-	<string>siku-ec2e0</string>
+	<string>siku-a1d19</string>
 	<key>STORAGE_BUCKET</key>
-	<string>siku-ec2e0.appspot.com</string>
+	<string>siku-a1d19.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:58688572598:ios:6f36d4014336aa09d8ea17</string>
+	<string>1:411085167335:ios:db13da10ec6fba5ac22042</string>
 </dict>
 </plist>
