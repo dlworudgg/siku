@@ -49,7 +49,7 @@ class _SaveButtonState extends State<SaveButton> {
           var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
           String userId = FirebaseAuth.instance.currentUser!.uid;
           String placeId = widget.placeDetail.placeId!;
-          await collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toMap());
+          await collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toFirestoreMap());
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Place was saved!')),
           );

@@ -27,7 +27,7 @@ class _SearchScreenState extends State<SearchScreen> {
   List<PlaceDetailResponse> placeDetails = [];
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
+  final String googleMapKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
 
 
   Future<void> placeAutoComplete(String query) async {
@@ -156,7 +156,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       if (snapshot.exists) {
                         // Document exists in Firestore. Use the saved data.
                         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-                        selectedDetail = Result.fromMap(data); // Don't use await here, it's not a Future
+                        selectedDetail = Result.fromFirestoreMap(data); // Don't use await here, it's not a Future
                         // additionalDetail = await placeDetailResponse(placeId);
                         additionalDetail = await placeDetailResponse(placeId, sortByNewest: true);
                         if (areReviewsDifferent(selectedDetail.reviews, additionalDetail.reviews)) {
@@ -172,7 +172,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                         await firestore.collection('PlacesInformation')
                             .doc(placeId)
-                            .set(selectedDetail.toMap());
+                            .set(selectedDetail.toFirestoreMap());
                       }
                       // This is assuming processPlaceDetailAI only needs selectedDetail, you might need to adjust it as per your needs
                       // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);

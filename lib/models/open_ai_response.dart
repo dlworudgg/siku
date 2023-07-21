@@ -65,7 +65,6 @@ Overall Summary of Restaurant:""";
   var data = {
     'model': 'gpt-3.5-turbo',
     'messages': [{'role': 'user', 'content': prompt}],
-    'max_tokens': 3000,
     'temperature' : 0,
   };
 
