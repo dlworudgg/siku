@@ -1,5 +1,5 @@
 # SIKU
-## Geospatial Restaurant List Management Application Development
+## Restaurant List Management and Shraing Feature for Google Maps Saved Places Application Development
 
 
 ###  Project Objective
