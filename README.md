@@ -11,6 +11,7 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 ### Features To-do.
 [X] **Google Map Integration and Place Search**: Implement Google Map service to facilitate place searches seamlessly.
 
+
 [X] **Place Information Enrichment via Chat-GPT**: Employ Chat-GPT to summarize reviews, providing detailed and user-friendly data to enhance decision-making.
 
 [  ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
