@@ -43,6 +43,7 @@ class _MapScreenState extends State<MapScreen> {
 
   // var imageUrl = my_list.get('googleProfileImageUrl');
   final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
+  final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
   late GoogleMapController _googleMapController;
   Set<Marker> _markers = {};
   bool isMarkerOnMap = false;
@@ -293,50 +294,27 @@ class _MapScreenState extends State<MapScreen> {
               SizedBox(height: 10),
               if (widget.placeDetail!.photosList?.photos?.isNotEmpty ?? false)
                 SizedBox(
-                    height: 400,
-                    // You can adjust the size of the image slider here
-                    child: GridView.custom(
-                      gridDelegate: SliverQuiltedGridDelegate(
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 4,
-                        crossAxisSpacing: 2,
-                        repeatPattern: QuiltedGridRepeatPattern.inverted,
-                        pattern: [
-                          QuiltedGridTile(2, 2),
-                          QuiltedGridTile(1, 1),
-                          QuiltedGridTile(1, 1),
-                          QuiltedGridTile(1, 2),
-                          QuiltedGridTile(2, 2),
-                          QuiltedGridTile(1, 1),
-                          QuiltedGridTile(1, 1),
-                        ],
-                      ),
-                      //       itemBuilder:
-                      childrenDelegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          if (index <
-                              widget.placeDetail!.photosList!.photos!.length) {
-                            final photo = widget.placeDetail!.photosList!
-                                .photos![index].photoReference;
-                            final height = widget
-                                .placeDetail!.photosList!.photos![index].height;
-                            final width = widget
-                                .placeDetail!.photosList!.photos![index].width;
-                            return Image.network(
-                              // 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=$width&maxheight=$height&photoreference=$photo&key=$googleMapKey',
-                              'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photo&key=$googleMapKey',
-                              fit: BoxFit.cover,
-                            );
-                          }
-                        },
-                      ),
-                    )),
+                  height: 300,  // Adjust the height as required
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: widget.placeDetail!.photosList!.photos!.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),  // Adjust the spacing between images as required
+                        child: Image.network(
+                          'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.placeDetail!.photosList!.photos![index].photoReference}&key=$googleMapBrowserKey',
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
         ),
       ),
-          if (widget.placeDetail != null)
-            SaveButton(placeDetail: widget.placeDetail!),
+          // if (widget.placeDetail != null)
+          //   SaveButton(placeDetail: widget.placeDetail!),
         ]));
   }
 
@@ -358,23 +336,25 @@ class _MapScreenState extends State<MapScreen> {
     final doc = await FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get();
     if (doc.exists) {
       Map<String, dynamic> data  = doc.data() as Map<String, dynamic>;
-      Map<String, String> _savedAIResponse = {
-                'Nationality': data['Nationality'] as String,
-                'Sub-Category': data['Sub-Category'] as String,
-                'Suggested Menu': data['Suggested Menu'] as String,
-                'Good Side': data['Good Side'] as String,
-                'Downside': data['Downside'] as String,
-                'Summary': data['Summary'] as String,
+      _savedAIResponse = {
+        'Cuisines/Styles': data['Cuisines/Styles'] as String,
+        'Restaurant Type': data['Restaurant Type'] as String,
+        'Specialty Dishes': data['Specialty Dishes'] as String,
+        'Strengths of the Restaurant': data['Strengths of the Restaurant'] as String,
+        'Areas for Improvement': data['Areas for Improvement'] as String,
+        'Overall Summary of the Restaurant': data['Overall Summary of the Restaurant'] as String,
               };
       _summaryTabVisited.value = true;
     } else {
       var result = await processPlaceDetailAI(widget.placeDetail!);
       if (result.choices.isNotEmpty) {
         _savedAIResponse = processText(result.choices[0].message.content ?? '');
+        // print(widget.placeDetail!.placeId);
         FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(_savedAIResponse!);
-        _summaryTabVisited.value = true;
+
       }
     }
+    _summaryTabVisited.value = true;
   }
   @override
   void dispose() {
@@ -407,51 +387,62 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 10),
           Text(
             widget.placeDetail!.name ?? '',
             // If name is null, use empty string
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          Text(
-            _savedAIResponse['Nationality']!,
-            style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.6)),
+
+                Text(
+            _savedAIResponse['Cuisines/Styles']! ,
+            style: TextStyle(fontSize: 18,color: Colors.black.withOpacity(0.8)),
           ),
-          // Remaining code goes here...
-          Text(
-            _savedAIResponse['Sub-Category']!,
-            style: TextStyle(fontSize: 12,color: Colors.black.withOpacity(0.8)),
-          ),
+          SizedBox(height: 2),
+                    Text(
+              _savedAIResponse['Restaurant Type']!,
+              style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7)),
+                    ),
+
           SizedBox(height: 10),
+          const Text(
+            "Summary",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 4),
           Text(
-            _savedAIResponse['Summary']!,
+            _savedAIResponse['Overall Summary of the Restaurant']!,
             style: TextStyle(fontSize: 16),
           ),
 
           SizedBox(height: 10),
           const Text(
-            "Main Menu",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            "Specialty Dishes",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 4),
           Text(
-            _savedAIResponse['Suggested Menu']!,
+            _savedAIResponse['Specialty Dishes']!,
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 10),
           const Text(
-            "Good Things About This Place",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            "Strengths of the Restaurant",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 4),
           Text(
-            _savedAIResponse['Good Side']!,
+            _savedAIResponse['Strengths of the Restaurant']!,
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 10),
           const Text(
-            "Bad Things About This Place",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            "Areas for Improvement",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 4),
           Text(
-            _savedAIResponse['Downside']!,
+            _savedAIResponse['Areas for Improvement']!,
             style: TextStyle(fontSize: 16),
           ),
         ],

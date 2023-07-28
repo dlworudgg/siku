@@ -93,7 +93,7 @@ class Result {
     return {
       'Name': name,
       'delivery': delivery,
-      'editorialSummary': editorialSummary,
+      'editorialSummary': editorialSummary?.overview,
       'formatted_address': formattedAddress,
       'geometry': {
         'lat': geometry?.location?.lat,
@@ -114,14 +114,13 @@ class Result {
         'rating': review.rating,
         'review': review.text
       }).toList(),
-      'servesBeer': servesBeer,  // This is hardcoded as per the provided data
-      'servesBrunch': servesBrunch,  // This is hardcoded as per the provided data
-      'servesDinner': servesDinner,  // This is hardcoded as per the provided data
-      'servesLunch':servesLunch,  // This is hardcoded as per the provided data
-      'servesVegetarianFood': servesVegetarianFood,  // This is hardcoded as per the provided data
-      'servesWine': servesWine,  // This is hardcoded as per the provided data
-      'serves_wine': servesWine,  // This is hardcoded as per the provided data
-      'takeout': takeout,  // This is hardcoded as per the provided data
+      'servesBeer': servesBeer,
+      'servesBrunch': servesBrunch,
+      'servesDinner': servesDinner,
+      'servesLunch':servesLunch,
+      'servesVegetarianFood': servesVegetarianFood,
+      'servesWine': servesWine,
+      'takeout': takeout,
       'types': types,
       'user_ratings_total': userRatingsTotal,
       'website': website,
@@ -163,7 +162,18 @@ class Result {
           authorUrl: reviewMap['author_url'] as String?
       )).toList(),
       placeId: firestoreMap['placeId'] as String?,
-      // Additional fields can be mapped as necessary...
+      editorialSummary : firestoreMap['editorialSummary'] != null
+          ? EditorialSummary(overview: firestoreMap['editorialSummary']  as String?)
+          : null,
+       priceLevel: firestoreMap['priceLevel'] is int ? firestoreMap['priceLevel'] as int : null,
+        reservable : firestoreMap['reservable'] is bool?  firestoreMap['reservable'] as bool : null,
+        servesBeer : firestoreMap['servesBeer'] is bool?  firestoreMap['servesBeer'] as bool : null,
+        servesBrunch:  firestoreMap['servesBrunch'] is bool?  firestoreMap['servesBrunch'] as bool : null,
+        servesDinner:  firestoreMap['servesDinner'] is bool?  firestoreMap['servesDinner'] as bool : null,
+        servesLunch: firestoreMap['servesLunch'] is bool?  firestoreMap['servesLunch'] as bool : null,
+        servesVegetarianFood:  firestoreMap['servesVegetarianFood'] is bool?  firestoreMap['servesVegetarianFood'] as bool : null,
+        servesWine:  firestoreMap['servesWine'] is bool?  firestoreMap['servesWine'] as bool : null,
+        takeout: firestoreMap['takeout'] is bool?  firestoreMap['takeout'] as bool : null,
     );
   }
 

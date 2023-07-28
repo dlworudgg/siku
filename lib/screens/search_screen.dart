@@ -168,7 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         selectedDetail = await placeDetailResponse(placeId);
                         Result selectedNewestDetail = await placeDetailResponse(placeId, sortByNewest: true);
                         // Save the data in Firestore for future use
-                        selectedDetail = selectedDetail.withReviews(mergeReviews(selectedDetail.reviews, selectedNewestDetail.reviews));
+                        // selectedDetail = selectedDetail.withReviews(mergeReviews(selectedDetail.reviews, selectedNewestDetail.reviews));
 
                         await firestore.collection('PlacesInformation')
                             .doc(placeId)
