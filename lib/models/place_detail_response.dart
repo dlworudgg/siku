@@ -159,7 +159,7 @@ class Result {
       website: firestoreMap['website'] as String?,
       reviews: (firestoreMap['reviews'] as List<dynamic>?)?.map((reviewMap) => Reviews(
           text: reviewMap['review'] as String?,
-          rating: reviewMap['rating']?.toDouble(),
+          rating: reviewMap['rating'] as int?,
           authorUrl: reviewMap['author_url'] as String?
       )).toList(),
       placeId: firestoreMap['placeId'] as String?,
