@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:siku/services/auth_service.dart';
@@ -22,7 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailnameController = TextEditingController();
   final passwordController = TextEditingController();
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   void signUserIn() async {
     showDialog(
         context: context,
@@ -35,10 +36,21 @@ class _LoginPageState extends State<LoginPage> {
 
 
     try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: emailnameController.text,
       password: passwordController.text,
     );
+
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    final docRef = _firestore.collection('ShareRoom').doc(userId);
+    final docSnapshot = await docRef.get();
+    if (!docSnapshot.exists) {
+      await docRef.collection("My List").doc("Dummy Plcae ID").set({
+        'placeholder': true,
+      });
+    }
+
     // ignore: use_build_context_synchronously
     // Navigator.pop(context);
     Navigator.of(context, rootNavigator: true).pop(context);
