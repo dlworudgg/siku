@@ -1,17 +1,27 @@
-# siku
+# SIKU
+## Restaurant List Management and Shraing Feature for Google Maps Saved Places Application Development
 
-A new Flutter project.
 
-## Getting Started
+###  Project Objective
 
-This project is a starting point for a Flutter application.
+SIKU is designed to enhance the user's culinary journey through a focus on restaurant list management and sharing. The application provides users with tools for effective management and sharing of their favorite restaurant lists and reviews within their exclusive groups, all within an intuitive map interface. With enhanced marker customizability, SIKU emphasizes personalized experiences, making sharing and discovering restaurants within an intimate circle more accessible and enjoyable.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# siku
+### Features To-do.
+[X] **Google Map Integration and Place Search**: Implement Google Map service to facilitate place searches seamlessly.
+
+
+[X] **Place Information Enrichment via Chat-GPT**: Employ Chat-GPT to summarize reviews, providing detailed and user-friendly data to enhance decision-making.
+
+[  ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
+
+[  ] **Sharing**: Enable sharing of restaurant lists and open reviews to only close friends to enhance the credibility of the reviews
+
+[  ] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
+
+...
+...
+
+
+
