@@ -1,3 +1,5 @@
+import 'package:hive/hive.dart';
+
 class PlaceDetailResponse {
   final Result result;
   final String status;
@@ -12,30 +14,51 @@ class PlaceDetailResponse {
   }
 }
 
+@HiveType(typeId: 0)
 class Result {
+  @HiveField(0)
   final String? name;
+  @HiveField(1)
   final String? formattedAddress;
+  @HiveField(2)
   final Geometry? geometry;
+  @HiveField(3)
   final List<String>? weekdayText;
-  // final List<String>? photos;
+  @HiveField(4)
   final PhotosList? photosList;
+  @HiveField(5)
   final double? rating;
+  @HiveField(6)
   final EditorialSummary? editorialSummary;
+  @HiveField(7)
   final int? priceLevel;
+  @HiveField(8)
   final bool? reservable;
+  @HiveField(9)
   final List<String>? types;
+  @HiveField(10)
   final int? userRatingsTotal;
+  @HiveField(11)
   final String? website;
+  @HiveField(12)
   final List<Reviews>? reviews;
-  // final ReviewsList? reviewList;
+  @HiveField(13)
   final bool? delivery;
+  @HiveField(14)
   final bool? servesBeer;
+  @HiveField(15)
   final bool? servesBrunch;
+  @HiveField(16)
   final bool? servesDinner;
+  @HiveField(17)
   final bool? servesLunch;
+  @HiveField(18)
   final bool? servesVegetarianFood;
+  @HiveField(19)
   final bool? servesWine;
+  @HiveField(20)
   final bool? takeout;
+  @HiveField(21)
   final String? placeId;
 
   Result({
@@ -43,7 +66,6 @@ class Result {
     this.formattedAddress,
     this.geometry,
     this.weekdayText,
-    // this.photos,
     this.photosList,
     this.rating,
     this.editorialSummary,
@@ -53,7 +75,6 @@ class Result {
     this.userRatingsTotal,
     this.website,
     this.reviews,
-    // this.reviewList,
     this.delivery,
     this.servesBeer,
     this.servesBrunch,
@@ -72,7 +93,6 @@ class Result {
       formattedAddress: json['formatted_address'] as String?,
       geometry: json['geometry'] != null ? Geometry.fromJson(json['geometry'] as Map<String, dynamic>) : null,
       weekdayText: (json['opening_hours']?['weekday_text'] as List<dynamic>?)?.cast<String>(),
-      // photos: (json['photos']?.map((item) => item['photo_reference'] as String)?.toList()),
       photosList: json['photos'] != null ? PhotosList.fromJson({'photo': json['photos']}) : null,
       rating: json['rating'] as double?,
       editorialSummary: json['editorial_summary'] != null ? EditorialSummary.fromJson(json['editorial_summary'] as Map<String, dynamic>) : null,
@@ -81,8 +101,6 @@ class Result {
       types: (json['types'] as List<dynamic>?)?.cast<String>(),
       userRatingsTotal: json['user_ratings_total'] as int?,
       website: json['website'] as String?,
-      // reviews: (json['reviews']?.map((json) => Review.fromJson(json as Map<String, dynamic>))?.toList()),
-      // reviews: json['reviews'] != null ? Reviews.fromJson(json['reviews']): null,
       reviews: json['reviews'] != null ? (json['reviews'] as List<dynamic>).map((item) => Reviews.fromJson(item as Map<String, dynamic>)).toList() : null,
       delivery: json['delivery'] as bool?,
       servesBeer: json['serves_beer'] as bool?,
@@ -95,93 +113,94 @@ class Result {
       placeId : json['place_id'] as String?,
     );
   }
-
-
-  factory Result.fromMap(Map<String, dynamic> map) {
-    return Result(
-      name: map['name'],
-      formattedAddress: map['formattedAddress'],
-      geometry: map['geometry'] != null
-          ? Geometry.fromJson(map['geometry'] as Map<String, dynamic>)
-          : null,
-      weekdayText: (map['weekdayText'] as List<dynamic>?)?.cast<String>(),
-      // photos: (json['photos']?.map((item) => item['photo_reference'] as String)?.toList()),
-      photosList: map['photoslist'] != null ? PhotosList.fromJson2({'photo' :map['photoslist']}) : null,
-      rating: map['rating'] as double?,
-      editorialSummary: map['editorial_summary'] != null ? EditorialSummary.fromJson(map['editorial_summary'] as Map<String, dynamic>) : null,
-      priceLevel: map['price_level'] as int?,
-      reservable: map['reservable'] as bool?,
-      types: (map['types'] as List<dynamic>?)?.cast<String>(),
-      userRatingsTotal: map['user_ratings_total'] as int?,
-      website: map['website'] as String?,
-      // reviews: (map['reviews']?.map((json) => Review.fromJson(json as Map<String, dynamic>))?.toList()),
-      // reviews: map['reviews'] != null ? Reviews.fromJson(map['reviews']) : null,
-        reviews: map['reviews'] != null ? (map['reviews'] as List<dynamic>).map((item) => Reviews.fromJson(item as Map<String, dynamic>)).toList() : null,
-        delivery: map['delivery'] as bool?,
-      servesBeer: map['serves_beer'] as bool?,
-      servesBrunch: map['serves_brunch'] as bool?,
-      servesDinner: map['serves_dinner'] as bool?,
-      servesLunch: map['serves_lunch'] as bool?,
-      servesVegetarianFood: map['serves_vegetarian_food'] as bool?,
-      servesWine: map['serves_wine'] as bool?,
-      takeout: map['takeout'] as bool?,
-      placeId : map['place_id'] as String?,
-// ... continue with other properties
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    List<Map<String, dynamic>> photos = [];
-    photosList?.photos?.forEach((photo) {
-      photos.add({
-        'height': photo.height,
-        'photoReference': photo.photoReference,
-        'width': photo.width,
-      });
-    });
-
-    // List<Map<String, dynamic>> reviews = [];
-    // reviewList?.review?.forEach((review) {
-    //   reviews.add({
-    //     'rating': review.rating,
-    //     'text': review.text,
-    //   });
-    // });
-
-    List<Map<String, dynamic>> reviews = [];
-    this.reviews?.forEach((review) {
-      reviews.add({
-        'rating': review.rating,
-        'text': review.text,
-        'author_url': review.authorUrl,
-      });
-    });
-
+  Map<String, dynamic> toFirestoreMap() {
     return {
-      'name': name,
+      'Name': name,
+      'delivery': delivery,
+      'editorialSummary': editorialSummary?.overview,
       'formatted_address': formattedAddress,
-      'geometry': {'location': {'lat': geometry?.location?.lat, 'lng': geometry?.location?.lng}},
-      'weekdayText': weekdayText,
-      'photoslist': photos,
+      'geometry': {
+        'lat': geometry?.location?.lat,
+        'lng': geometry?.location?.lng
+      },
+      'photos': photosList?.photos?.map((photo) => {
+        'height': photo.height,
+        'html_attributions': photo.htmlAttributions,
+        'photo_reference': photo.photoReference,
+        'width': photo.width
+      }).toList(),
+      'placeId': placeId,
+      'priceLevel': priceLevel,
       'rating': rating,
-      'editorial_summary': {'overview': editorialSummary?.overview},
-      'price_level': priceLevel,
       'reservable': reservable,
+      'reviews': reviews?.map((review) => {
+        'author_url': review.authorUrl,
+        'rating': review.rating,
+        'review': review.text
+      }).toList(),
+      'servesBeer': servesBeer,
+      'servesBrunch': servesBrunch,
+      'servesDinner': servesDinner,
+      'servesLunch':servesLunch,
+      'servesVegetarianFood': servesVegetarianFood,
+      'servesWine': servesWine,
+      'takeout': takeout,
       'types': types,
       'user_ratings_total': userRatingsTotal,
       'website': website,
-      'reviews': reviews,
-      'delivery': delivery,
-      'serves_beer': servesBeer,
-      'serves_brunch': servesBrunch,
-      'serves_dinner': servesDinner,
-      'serves_lunch': servesLunch,
-      'serves_vegetarian_food': servesVegetarianFood,
-      'serves_wine': servesWine,
-      'takeout': takeout,
-      'place_id': placeId,
+      'weekday_text': weekdayText
     };
   }
+
+
+  /// Factory method to create Result from Firestore Map
+  factory Result.fromFirestoreMap(Map<String, dynamic> firestoreMap) {
+    return Result(
+      name: firestoreMap['Name'] as String?,
+      formattedAddress: firestoreMap['formatted_address'] as String?,
+      geometry: firestoreMap['geometry'] != null
+          ? Geometry(
+          location: Location(
+              lat: firestoreMap['geometry']['lat'] as double?,
+              lng: firestoreMap['geometry']['lng'] as double?
+          )
+      )
+          : null,
+      weekdayText: (firestoreMap['weekday_text'] as List<dynamic>?)?.cast<String>(),
+      photosList: firestoreMap['photos'] != null
+          ? PhotosList(
+          photos: (firestoreMap['photos'] as List<dynamic>).map((photoMap) => Photo(
+              height: photoMap['height'] as int?,
+              htmlAttributions: (photoMap['html_attributions'] as List<dynamic>?)?.cast<String>(),
+              photoReference: photoMap['photo_reference'] as String?,
+              width: photoMap['width'] as int?
+          )).toList()
+      )
+          : null,
+      rating: firestoreMap['rating']?.toDouble(),
+      userRatingsTotal: firestoreMap['user_ratings_total'] as int?,
+      website: firestoreMap['website'] as String?,
+      reviews: (firestoreMap['reviews'] as List<dynamic>?)?.map((reviewMap) => Reviews(
+          text: reviewMap['review'] as String?,
+          rating: reviewMap['rating'] as int?,
+          authorUrl: reviewMap['author_url'] as String?
+      )).toList(),
+      placeId: firestoreMap['placeId'] as String?,
+      editorialSummary : firestoreMap['editorialSummary'] != null
+          ? EditorialSummary(overview: firestoreMap['editorialSummary']  as String?)
+          : null,
+       priceLevel: firestoreMap['priceLevel'] is int ? firestoreMap['priceLevel'] as int : null,
+        reservable : firestoreMap['reservable'] is bool?  firestoreMap['reservable'] as bool : null,
+        servesBeer : firestoreMap['servesBeer'] is bool?  firestoreMap['servesBeer'] as bool : null,
+        servesBrunch:  firestoreMap['servesBrunch'] is bool?  firestoreMap['servesBrunch'] as bool : null,
+        servesDinner:  firestoreMap['servesDinner'] is bool?  firestoreMap['servesDinner'] as bool : null,
+        servesLunch: firestoreMap['servesLunch'] is bool?  firestoreMap['servesLunch'] as bool : null,
+        servesVegetarianFood:  firestoreMap['servesVegetarianFood'] is bool?  firestoreMap['servesVegetarianFood'] as bool : null,
+        servesWine:  firestoreMap['servesWine'] is bool?  firestoreMap['servesWine'] as bool : null,
+        takeout: firestoreMap['takeout'] is bool?  firestoreMap['takeout'] as bool : null,
+    );
+  }
+
 
   Result withReviews(List<Reviews> newReviews) {
     return Result(
@@ -212,8 +231,9 @@ class Result {
 
 }
 
-
+@HiveType(typeId: 1)
 class Geometry {
+  @HiveField(0)
   final Location? location;
 
   Geometry({this.location});
@@ -224,9 +244,11 @@ class Geometry {
     );
   }
 }
-
+@HiveType(typeId: 2)
 class Location {
+  @HiveField(0)
   final double? lat;
+  @HiveField(1)
   final double? lng;
 
   Location({this.lat, this.lng});
@@ -238,8 +260,9 @@ class Location {
     );
   }
 }
-
+@HiveType(typeId: 3)
 class EditorialSummary{
+  @HiveField(0)
   final String? overview;
 
   EditorialSummary({this.overview});
@@ -250,10 +273,15 @@ class EditorialSummary{
     );
   }
 }
+@HiveType(typeId: 4)
 class Photo {
+  @HiveField(0)
   final int? height;
+  @HiveField(1)
   final List<String>? htmlAttributions;
+  @HiveField(2)
   final String? photoReference;
+  @HiveField(3)
   final int? width;
 
   Photo({
@@ -285,8 +313,9 @@ class Photo {
   }
 }
 
-
+@HiveType(typeId: 5)
 class PhotosList {
+  @HiveField(0)
   final List<Photo>? photos;
 
   PhotosList({
@@ -301,21 +330,24 @@ class PhotosList {
     );
   }
 
-  factory PhotosList.fromJson2(Map<String, dynamic> json) {
-    return PhotosList(
-      photos: json['photo'] != null
-          ? List<Photo>.from(json['photo'].map((x) => Photo.fromJson2(x)))
-          : null,
-    );
-  }
+  // factory PhotosList.fromJson2(Map<String, dynamic> json) {
+  //   return PhotosList(
+  //     photos: json['photo'] != null
+  //         ? List<Photo>.from(json['photo'].map((x) => Photo.fromJson2(x)))
+  //         : null,
+  //   );
+  // }
 }
 
 
 
-
+@HiveType(typeId: 6)
 class Reviews{
+  @HiveField(0)
   final String? text;
+  @HiveField(1)
   final int? rating;
+  @HiveField(2)
   final String? authorUrl;
 
   Reviews({this.text, this.rating, this.authorUrl});
@@ -335,4 +367,5 @@ class Reviews{
     };
   }
 }
+
 

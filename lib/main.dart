@@ -5,7 +5,10 @@ import 'package:siku/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:hive/hive.dart';
 
+import 'models/result_adapter.dart';
 //
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +17,17 @@ void main()  async {
   );
 
   await dotenv.load(fileName: '.env');
+  Hive.registerAdapter(ResultAdapter());
+  Hive.registerAdapter(GeometryAdapter());
+  Hive.registerAdapter(LocationAdapter());
+  Hive.registerAdapter(EditorialSummaryAdapter());
+  Hive.registerAdapter(PhotoAdapter());
+  Hive.registerAdapter(PhotosListAdapter());
+  Hive.registerAdapter(ReviewsAdapter());
 
+
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
 
   // await Hive.initFlutter();
 
