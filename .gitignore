@@ -18,7 +18,7 @@ migrate_working_dir/
 android/
 ios/
 linux/
-maxos/
+macos/
 test/
 windows/
 .metadata
