@@ -9,6 +9,7 @@ import 'package:siku/components/textfields.dart';
 
 import '../components/login_button.dart';
 import '../components/login_square_tile.dart';
+import '../models/login_my_list_creation.dart';
 import '../services/auth_service.dart';
 
 
@@ -42,14 +43,8 @@ class _LoginPageState extends State<LoginPage> {
       password: passwordController.text,
     );
 
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    final docRef = _firestore.collection('ShareRoom').doc(userId);
-    final docSnapshot = await docRef.get();
-    if (!docSnapshot.exists) {
-      await docRef.collection("My List").doc("Dummy Plcae ID").set({
-        'placeholder': true,
-      });
-    }
+      final shareRoomService = ShareRoomService();
+      await shareRoomService.ensureShareRoomExists();
 
     // ignore: use_build_context_synchronously
     // Navigator.pop(context);
@@ -92,28 +87,6 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            // const Text('Share your favorite spots',
-            // style: TextStyle(color : AppColors.textDark ,
-            //       fontSize: 16),
-            // ),
-            // const Text('to your favorite sikus',
-            //   style: TextStyle(color : AppColors.textDark ,
-            //       fontSize: 16),
-            // ),
-            // Container(
-            //   padding: EdgeInsets.all(50),
-            //   decoration: const BoxDecoration(
-            //     image: DecorationImage(
-            //         image: AssetImage('lib/images/new_york_daylight.jpg'),
-            //         fit: BoxFit.fitWidth
-            //     )
-            //     ),
-            //   // child: BackdropFilter(
-            //   //   filter: ImageFilter.blur(
-            //   //       sigmaX : 5 ,sigmaY : 5
-            //   //   ),
-            //   // )
-            // ),
             const SizedBox(height: 25),
             Center(
               child: SingleChildScrollView(

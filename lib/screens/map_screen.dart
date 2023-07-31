@@ -10,6 +10,7 @@ import '../components/saved_button.dart';
 import '../helpers.dart';
 import '../models/open_ai_response.dart';
 import '../pages/messaging_page.dart';
+import '../pages/share_room_page.dart';
 import '../widgets/avatar.dart';
 import 'dart:ui';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -152,15 +153,23 @@ class _MapScreenState extends State<MapScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       // This allows the bottom sheet to expand to its full height
       builder: (BuildContext context) {
-        return Container(
+        return SafeArea(
+          top: true,
+          child: Container(
+            decoration: const BoxDecoration(
+              // color: Colors.transparent,
+            ),
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height,
+            maxHeight: MediaQuery.of(context).size.height * 0.9,
             maxWidth: MediaQuery.of(context).size.width,
           ),
-          child: MessagesPage(),
-        );
+          // child: MessagesPage(),
+          child: ShareRoomPage(),
+        ),)
+        ;
       },
     );
   }
