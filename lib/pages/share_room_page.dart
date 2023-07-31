@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -74,6 +75,10 @@ class _ShareRoomPageState extends State<ShareRoomPage> {
     _addSavedRoomList() ;
   }
 
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +116,7 @@ class _ShareRoomPageState extends State<ShareRoomPage> {
             key: _listKey,
             itemBuilder: (BuildContext context, int index,
                 Animation<double> animation) {
-              return _buildItem(items[index], animation);
+              return _buildItem(context,items[index], animation);
             },
             initialItemCount: items.length,
           ),
@@ -153,14 +158,55 @@ class _ShareRoomPageState extends State<ShareRoomPage> {
 }
 
 
-Widget _buildItem(Item item, Animation<double> animation) {
+Widget _buildItem(context ,Item item, Animation<double> animation) {
+
+  void _onShareRoomTap(item) {
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        // This allows the bottom sheet to expand to its full height
+        builder: (BuildContext context) {
+          return SafeArea(
+            top: true,
+            child: Container(
+                decoration: const BoxDecoration(
+                  // color: Colors.transparent,
+                ),
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.9,
+                  maxWidth: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                ),
+                // child: MessagesPage(),
+                child: SharedListPage(
+                    id: item.id, isSavedList: item.isSavedList, name: item.name)
+            ),
+          );
+        },
+      );
+  }
+
+
   return SizeTransition(
     sizeFactor: animation,
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
       child: InkWell(
         onTap: () {
-          SharedListPage(id : item.id, isSavedList : item.isSavedList);
+            _onShareRoomTap(item);
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => SharedListPage(id: item.id, isSavedList: item.isSavedList ,name: item.name),
+          //   ),
+          // );
         },
         borderRadius: BorderRadius.circular(25),
         child: Container(
