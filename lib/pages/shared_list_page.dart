@@ -15,6 +15,7 @@ class SharedListPage extends StatefulWidget {
   State<SharedListPage> createState() => _SharedListPageState();
 }
 
+
 class _SharedListPageState extends State<SharedListPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
