@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 import '../models/place_detail_response.dart';
 
@@ -20,7 +21,19 @@ class _SaveButtonState extends State<SaveButton> {
   @override
   void initState() {
     super.initState();
-    _checkIfSaved();
+    _checkIfSaved();      // Existing Firebase check
+    _checkIfSavedInHive();  // New Hive check
+  }
+  Future<void> _saveToHive() async {
+    final box = await Hive.openBox<Result>('placeDetails');
+    await box.put(widget.placeDetail.placeId!, widget.placeDetail);
+  }
+// This function will check if the placeDetail is saved in Hive
+  Future<void> _checkIfSavedInHive() async {
+    final box = await Hive.openBox<Result>('placeDetails');
+    setState(() {
+      isSaved = box.containsKey(widget.placeDetail.placeId!);
+    });
   }
 
   Future<void> _checkIfSaved() async {
@@ -49,7 +62,9 @@ class _SaveButtonState extends State<SaveButton> {
           var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
           String userId = FirebaseAuth.instance.currentUser!.uid;
           String placeId = widget.placeDetail.placeId!;
-          await collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toMap());
+          await collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toFirestoreMap());
+          await _saveToHive();  // New Hive save
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Place was saved!')),
           );

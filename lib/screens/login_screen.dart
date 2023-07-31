@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:siku/services/auth_service.dart';
@@ -8,6 +9,7 @@ import 'package:siku/components/textfields.dart';
 
 import '../components/login_button.dart';
 import '../components/login_square_tile.dart';
+import '../models/login_my_list_creation.dart';
 import '../services/auth_service.dart';
 
 
@@ -22,7 +24,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailnameController = TextEditingController();
   final passwordController = TextEditingController();
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   void signUserIn() async {
     showDialog(
         context: context,
@@ -35,10 +37,15 @@ class _LoginPageState extends State<LoginPage> {
 
 
     try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: emailnameController.text,
       password: passwordController.text,
     );
+
+      final shareRoomService = ShareRoomService();
+      await shareRoomService.ensureShareRoomExists();
+
     // ignore: use_build_context_synchronously
     // Navigator.pop(context);
     Navigator.of(context, rootNavigator: true).pop(context);
@@ -80,28 +87,6 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            // const Text('Share your favorite spots',
-            // style: TextStyle(color : AppColors.textDark ,
-            //       fontSize: 16),
-            // ),
-            // const Text('to your favorite sikus',
-            //   style: TextStyle(color : AppColors.textDark ,
-            //       fontSize: 16),
-            // ),
-            // Container(
-            //   padding: EdgeInsets.all(50),
-            //   decoration: const BoxDecoration(
-            //     image: DecorationImage(
-            //         image: AssetImage('lib/images/new_york_daylight.jpg'),
-            //         fit: BoxFit.fitWidth
-            //     )
-            //     ),
-            //   // child: BackdropFilter(
-            //   //   filter: ImageFilter.blur(
-            //   //       sigmaX : 5 ,sigmaY : 5
-            //   //   ),
-            //   // )
-            // ),
             const SizedBox(height: 25),
             Center(
               child: SingleChildScrollView(

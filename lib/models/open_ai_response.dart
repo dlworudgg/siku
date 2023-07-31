@@ -13,59 +13,43 @@ Future<ChatCompletionResponse>  processPlaceDetailAI(Result placeDetail) async {
   };
 
 
-  String prompt = 'Place Name: ${placeDetail.name != null ? placeDetail.name! : 'Not available'}\n'
-      'Formatted Address: ${placeDetail.formattedAddress ?? 'Not available'}\n'
-      // 'Coordinates: Latitude - ${placeDetail.geometry?.location?.lat ?? 'Not available'}, Longitude - ${placeDetail.geometry?.location?.lng ?? 'Not available'}\n'
-      // 'Opening Hours: ${placeDetail.weekdayText?.join(', ') ?? 'Not available'}\n'
-      'Rating: ${placeDetail.rating ?? 'Not available'}\n'
-      'Editorial Summary: ${placeDetail.editorialSummary?.overview ?? 'Not available'}\n'
-      'Price Level: ${placeDetail.priceLevel ?? 'Not available'}\n'
-      'Reservable: ${placeDetail.reservable ?? 'Not available'}\n'
-      'Types: ${placeDetail.types?.join(', ') ?? 'Not available'}\n'
-      'User Ratings Total: ${placeDetail.userRatingsTotal ?? 'Not available'}\n'
-      'Website: ${placeDetail.website ?? 'Not available'}\n';
+  String reviews =  'These are the reviews \n ';
+  int r = 1;
 
-
-  String reviews = 'Reviews:\n';
 
 
   if (placeDetail.reviews != null) {
     for ( var review in placeDetail.reviews!){
-      reviews += 'Review - ${review.text}, Rating - ${review.rating}\n';
-      print(review.rating);
+      reviews += 'Review $r:  ${review.text} \n';
+      r++;
     }
   } else {
     reviews += 'No reviews available.';
   }
 
-  prompt += reviews;
 
-  prompt +=  """
-  
-  
-This is json file about some restaurant. Can you guess the what is the nationality of this restaurant’ food is and what are the menu they are focusing on. 
-If you can not guess what is the answer then please leave it as N/A. Be precise on the 'Nationality of Restaurant' and 'Suggested Menu'.
-Can you give some summary that explains on what kind of this place is and atmosphere of this place and what are the good thing and bad things of this place?
- In the summary try to avoid the information provided in the section prior. 
- Please provide detailed information and if information is not enough, add your own rich details and go beyond the obvious within correct information.
+  String prompt =  """You are making the summary of the reviews of one restrauant.  
+    This JSON file contains information about a specific restaurant. From the information provided, could you infer the cuisine nationality and the type of dishes the restaurant specializes in? If it's not possible to make an informed guess, kindly indicate with "N/A". Please be as accurate as possible when identifying the 'Cuisine Nationality' and 'Specialty Dishes'.
+    Moreover, we'd appreciate a comprehensive summary that describes the ambiance of the restaurant, its strengths, and its weaknesses. Please avoid repeating information already mentioned in the previous sections.
 
-Answer should follow bellow format.
+    Your summary should enrich our understanding of the place. If the details provided are insufficient, feel free to augment them with plausible extrapolations while maintaining the integrity of the information.
 
-Nationality of Restaurant:
-Sub-category of Restaurant:
 
-Suggested Menu of Restaurant: 
-Good Side of Restaurant: 
-Downside Side of Restaurant: 
+    Please adhere to the following format for your response:
 
-Overall Summary of Restaurant:""";
+    Cuisine Nationality:
+    Restaurant Type:
+    Specialty Dishes:
+    Strengths of the Restaurant:
+    Areas for Improvement:
+    Overall Summary of the Restaurant:
+    """;
 
-  // print(prompt);
-  // print(placeDetail.placeId);
+
   var data = {
     'model': 'gpt-3.5-turbo',
-    'messages': [{'role': 'user', 'content': prompt}],
-    'max_tokens': 3000,
+    'messages': [{'role': 'system', 'content': prompt},
+                {'role': 'user', 'content': reviews}],
     'temperature' : 0,
   };
 
@@ -79,8 +63,6 @@ Overall Summary of Restaurant:""";
   final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
   final ChatCompletionResponse responseBody =
   ChatCompletionResponse.fromJson(jsonResponse);
-  print(responseBody.choices);
-  print(response.statusCode);
   return responseBody;
 }
 
@@ -154,12 +136,12 @@ class RestaurantInfo {
 
 Map<String, String> processText(String text) {
   // Extract sections using regular expressions
-  final nationalityRegex = RegExp(r'Nationality of Restaurant:\s*(.*)');
-  final subCategoryRegex = RegExp(r'Sub-category of Restaurant:\s*(.*)');
-  final suggestedMenuRegex = RegExp(r'Suggested Menu of Restaurant:\s*(.*)');
-  final goodSideRegex = RegExp(r'Good Side of Restaurant:\s*(.*)');
-  final downsideRegex = RegExp(r'Downside Side of Restaurant:\s*(.*)');
-  final summaryRegex = RegExp(r'Overall Summary of Restaurant:\s*(.*)');
+  final nationalityRegex = RegExp(r'Cuisine Nationality:\s*(.*)');
+  final subCategoryRegex = RegExp(r'Restaurant Type:\s*(.*)');
+  final suggestedMenuRegex = RegExp(r'Specialty Dishes:\s*(.*)');
+  final goodSideRegex = RegExp(r'Strengths of the Restaurant:\s*(.*)');
+  final downsideRegex = RegExp(r'Areas for Improvement:\s*(.*)');
+  final summaryRegex = RegExp(r'Overall Summary of the Restaurant:\s*(.*)');
 
   // Extracted values
   final nationalityMatch = nationalityRegex.firstMatch(text);
@@ -178,21 +160,13 @@ Map<String, String> processText(String text) {
   final summary = summaryMatch?.group(1) ?? 'Not available';
 
 
-  // Return the extracted values as a class
-//   return 'Nationality: $nationality\n'
-//       'Suggested Menu: $suggestedMenu\n'
-//       'Good Side: $goodSide\n'
-//       'Downside: $downside\n'
-//       'Summary: $summary';
-// }
-// Return the extracted values as a Map
   return {
-    'Nationality': nationality,
-    'Sub-Category' : subCategory,
-    'Suggested Menu': suggestedMenu,
-    'Good Side': goodSide,
-    'Downside': downside,
-    'Summary': summary,
+    'Cuisines/Styles': nationality,
+    'Restaurant Type' : subCategory,
+    'Specialty Dishes': suggestedMenu,
+    'Strengths of the Restaurant': goodSide,
+    'Areas for Improvement': downside,
+    'Overall Summary of the Restaurant': summary,
   };
 }
 

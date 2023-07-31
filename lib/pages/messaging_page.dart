@@ -57,34 +57,19 @@ class _MessagesPageState extends State<MessagesPage> {
         // backgroundColor: Colors.transparent,
         backgroundColor: Colors.grey[700],
         elevation: 0,
-        // title: const Text(
-        //   'Siku',
-        //   style : TextStyle(
-        //       fontWeight: FontWeight.bold,
-        //       fontSize: 16,
-        //       color: AppColors.textDark
-        //   ),
-        // ),
-
       ),
-      // body: AnimatedList(
-      //   key: _listKey,
-      //   itemBuilder: (BuildContext context, int index,
-      //       Animation<double> animation) {
-      //     return _buildItem(items[index], animation);
-      //   },
-      //   initialItemCount: items.length,
-      // ),
-      //
       body: Stack(
         children: [
-          AnimatedList(
+          SafeArea(
+            top : true,
+              child: AnimatedList(
             key: _listKey,
             itemBuilder: (BuildContext context, int index,
                 Animation<double> animation) {
               return _buildItem(items[index], animation);
             },
             initialItemCount: items.length,
+          )
           ),
       Positioned(
           bottom: 40,
