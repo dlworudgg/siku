@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+
+import '../models/place_detail_response.dart';
 
 class SharedListPage extends StatefulWidget {
   final String id;
@@ -11,18 +14,44 @@ class SharedListPage extends StatefulWidget {
   const SharedListPage({Key? key, required this.id, required this.isSavedList, required this.name})
       : super(key: key);
 
+
+
   @override
   State<SharedListPage> createState() => _SharedListPageState();
 }
 
 
 class _SharedListPageState extends State<SharedListPage> {
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  //
-  // if (isSavedList == true){
-  //
+
+
+  Future<QuerySnapshot> _fetchFromFirestore() async {
+    return await FirebaseFirestore.instance.collection('YourFirestoreCollection').get();
+  }
+
+  Future<Box<PlaceDetailResponse>> _fetchFromHive() async {
+    return await Hive.openBox<PlaceDetailResponse>('PlaceDetailResponseBox');
+  }
+
+
+
+
+  late Stream<QuerySnapshot> roomsStream;
+
+  // @override
+  // void initState() {
+  //   super.initState();
   // }
+    // Assigning the stream of documents to roomsStream
+  //   roomsStream = _firestore
+  //       .collection('UserSavedPlace')
+  //       .doc(widget.id)
+  //       .collection('places')
+  //       .snapshots();
+  // }
+
 
   @override
   Widget build(BuildContext context) {

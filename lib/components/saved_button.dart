@@ -24,16 +24,23 @@ class _SaveButtonState extends State<SaveButton> {
     _checkIfSaved();      // Existing Firebase check
     _checkIfSavedInHive();  // New Hive check
   }
+
   Future<void> _saveToHive() async {
-    final box = await Hive.openBox<Result>('placeDetails');
-    await box.put(widget.placeDetail.placeId!, widget.placeDetail);
+    final box = await Hive.openBox('placeDetails');
+    final new_data = widget.placeDetail.toFirestoreMap();
+
+    await box.put( widget.placeDetail.placeId!, new_data);
+    // print(box.get(widget.placeDetail.placeId!).name);
   }
 // This function will check if the placeDetail is saved in Hive
   Future<void> _checkIfSavedInHive() async {
-    final box = await Hive.openBox<Result>('placeDetails');
+    final box = await Hive.openBox('placeDetails');
     setState(() {
       isSaved = box.containsKey(widget.placeDetail.placeId!);
     });
+    // print(box.get(widget.placeDetail.placeId!).name);
+    // print(box.get('ChIJQXY5d3dZwokROz4N4S6oh0M') );
+    // print(box.getAt[0]);
   }
 
   Future<void> _checkIfSaved() async {
