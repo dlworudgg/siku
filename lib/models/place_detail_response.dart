@@ -14,51 +14,29 @@ class PlaceDetailResponse {
   }
 }
 
-@HiveType(typeId: 0)
+
 class Result {
-  @HiveField(0)
   final String? name;
-  @HiveField(1)
   final String? formattedAddress;
-  @HiveField(2)
   final Geometry? geometry;
-  @HiveField(3)
   final List<String>? weekdayText;
-  @HiveField(4)
   final PhotosList? photosList;
-  @HiveField(5)
   final double? rating;
-  @HiveField(6)
   final EditorialSummary? editorialSummary;
-  @HiveField(7)
   final int? priceLevel;
-  @HiveField(8)
   final bool? reservable;
-  @HiveField(9)
   final List<String>? types;
-  @HiveField(10)
   final int? userRatingsTotal;
-  @HiveField(11)
   final String? website;
-  @HiveField(12)
   final List<Reviews>? reviews;
-  @HiveField(13)
   final bool? delivery;
-  @HiveField(14)
   final bool? servesBeer;
-  @HiveField(15)
   final bool? servesBrunch;
-  @HiveField(16)
   final bool? servesDinner;
-  @HiveField(17)
   final bool? servesLunch;
-  @HiveField(18)
   final bool? servesVegetarianFood;
-  @HiveField(19)
   final bool? servesWine;
-  @HiveField(20)
   final bool? takeout;
-  @HiveField(21)
   final String? placeId;
 
   Result({
@@ -231,9 +209,8 @@ class Result {
 
 }
 
-@HiveType(typeId: 1)
+
 class Geometry {
-  @HiveField(0)
   final Location? location;
 
   Geometry({this.location});
@@ -244,11 +221,9 @@ class Geometry {
     );
   }
 }
-@HiveType(typeId: 2)
+
 class Location {
-  @HiveField(0)
   final double? lat;
-  @HiveField(1)
   final double? lng;
 
   Location({this.lat, this.lng});
@@ -260,9 +235,8 @@ class Location {
     );
   }
 }
-@HiveType(typeId: 3)
+
 class EditorialSummary{
-  @HiveField(0)
   final String? overview;
 
   EditorialSummary({this.overview});
@@ -273,15 +247,11 @@ class EditorialSummary{
     );
   }
 }
-@HiveType(typeId: 4)
+
 class Photo {
-  @HiveField(0)
   final int? height;
-  @HiveField(1)
   final List<String>? htmlAttributions;
-  @HiveField(2)
   final String? photoReference;
-  @HiveField(3)
   final int? width;
 
   Photo({
@@ -313,9 +283,8 @@ class Photo {
   }
 }
 
-@HiveType(typeId: 5)
+
 class PhotosList {
-  @HiveField(0)
   final List<Photo>? photos;
 
   PhotosList({
@@ -341,13 +310,9 @@ class PhotosList {
 
 
 
-@HiveType(typeId: 6)
 class Reviews{
-  @HiveField(0)
   final String? text;
-  @HiveField(1)
   final int? rating;
-  @HiveField(2)
   final String? authorUrl;
 
   Reviews({this.text, this.rating, this.authorUrl});

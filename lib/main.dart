@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 
+import 'models/place_detail_response.dart';
 import 'models/result_adapter.dart';
 //
 void main()  async {
@@ -16,7 +17,10 @@ void main()  async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+
+
   await dotenv.load(fileName: '.env');
+
   Hive.registerAdapter(ResultAdapter());
   Hive.registerAdapter(GeometryAdapter());
   Hive.registerAdapter(LocationAdapter());
@@ -28,6 +32,9 @@ void main()  async {
 
   final appDocumentDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
+
+
+  // final box = await Hive.openBox('placeDetails');
 
   // await Hive.initFlutter();
 

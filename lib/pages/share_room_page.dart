@@ -8,6 +8,7 @@ import 'package:siku/pages/shared_list_page.dart';
 import '../helpers.dart';
 import '../theme.dart';
 import '../widgets/avatar.dart';
+import 'my_list_page.dart';
 
 
 
@@ -185,8 +186,9 @@ Widget _buildItem(context ,Item item, Animation<double> animation) {
                       .width,
                 ),
                 // child: MessagesPage(),
-                child: SharedListPage(
-                    id: item.id, isSavedList: item.isSavedList, name: item.name)
+                child:  MyListPage(id: item.id, isSavedList: item.isSavedList, name: item.name)
+                // child: SharedListPage(
+                //     id: item.id, isSavedList: item.isSavedList, name: item.name)
             ),
           );
         },
