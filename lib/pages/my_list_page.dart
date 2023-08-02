@@ -37,9 +37,9 @@ class _MyListPageState extends State<MyListPage> {
     return [box1, box2, box3];
   }
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
-  int _currentImageIndex = 0;
+  // int _currentImageIndex = 0;
   // final ValueNotifier<int> _currentImageIndexNotifier = ValueNotifier<int>(0);
-  final GlobalKey _sliderKey = GlobalKey();
+  // final GlobalKey _sliderKey = GlobalKey();
 
 
   @override
@@ -104,18 +104,22 @@ Widget build(BuildContext context) {
               final placeDetail = box.get(key);
               final placeDetailImages = image_box.get(key) ;
               // final placeDetailFormated = Map<String, dynamic>.from(placeDetail );
-              return InkWell(
-                key: ValueKey(key),
-                onTap: () {
-                  // placeInformationScreen(placeDetail: placeDetail ,placeDetailImages : placeDetailImages, placeId: key );
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => placeInformationScreen(placeDetail: placeDetail ,
-                          placeDetailImages : placeDetailImages,
-                          placeId: key,
-                         imageIndex: _currentImageIndex)
-                  ));
-                },
-                child: Container(
+              return
+                // InkWell(
+                // key: ValueKey(key),
+                // onTap: () {
+                  // placeInformationScreen(placeDetail: placeDetail ,placeDetailImages : placeDetailImages,
+                  // //     placeId: key ,listIndex: index);
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => placeInformationScreen(placeDetail: placeDetail ,
+                  //         placeDetailImages : placeDetailImages,
+                  //         placeId: key,
+                  //     listIndex: index)
+                //   ));
+                // },
+                // child:
+              Container(
+                  key: ValueKey(key),
                    // Provide a unique key for each item
                   // ... rest of your existing item-building logic
                       margin: const EdgeInsets.only(bottom: 0, top: 4.0),
@@ -136,21 +140,20 @@ Widget build(BuildContext context) {
                               SizedBox(
                                 width: 400,
                                 height: 230,
-                                child:  ImageSlider(
-                                    images: placeDetailImages,
-                                    height: 250,
-                                    width: 400,
-                                    // MediaQuery.of(context).size.width,
-                                    onImageChanged: (currentIndex) {
-                                      // _currentImageIndexNotifier.value = currentIndex;
-                                      if (_currentImageIndex != currentIndex) {
-                                        setState(() {
-                                          _currentImageIndex = currentIndex;
-                                          print('$currentIndex');
-                                        });
-                                      }
-                                    }
-                                ),
+                                // child:  Hero(
+                                //   tag: 'my_list_image$index',
+                                  child: ImageSlider(
+                                      images: placeDetailImages,
+                                      height: 250,
+                                      width: 400,
+                                    showDotIndicator :true,
+                                    showIndexIndicator : false,
+                                    placeDetail: placeDetail ,
+                                    placeDetailImages : placeDetailImages,
+                                        placeId: key,
+                                      // listIndex : index,
+                                  ),
+                                // ),
                               ),
                             ),
 
@@ -213,8 +216,8 @@ Widget build(BuildContext context) {
                           ],
                         ),
                       ),
-                    ),
-              );
+                    );
+              // );
             },
             onReorder: (oldIndex, newIndex) {
               setState(() async {
