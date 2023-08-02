@@ -9,6 +9,7 @@ import 'package:hive/hive.dart';
 
 import '../components/slide_image.dart';
 import '../models/place_detail_response.dart';
+import '../screens/place_information_screen.dart';
 
 
 class MyListPage extends StatefulWidget {
@@ -28,10 +29,6 @@ class MyListPage extends StatefulWidget {
 
 class _MyListPageState extends State<MyListPage> {
 
-  //
-  // Future<Box> _openBox() async {
-  //   return await Hive.openBox('placeDetails');
-  // }
 
   Future<List<Box>> _openBox() async {
     Box box1 = await Hive.openBox('placeDetails');
@@ -40,9 +37,12 @@ class _MyListPageState extends State<MyListPage> {
     return [box1, box2, box3];
   }
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
+  int _currentImageIndex = 0;
+  // final ValueNotifier<int> _currentImageIndexNotifier = ValueNotifier<int>(0);
+  final GlobalKey _sliderKey = GlobalKey();
 
 
-@override
+  @override
 Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: Colors.transparent,
@@ -58,7 +58,8 @@ Widget build(BuildContext context) {
           borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withOpacity(0.85),
+              color: Colors.white,
+                  // .withOpacity(0.85),
               offset: Offset(0, -1),
               spreadRadius: 1.0,
               blurRadius: 0,
@@ -67,7 +68,8 @@ Widget build(BuildContext context) {
         ),
         child: Text(
           "${widget.name}",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          overflow: TextOverflow.clip,
+          style: TextStyle(color: Colors.black, fontSize: 14),
         ),
       ),
     ),
@@ -86,112 +88,6 @@ Widget build(BuildContext context) {
           // Get the list of keys
           // final keys = box.keys.toList();
 
-
-          // return ListView.builder(
-          //   itemCount: keys.length,
-          //   itemBuilder: (context, index) {
-          //     // Use the key to get the value from the box
-          //     final key = keys[index];
-          //     final placeDetail = box.get(key);
-          //     final placeDetailImages = image_box.get(key);
-          //     return Container(
-          //       margin: const EdgeInsets.only(bottom: 0, top: 4.0),
-          //       height: 350,
-          //       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          //       child: Container(
-          //         decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           // color: Colors.grey[100],
-          //           borderRadius: BorderRadius.circular(15.0),
-          //           boxShadow: [
-          //             BoxShadow(
-          //               color: Colors.white.withOpacity(0.85),
-          //               offset: Offset(0, -1),
-          //               spreadRadius: 1.0,
-          //               blurRadius: 0,
-          //             ),
-          //           ],
-          //         ),
-          //         // padding: const EdgeInsets.all(16),
-          //         child: Column(
-          //           children: [
-          //             // Image
-          //             ClipRRect(
-          //               borderRadius: BorderRadius.circular(15.0),
-          //               child:
-          //               SizedBox(
-          //                 width: 400,
-          //                 height: 230,
-          //                 child: ImageSlider(images: placeDetailImages,width: 400,
-          //                   height: 250),
-          //               ),
-          //             ),
-          //
-          //
-          //
-          //             // Text Details
-          //             Expanded(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(12.0),
-          //                 child: Column(
-          //                   crossAxisAlignment: CrossAxisAlignment.start,
-          //                   children: <Widget>[
-          //
-          //                     // Title
-          //                     Row(
-          //                       children: <Widget>[
-          //                         // const SizedBox(width: 16),
-          //                         Text(
-          //                           placeDetail?['Name'] ?? '',
-          //                           overflow: TextOverflow.ellipsis,
-          //                           style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-          //                         ),
-          //                         const SizedBox(width: 8),
-          //                         // Rating
-          //                         if (placeDetail?['rating'] != null && placeDetail?['rating'] != '')
-          //                           Row(
-          //                             children: [
-          //                               Icon(Icons.star, color: Colors.yellow, size: 16),
-          //                               const SizedBox(width: 4),
-          //                               Text(
-          //                                 placeDetail?['rating'].toString() ?? '',
-          //                                 style: TextStyle(color: Colors.black, fontSize: 13),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                         const SizedBox(width: 4),
-          //
-          //                         // Price Level
-          //                         if (placeDetail?['priceLevel'] != null && placeDetail?['priceLevel'] != '')
-          //                           Text(
-          //                             '\$' * int.parse(placeDetail!['priceLevel'].toString()),
-          //                             style: TextStyle(color: Colors.grey[40], fontSize: 13),
-          //                           ),
-          //                       ],
-          //                     ),
-          //                     const SizedBox(height: 5),
-          //
-          //                     // Editorial Summary
-          //                     Text(
-          //                       placeDetail?['editorialSummary'] ?? '',
-          //                       style: TextStyle(color: Colors.black, fontSize: 12),
-          //                     ),
-          //                     const SizedBox(height: 5),
-          //
-          //                     // Price Level and Rating
-          //
-          //                   ],
-          //                 ),
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // );
-
-
           return ReorderableListView.builder(
             shrinkWrap: false,
             physics: ClampingScrollPhysics(),
@@ -206,103 +102,119 @@ Widget build(BuildContext context) {
             itemBuilder: (context, index) {
               final key = keys[index];
               final placeDetail = box.get(key);
-              final placeDetailImages = image_box.get(key);
-              return Container(
-                key: ValueKey(key),  // Provide a unique key for each item
-                // ... rest of your existing item-building logic
-                    margin: const EdgeInsets.only(bottom: 0, top: 4.0),
-                    height: 350,
-                    padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        // color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(15.0),
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //     color: Colors.white.withOpacity(0.85),
-                        //     offset: Offset(0, -1),
-                        //     spreadRadius: 1.0,
-                        //     blurRadius: 0,
-                        //   ),
-                        // ],
-                      ),
-                      // padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          // Image
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child:
-                            SizedBox(
-                              width: 400,
-                              height: 230,
-                              child: ImageSlider(images: placeDetailImages,width: 400,
-                                height: 250),
-                            ),
-                          ),
-
-
-
-                          // Text Details
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-
-                                  // Title
-                                  Row(
-                                    children: <Widget>[
-                                      // const SizedBox(width: 16),
-                                      Text(
-                                        placeDetail?['Name'] ?? '',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      // Rating
-                                      if (placeDetail?['rating'] != null && placeDetail?['rating'] != '')
-                                        Row(
-                                          children: [
-                                            Icon(Icons.star, color: Colors.yellow, size: 16),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              placeDetail?['rating'].toString() ?? '',
-                                              style: TextStyle(color: Colors.black, fontSize: 13),
-                                            ),
-                                          ],
-                                        ),
-                                      const SizedBox(width: 4),
-
-                                      // Price Level
-                                      if (placeDetail?['priceLevel'] != null && placeDetail?['priceLevel'] != '')
-                                        Text(
-                                          '\$' * int.parse(placeDetail!['priceLevel'].toString()),
-                                          style: TextStyle(color: Colors.grey[40], fontSize: 13),
-                                        ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-
-                                  // Editorial Summary
-                                  Text(
-                                    placeDetail?['editorialSummary'] ?? '',
-                                    style: TextStyle(color: Colors.black, fontSize: 12),
-                                  ),
-                                  const SizedBox(height: 5),
-
-                                  // Price Level and Rating
-
-                                ],
+              final placeDetailImages = image_box.get(key) ;
+              // final placeDetailFormated = Map<String, dynamic>.from(placeDetail );
+              return InkWell(
+                key: ValueKey(key),
+                onTap: () {
+                  // placeInformationScreen(placeDetail: placeDetail ,placeDetailImages : placeDetailImages, placeId: key );
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => placeInformationScreen(placeDetail: placeDetail ,
+                          placeDetailImages : placeDetailImages,
+                          placeId: key,
+                         imageIndex: _currentImageIndex)
+                  ));
+                },
+                child: Container(
+                   // Provide a unique key for each item
+                  // ... rest of your existing item-building logic
+                      margin: const EdgeInsets.only(bottom: 0, top: 4.0),
+                      height: 350,
+                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        // padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            // Image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child:
+                              SizedBox(
+                                width: 400,
+                                height: 230,
+                                child:  ImageSlider(
+                                    images: placeDetailImages,
+                                    height: 250,
+                                    width: 400,
+                                    // MediaQuery.of(context).size.width,
+                                    onImageChanged: (currentIndex) {
+                                      // _currentImageIndexNotifier.value = currentIndex;
+                                      if (_currentImageIndex != currentIndex) {
+                                        setState(() {
+                                          _currentImageIndex = currentIndex;
+                                          print('$currentIndex');
+                                        });
+                                      }
+                                    }
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+
+
+                            // Text Details
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+
+                                    // Title
+                                    Row(
+                                      children: <Widget>[
+                                        // const SizedBox(width: 16),
+                                        Text(
+                                          placeDetail?['Name'] ?? '',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        // Rating
+                                        if (placeDetail?['rating'] != null && placeDetail?['rating'] != '')
+                                          Row(
+                                            children: [
+                                              Icon(Icons.star, color: Colors.yellow, size: 16),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                placeDetail?['rating'].toString() ?? '',
+                                                style: TextStyle(color: Colors.black, fontSize: 13),
+                                              ),
+                                            ],
+                                          ),
+                                        const SizedBox(width: 4),
+
+                                        // Price Level
+                                        if (placeDetail?['priceLevel'] != null && placeDetail?['priceLevel'] != '')
+                                          Text(
+                                            '\$' * int.parse(placeDetail!['priceLevel'].toString()),
+                                            style: TextStyle(color: Colors.grey[40], fontSize: 13),
+                                          ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+
+                                    // Editorial Summary
+                                    Text(
+                                      placeDetail?['editorialSummary'] ?? '',
+                                      style: TextStyle(color: Colors.black, fontSize: 12),
+                                    ),
+                                    const SizedBox(height: 5),
+
+                                    // Price Level and Rating
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  );
+              );
             },
             onReorder: (oldIndex, newIndex) {
               setState(() async {

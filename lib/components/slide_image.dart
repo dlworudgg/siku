@@ -8,7 +8,10 @@ class ImageSlider extends StatefulWidget {
   final List<dynamic> images;
   final double height;
   final double width;
-  ImageSlider({required this.images, required this.height, required this.width });
+  final ValueChanged<int> onImageChanged;
+  ImageSlider({required this.images, required this.height,
+    required this.width,
+    required this.onImageChanged});
 
   @override
   _ImageSliderState createState() => _ImageSliderState();
@@ -23,7 +26,14 @@ class _ImageSliderState extends State<ImageSlider> {
     super.initState();
     _controller.addListener(() {
       setState(() {
-        _currentPage = _controller.page!;
+
+        _controller.addListener(() {
+          setState(() {
+            _currentPage = _controller.page!;
+            widget.onImageChanged(_currentPage.round());
+          });
+        });
+
       });
     });
   }
@@ -38,10 +48,15 @@ class _ImageSliderState extends State<ImageSlider> {
             controller: _controller,
             itemCount: widget.images.length,
             itemBuilder: (context, index) {
-              return Image.memory(widget.images[index],
-                  height: widget.height,
-                  width :  widget.width,
-                  fit: BoxFit.cover);
+              return Hero(
+                  tag: widget.images[index],
+                  child: Image.memory(
+                      widget.images[index],
+                      height: widget.height,
+                      width: widget.width,
+                      fit: BoxFit.cover
+                  )
+              );
             },
           ),
         ),

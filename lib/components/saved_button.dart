@@ -49,7 +49,7 @@ class _SaveButtonState extends State<SaveButton> {
 
     final new_data = widget.placeDetail.toFirestoreMap();
 
-    List<Uint8List?> photoReferences = [];
+    List<Uint8List> photoReferences = [];
     if (new_data['photos'] != null) {
       for (var photo in new_data['photos']) {
         if (photo["photo_reference"] != null) {
