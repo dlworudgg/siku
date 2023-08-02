@@ -53,17 +53,36 @@ class _ImageSliderState extends State<ImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return
+      Stack(
       children: [
-        InkWell(
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => placeInformationScreen(placeDetail: widget.placeDetail ,
-                    placeDetailImages : widget.placeDetailImages,
-                    placeId : widget.placeId)
-            ));
-          },
-          child: Container(
+        // InkWell(
+        //   onTap: (){
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (context) => placeInformationScreen(placeDetail: widget.placeDetail ,
+            //         placeDetailImages : widget.placeDetailImages,
+            //         placeId : widget.placeId)
+            // ));
+
+            // showModalBottomSheet(
+            //   context: context,
+            //   isScrollControlled: true,
+            //   // This allows the bottom sheet to expand to its full height
+            //   builder: (BuildContext context) {
+            //     return Container(
+            //       constraints: BoxConstraints(
+            //         maxHeight: MediaQuery.of(context).size.height,
+            //         maxWidth: MediaQuery.of(context).size.width,
+            //       ),
+            //       child: placeInformationScreen(placeDetail: widget.placeDetail ,
+            //             placeDetailImages : widget.placeDetailImages,
+            //             placeId : widget.placeId)
+            //     );
+            //   },
+            // );
+          // },
+          // child:
+    Container(
             height: widget.height,
             child: Hero(
               transitionOnUserGestures: true,
@@ -91,7 +110,6 @@ class _ImageSliderState extends State<ImageSlider> {
               ),
             ),
           ),
-        ),
           // Existing logic for displaying the DotIndicator
           Visibility(
             visible: widget.showDotIndicator,
@@ -134,9 +152,8 @@ class _ImageSliderState extends State<ImageSlider> {
                 ),
               ),
             ),
-          )
-      ],
-    );
+          ),
+    ]);
   }
 
   @override
