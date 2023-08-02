@@ -166,20 +166,20 @@ Widget _buildItem(context ,Item item, Animation<double> animation) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         // This allows the bottom sheet to expand to its full height
         builder: (BuildContext context) {
           return SafeArea(
             top: true,
             child: Container(
                 decoration: const BoxDecoration(
-                  // color: Colors.transparent,
+                  color: Colors.white,
                 ),
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery
                       .of(context)
                       .size
-                      .height * 0.9,
+                      .height ,
                   maxWidth: MediaQuery
                       .of(context)
                       .size
