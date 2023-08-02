@@ -45,6 +45,7 @@ class _SaveButtonState extends State<SaveButton> {
   Future<void> _saveToHive() async {
     final box = await Hive.openBox('placeDetails');
     final image_box = await Hive.openBox('placeDetails_images');
+    final order_box = await Hive.openBox('placeDetails_key_order');
 
     final new_data = widget.placeDetail.toFirestoreMap();
 
@@ -61,7 +62,9 @@ class _SaveButtonState extends State<SaveButton> {
 
     await box.put( widget.placeDetail.placeId!, new_data);
     await image_box.put( widget.placeDetail.placeId!, photoReferences);
+    await order_box.add( widget.placeDetail.placeId!);
   }
+
 // This function will check if the placeDetail is saved in Hive
   Future<void> _checkIfSavedInHive() async {
     final box = await Hive.openBox('placeDetails');

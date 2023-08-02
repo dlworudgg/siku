@@ -32,10 +32,12 @@ class _MyListPageState extends State<MyListPage> {
   // Future<Box> _openBox() async {
   //   return await Hive.openBox('placeDetails');
   // }
+
   Future<List<Box>> _openBox() async {
     Box box1 = await Hive.openBox('placeDetails');
     Box box2 = await Hive.openBox('placeDetails_images');
-    return [box1, box2];
+    Box box3 = await Hive.openBox('placeDetails_key_order');
+    return [box1, box2, box3];
   }
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
 
@@ -77,8 +79,13 @@ Widget build(BuildContext context) {
             return Center(child: Text('Error: ${snapshot.error}'));
           final box = snapshot.data![0];
           final image_box = snapshot.data![1];
+          final order_box = snapshot.data![2];
+
+          final keys = order_box.values.toList();
+          final keys_order = order_box.keys.toList();
           // Get the list of keys
-          final keys = box.keys.toList();
+          // final keys = box.keys.toList();
+
 
           // return ListView.builder(
           //   itemCount: keys.length,
@@ -186,8 +193,15 @@ Widget build(BuildContext context) {
 
 
           return ReorderableListView.builder(
-            shrinkWrap: true,
+            shrinkWrap: false,
             physics: ClampingScrollPhysics(),
+            proxyDecorator: (child, index, animation) {
+              return Material(
+                elevation: 4.0,
+                color: Colors.transparent,  // setting background color to transparent
+                child: child,
+              );
+            },
             itemCount: keys.length,
             itemBuilder: (context, index) {
               final key = keys[index];
@@ -204,14 +218,14 @@ Widget build(BuildContext context) {
                         color: Colors.white,
                         // color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(15.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.85),
-                            offset: Offset(0, -1),
-                            spreadRadius: 1.0,
-                            blurRadius: 0,
-                          ),
-                        ],
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.white.withOpacity(0.85),
+                        //     offset: Offset(0, -1),
+                        //     spreadRadius: 1.0,
+                        //     blurRadius: 0,
+                        //   ),
+                        // ],
                       ),
                       // padding: const EdgeInsets.all(16),
                       child: Column(
@@ -291,12 +305,20 @@ Widget build(BuildContext context) {
                   );
             },
             onReorder: (oldIndex, newIndex) {
-              setState(() {
+              setState(() async {
                 if (newIndex > oldIndex) {
                   newIndex -= 1;
                 }
                 final key = keys.removeAt(oldIndex);
                 keys.insert(newIndex, key);
+
+                // Save reordered keys to Hive
+                final orderBox = await Hive.openBox('placeDetails_key_order');
+                await orderBox.clear();  // Remove all existing keys
+
+                for (var key in keys) {
+                  await orderBox.add(key);
+                }
               });
             },
           );
