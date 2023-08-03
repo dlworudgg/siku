@@ -1,6 +1,19 @@
 # SIKU
 ## Restaurant List Management and Shraing Feature for Google Maps Saved Places Application Development
 
+### SIKU CURRENT STATUS
+
+#### Login and Searching
+![Siku Login and Search](https://github.com/dlworudgg/siku/assets/37742961/5d77987b-4a0d-40cd-8061-ffdd5afd4d0d)
+
+#### Searching Result and Save
+![Siku Search Restaurants](https://github.com/dlworudgg/siku/assets/37742961/e87c4b99-3a95-428a-9f3a-7d8de58574e7)
+
+#### Saved List
+![Siku Saved List](https://github.com/dlworudgg/siku/assets/37742961/239bb519-f758-456d-8512-df790dde48ac)
+
+#### Saved List Detail
+![Siku Saved List detail](https://github.com/dlworudgg/siku/assets/37742961/e31a70d1-71e8-467d-969f-77f410a80ce1)
 
 ###  Project Objective
 
