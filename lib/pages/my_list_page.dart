@@ -45,7 +45,8 @@ class _MyListPageState extends State<MyListPage> {
   @override
 Widget build(BuildContext context) {
   return Stack(
-    children: [Scaffold(
+    children: [
+      Scaffold(
       // backgroundColor: Colors.transparent,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -80,7 +81,7 @@ Widget build(BuildContext context) {
             final order_box = snapshot.data![2];
 
             final keys = order_box.values.toList();
-            final keys_order = order_box.keys.toList();
+            // final keys_order = order_box.keys.toList();
             // Get the list of keys
             // final keys = box.keys.toList();
           // [SizedBox(height: 60),

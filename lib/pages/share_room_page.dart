@@ -31,7 +31,7 @@ class _ShareRoomPageState extends State<ShareRoomPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   List<Item> items = [];
-
+  List<String> url_list = ['lib/images/jae_logo.png','lib/images/jae_jae_logo.png' ];
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
@@ -121,37 +121,41 @@ class _ShareRoomPageState extends State<ShareRoomPage> {
             },
             initialItemCount: items.length,
           ),
-          Positioned(
-              bottom: 40,
-              left: 10,
-              right: 0,
-              child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16.0, right: 110.0, bottom: 16.0),
-                  child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.group,
-                          size: 40, color: AppColors.secondary),
-                      label: const Text('Siku',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.secondary,
-                          )),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.cardLight,
-                          foregroundColor: Colors.black,
-                          elevation: 0,
-                          fixedSize: const Size(double.infinity, 50),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          side: const BorderSide(
-                            width: 1.0,
-                            color: Colors.grey,
-                          )))))
+          // Positioned(
+          //     bottom: 40,
+          //     left: 10,
+          //     right: 0,
+          //     child: Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 16.0, right: 110.0, bottom: 16.0),
+          //         child: ElevatedButton.icon(
+          //             onPressed: () {
+          //               Navigator.pop(context);
+          //             },
+          //             icon: const Icon(CupertinoIcons.group,
+          //                 size: 40, color: AppColors.secondary),
+          //             label: const Text('Siku',
+          //                 style: TextStyle(
+          //                   fontSize: 18,
+          //                   fontWeight: FontWeight.bold,
+          //                   color: AppColors.secondary,
+          //                 )),
+          //             style: ElevatedButton.styleFrom(
+          //                 backgroundColor: AppColors.cardLight,
+          //                 foregroundColor: Colors.black,
+          //                 elevation: 0,
+          //                 fixedSize: const Size(double.infinity, 50),
+          //                 shape: const RoundedRectangleBorder(
+          //                   borderRadius: BorderRadius.all(Radius.circular(10)),
+          //                 ),
+          //                 side: const BorderSide(
+          //                   width: 1.0,
+          //                   color: Colors.grey,
+          //                 )
+          //             )
+          //         )
+          //     )
+          // )
         ]),
       ),
     );
@@ -230,16 +234,17 @@ Widget _buildItem(context ,Item item, Animation<double> animation) {
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Avatar.small(url: Helpers.randomPictureUrl()),
+                  padding: const EdgeInsets.all(14.0),
+                  child: Avatar.small( ),
                 ),
+                SizedBox(width: 10,),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        padding: const EdgeInsets.only(top : 15,left: 5),
                         child: Text(
                           item.name,
                           overflow: TextOverflow.ellipsis,
@@ -247,14 +252,15 @@ Widget _buildItem(context ,Item item, Animation<double> animation) {
                             color: Colors.black87,
                             letterSpacing: 0.2,
                             wordSpacing: 1.5,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15
                           ),
                         ),
                       ),
                       SizedBox(
                         height: 20,
                         // child: _buildLastMessage(),
-                      )
+                      ),
                     ],
                   ),
                 ),

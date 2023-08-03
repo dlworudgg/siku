@@ -573,7 +573,10 @@ class _MapScreenState extends State<MapScreen> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 7.3, top: 7.3),
             // Padding for the child widget
-            child: Avatar.small(url: Helpers.randomPictureUrl()),
+            child: Avatar.small(
+            ),
+                // url: Helpers.randomPictureUrl()
+              // ),
           ),
         ),
       ),
