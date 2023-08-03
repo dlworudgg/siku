@@ -4,7 +4,8 @@
 ### SIKU CURRENT STATUS
 
 #### Login and Searching
-![Siku Login and Search](https://github.com/dlworudgg/siku/assets/37742961/5d77987b-4a0d-40cd-8061-ffdd5afd4d0d)
+![Siku Login and Search](https://github.com/dlworudgg/siku/assets/37742961/bc356f41-79b4-416f-b468-ff5173bedb68)
+
 
 #### Searching Result and Save
 ![Siku Search Restaurants](https://github.com/dlworudgg/siku/assets/37742961/e87c4b99-3a95-428a-9f3a-7d8de58574e7)
