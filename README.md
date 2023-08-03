@@ -8,13 +8,16 @@
 
 
 #### Searching Result and Save
-![Siku Search Restaurants](https://github.com/dlworudgg/siku/assets/37742961/e87c4b99-3a95-428a-9f3a-7d8de58574e7)
+![Siku Search Restaurants](https://github.com/dlworudgg/siku/assets/37742961/8bad9e72-c330-4086-9ab5-5de046d3cda5)
+
 
 #### Saved List
-![Siku Saved List](https://github.com/dlworudgg/siku/assets/37742961/239bb519-f758-456d-8512-df790dde48ac)
+![Siku Saved List](https://github.com/dlworudgg/siku/assets/37742961/cc6fa8d5-20b6-4608-99a5-6ee07c67016d)
+
 
 #### Saved List Detail
-![Siku Saved List detail](https://github.com/dlworudgg/siku/assets/37742961/e31a70d1-71e8-467d-969f-77f410a80ce1)
+![Siku Saved List detail](https://github.com/dlworudgg/siku/assets/37742961/a17c095e-c63a-4454-a7f9-93f1ec425b3e)
+
 
 ###  Project Objective
 
