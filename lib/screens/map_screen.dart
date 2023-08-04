@@ -7,15 +7,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
 import '../components/saved_button.dart';
-import '../helpers.dart';
 import '../models/open_ai_response.dart';
-import '../pages/messaging_page.dart';
 import '../pages/share_room_page.dart';
 import '../widgets/avatar.dart';
 import 'dart:ui';
-import 'package:hive_flutter/hive_flutter.dart';
 import '../models/place_detail_response.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MapScreen extends StatefulWidget {
   final double? lat;
@@ -46,7 +42,8 @@ class _MapScreenState extends State<MapScreen> {
   final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
   late GoogleMapController _googleMapController;
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
+  // Set<Marker> _markers = {};
   bool isMarkerOnMap = false;
 
 
@@ -64,7 +61,7 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         _markers.add(
           Marker(
-            markerId: MarkerId('selected_location'),
+            markerId: const MarkerId('selected_location'),
             position: LatLng(widget.lat!, widget.lng!),
           ),
         );
@@ -77,7 +74,7 @@ class _MapScreenState extends State<MapScreen> {
 
   void _resetCameraPosition() {
     _googleMapController
-        .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        .animateCamera(CameraUpdate.newCameraPosition(const CameraPosition(
       target: LatLng(40.7178, -74.0431),
       zoom: 14.5,
     )));
@@ -105,20 +102,20 @@ class _MapScreenState extends State<MapScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('User Name'),
+            title: const Text('User Name'),
             // Replace 'User Name' with the actual user name
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Divider(color: Colors.grey),
+                const Divider(color: Colors.grey),
                 Row(
                   children: [
-                    Icon(Icons.logout, color: Colors.black),
+                    const Icon(Icons.logout, color: Colors.black),
                     // This is the prefix icon
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     // Add some space between the icon and the button
                     TextButton(
-                      child: Text('Sign Out'),
+                      child: const Text('Sign Out'),
                       onPressed: () {
                         signUserOut();
                         Navigator.of(context).pop();
@@ -143,13 +140,14 @@ class _MapScreenState extends State<MapScreen> {
             maxHeight: MediaQuery.of(context).size.height,
             maxWidth: MediaQuery.of(context).size.width,
           ),
-          child: SearchScreen(),
+          child: const SearchScreen(),
         );
       },
     );
   }
 
   void _onMenuTap() {
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -163,7 +161,7 @@ class _MapScreenState extends State<MapScreen> {
               // color: Colors.transparent,
             ),
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.9,
+            maxHeight: MediaQuery.of(context).size.height,
             maxWidth: MediaQuery.of(context).size.width,
           ),
           // child: MessagesPage(),
@@ -180,7 +178,7 @@ class _MapScreenState extends State<MapScreen> {
       context: context,
       isScrollControlled: true,
       // This allows you to control the size of the bottom sheet
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(25),
         ),
@@ -192,17 +190,17 @@ class _MapScreenState extends State<MapScreen> {
           child: DefaultTabController(
             length: 2, // number of tabs
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(25),
                   topRight: Radius.circular(25),
                 ),
               ),
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  TabBar(
+                  const TabBar(
                     indicatorColor: Colors.black,
                     tabs: [
                       Tab(text:'Info'), // name the tabs as you wish
@@ -235,89 +233,169 @@ class _MapScreenState extends State<MapScreen> {
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
           ),
         ),
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           // wrap your Column in a SingleChildScrollView
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (widget.placeDetail != null)
-                Row(
-                  children: [
-                    Expanded( // Make sure the Text widget does not overflow
-                      child: Text(
-                        widget.placeDetail!.name ?? '', // If name is null, use empty string
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(width: 10), // Adds some spacing between the button and the name
-                    SaveButton(placeDetail: widget.placeDetail!),
-                  ],
-                ),
-              SizedBox(height: 10),
-              Text(
-                widget.placeDetail!.formattedAddress ?? '',
-                style: TextStyle(fontSize: 18),
-              ),
-            //   SizedBox(height: 10),
-            // for ( var review in widget.placeDetail!.reviews! ?? [])
-            //   Text(
-            //    review.text,
-            //     style: TextStyle(fontSize: 18),
-            //   ),
-              SizedBox(height: 10),
-              for (var text in widget.placeDetail!.weekdayText ?? [])
-                Text(
-                  text,
-                  style: TextStyle(fontSize: 16),
-                ),
-              SizedBox(height: 10),
+              const SizedBox(height: 25),
               Row(
-                children: [
+                children: <Widget>[
+                  // const SizedBox(width: 16),
                   Text(
-                    widget.placeDetail!.rating != null
-                        ? widget.placeDetail!.rating!.toStringAsFixed(1)
-                        : "0", // Or any default value you'd like
-                    style: TextStyle(fontSize: 18),
+                    widget.placeDetail?.name ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(width: 10),
-                  ...List<Widget>.generate(5, (index) {
-                    return Icon(
-                      widget.placeDetail!.rating != null &&
-                              index < widget.placeDetail!.rating!.round()
-                          ? Icons.star
-                          : Icons.star_border,
-                      // choose the icon based on the rating
-                      color: Colors.pink,
-                    );
-                  }),
+                  const SizedBox(width: 8),
+                  // Rating
+                  if (widget.placeDetail?.rating != null &&
+                      widget.placeDetail?.rating != '')
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.yellow, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.placeDetail?.rating.toString() ?? '',
+                          style:
+                          const TextStyle(color: Colors.black, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(width: 4),
+
+                  // Price Level
+                  if (widget.placeDetail?.priceLevel != null &&
+                      widget.placeDetail?.priceLevel != '')
+                    Text(
+                      '\$' *
+                          int.parse(
+                              widget.placeDetail!.priceLevel.toString()),
+                      style:
+                      TextStyle(color: Colors.grey[40], fontSize: 13),
+                    ),
                 ],
               ),
-              SizedBox(height: 10),
-              if (widget.placeDetail!.photosList?.photos?.isNotEmpty ?? false)
-                SizedBox(
-                  height: 300,  // Adjust the height as required
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: widget.placeDetail!.photosList!.photos!.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),  // Adjust the spacing between images as required
-                        child: Image.network(
-                          'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.placeDetail!.photosList!.photos![index].photoReference}&key=$googleMapBrowserKey',
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
+              const SizedBox(height: 5),
+              Text(
+                widget.placeDetail?.formattedAddress ?? '',
+                style: const TextStyle(fontSize: 14),
+              ),
+
+              const SizedBox(height: 8),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 12.0),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      // Text(
+                      //   _savedAIResponse['Cuisines/Styles'] ?? '',
+                      //   style: const TextStyle(
+                      //       fontSize: 17, fontWeight: FontWeight.normal),
+                      // ),
+                      // const SizedBox(width: 5.0),
+                      // Text(
+                      //   _savedAIResponse['Restaurant Type'] ?? '',
+                      //   style: TextStyle(
+                      //       fontSize: 14,
+                      //       color: Colors.black.withOpacity(0.7)),
+                      // ),
+                    ]),
+              ),
+              // const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 18),
+                child: Text(
+                  widget.placeDetail?.editorialSummary?.overview ?? '',
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                 ),
+              ),
+              const SizedBox(height: 15),
+              const Divider(),
+
+              //   if (widget.placeDetail != null)
+            //     Row(
+            //       children: [
+            //         Expanded( // Make sure the Text widget does not overflow
+            //           child: Text(
+            //             widget.placeDetail!.name ?? '', // If name is null, use empty string
+            //             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            //           ),
+            //         ),
+            //         const SizedBox(width: 10), // Adds some spacing between the button and the name
+            //         SaveButton(placeDetail: widget.placeDetail!),
+            //       ],
+            //     ),
+            //   const SizedBox(height: 10),
+            //   Text(
+            //     widget.placeDetail!.formattedAddress ?? '',
+            //     style: const TextStyle(fontSize: 18),
+            //   ),
+            // //   SizedBox(height: 10),
+            // // for ( var review in widget.placeDetail!.reviews! ?? [])
+            // //   Text(
+            // //    review.text,
+            // //     style: TextStyle(fontSize: 18),
+            // //   ),
+            //   const SizedBox(height: 10),
+            //   for (var text in widget.placeDetail!.weekdayText ?? [])
+            //     Text(
+            //       text,
+            //       style: const TextStyle(fontSize: 16),
+            //     ),
+            //   const SizedBox(height: 10),
+            //   Row(
+            //     children: [
+            //       Text(
+            //         widget.placeDetail!.rating != null
+            //             ? widget.placeDetail!.rating!.toStringAsFixed(1)
+            //             : "0", // Or any default value you'd like
+            //         style: const TextStyle(fontSize: 18),
+            //       ),
+            //       const SizedBox(width: 10),
+            //       ...List<Widget>.generate(5, (index) {
+            //         return Icon(
+            //           widget.placeDetail!.rating != null &&
+            //                   index < widget.placeDetail!.rating!.round()
+            //               ? Icons.star
+            //               : Icons.star_border,
+            //           // choose the icon based on the rating
+            //           color: Colors.pink,
+            //         );
+            //       }),
+            //     ],
+            //   ),
+            //   const SizedBox(height: 10),
+            //   if (widget.placeDetail!.photosList?.photos?.isNotEmpty ?? false)
+            //     SizedBox(
+            //       height: 300,  // Adjust the height as required
+            //       child: ListView.builder(
+            //         scrollDirection: Axis.horizontal,
+            //         itemCount: widget.placeDetail!.photosList!.photos!.length,
+            //         itemBuilder: (context, index) {
+            //           return Padding(
+            //             padding: const EdgeInsets.only(right: 10),  // Adjust the spacing between images as required
+            //             child: Image.network(
+            //               'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.placeDetail!.photosList!.photos![index].photoReference}&key=$googleMapBrowserKey',
+            //               fit: BoxFit.cover,
+            //             ),
+            //           );
+            //         },
+            //       ),
+            //     ),
             ],
           ),
         ),
@@ -383,7 +461,13 @@ class _MapScreenState extends State<MapScreen> {
           child : SizedBox(
             width: 50,
             height: 50,
-            child: CircularProgressIndicator(),
+            child: Stack(
+              alignment: Alignment.center, // This centers the content inside the stack
+              children: [
+                CircularProgressIndicator(),
+                Text('AI is Summarizing...'), // Your desired text
+              ],
+            )
           ),
         );
       },
@@ -396,65 +480,266 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
-          Text(
-            widget.placeDetail!.name ?? '',
-            // If name is null, use empty string
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-
-                Text(
-            _savedAIResponse['Cuisines/Styles']! ,
-            style: TextStyle(fontSize: 18,color: Colors.black.withOpacity(0.8)),
-          ),
-          SizedBox(height: 2),
+          const SizedBox(height: 25),
+          Row(
+            children: <Widget>[
+              // const SizedBox(width: 16),
+              Text(
+                widget.placeDetail?.name ?? '',
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 8),
+              // Rating
+              if (widget.placeDetail?.rating != null &&
+                  widget.placeDetail?.rating != '')
+                Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.yellow, size: 16),
+                    const SizedBox(width: 4),
                     Text(
-              _savedAIResponse['Restaurant Type']!,
-              style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7)),
+                      widget.placeDetail?.rating.toString() ?? '',
+                      style:
+                      const TextStyle(color: Colors.black, fontSize: 13),
                     ),
+                  ],
+                ),
+              const SizedBox(width: 4),
 
-          SizedBox(height: 10),
-          const Text(
-            "Summary",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // Price Level
+              if (widget.placeDetail?.priceLevel != null &&
+                  widget.placeDetail?.priceLevel != '')
+                Text(
+                  '\$' *
+                      int.parse(
+                          widget.placeDetail!.priceLevel.toString()),
+                  style:
+                  TextStyle(color: Colors.grey[40], fontSize: 13),
+                ),
+            ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 5),
           Text(
-            _savedAIResponse['Overall Summary of the Restaurant']!,
-            style: TextStyle(fontSize: 16),
+            widget.placeDetail?.formattedAddress ?? '',
+            style: const TextStyle(fontSize: 14),
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 8),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    _savedAIResponse['Cuisines/Styles'] ?? '',
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.normal),
+                  ),
+                  const SizedBox(width: 5.0),
+                  Text(
+                    _savedAIResponse['Restaurant Type'] ?? '',
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black.withOpacity(0.7)),
+                  ),
+                ]),
+          ),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.only(left: 18),
+            child: Text(
+              widget.placeDetail?.editorialSummary?.overview ?? '',
+              style: const TextStyle(color: Colors.black, fontSize: 16),
+            ),
+          ),
+          const SizedBox(height: 15),
+          const Divider(),
+          const SizedBox(height: 15),
+
+          // Text(
+          //   widget.placeDetail['editorialSummary'] ?? '',
+          //   style: TextStyle(color: Colors.black, fontSize: 13),
+          // ),
           const Text(
-            "Specialty Dishes",
+            "AI Reivew Summary",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Specialty Dishes']!,
-            style: TextStyle(fontSize: 16),
+
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset(
+                        'lib/images/Chef_Hat_Icon.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 3),
+                      const Text(
+                        "Specialty Dishes",
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      _savedAIResponse['Specialty Dishes'] ?? '',
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'lib/images/Star_icon2.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 3),
+                      const Text(
+                        "Strengths of the Restaurant",
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      _savedAIResponse[
+                      'Strengths of the Restaurant'] ??
+                          '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'lib/images/Sad_face_solid_icon.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 3),
+                      const Text(
+                        "Areas for Improvement",
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      _savedAIResponse['Areas for Improvement'] ?? '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'lib/images/reader_icon.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 3),
+                      const Text(
+                        "Summary",
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      _savedAIResponse[
+                      'Overall Summary of the Restaurant'] ??
+                          '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ]),
           ),
-          SizedBox(height: 10),
-          const Text(
-            "Strengths of the Restaurant",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Strengths of the Restaurant']!,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          const Text(
-            "Areas for Improvement",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Areas for Improvement']!,
-            style: TextStyle(fontSize: 16),
-          ),
+
+          const SizedBox(height: 20),
         ],
+
+
+          // const SizedBox(height: 10),
+          // Text(
+          //   widget.placeDetail!.name ?? '',
+          //   // If name is null, use empty string
+          //   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          // ),
+          //
+          //       Text(
+          //   _savedAIResponse['Cuisines/Styles']! ,
+          //   style: TextStyle(fontSize: 18,color: Colors.black.withOpacity(0.8)),
+          // ),
+          // const SizedBox(height: 2),
+          //           Text(
+          //     _savedAIResponse['Restaurant Type']!,
+          //     style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7)),
+          //           ),
+          //
+          // const SizedBox(height: 10),
+          // const Text(
+          //   "Summary",
+          //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 4),
+          // Text(
+          //   _savedAIResponse['Overall Summary of the Restaurant']!,
+          //   style: TextStyle(fontSize: 16),
+          // ),
+          //
+          // const SizedBox(height: 10),
+          // const Text(
+          //   "Specialty Dishes",
+          //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 4),
+          // Text(
+          //   _savedAIResponse['Specialty Dishes']!,
+          //   style: const TextStyle(fontSize: 16),
+          // ),
+          // const SizedBox(height: 10),
+          // const Text(
+          //   "Strengths of the Restaurant",
+          //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 4),
+          // Text(
+          //   _savedAIResponse['Strengths of the Restaurant']!,
+          //   style: TextStyle(fontSize: 16),
+          // ),
+          // const SizedBox(height: 10),
+          // const Text(
+          //   "Areas for Improvement",
+          //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          // ),
+          // const SizedBox(height: 4),
+          // Text(
+          //   _savedAIResponse['Areas for Improvement']!,
+          //   style: const TextStyle(fontSize: 16),
+          // ),
       ),
     );
   }
@@ -534,6 +819,8 @@ class _MapScreenState extends State<MapScreen> {
                   const EdgeInsets.only(left: 16.0, right: 110.0, bottom: 16.0),
               child: ElevatedButton.icon(
                   onPressed: () {
+                    // Navigator.of(context).push(MaterialPageRoute(builder: (context) => ShareRoomPage()));
+
                     _onMenuTap();
                   },
                   icon: const Icon(CupertinoIcons.group, size: 40),
@@ -570,10 +857,10 @@ class _MapScreenState extends State<MapScreen> {
             ),
             elevation: 0,
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 7.3, top: 7.3),
+          child: const Padding(
+            padding: EdgeInsets.only(bottom: 7.3, top: 7.3),
             // Padding for the child widget
-            child: Avatar.small(
+            child: Avatar.small(url : "lib/images/jae_logo_2.png",
             ),
                 // url: Helpers.randomPictureUrl()
               // ),
@@ -587,11 +874,11 @@ class _MapScreenState extends State<MapScreen> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           onPressed: _resetCameraPosition,
-          // tooltip: 'Press the circle button',
-          child: const Icon(Icons.center_focus_strong),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50.0),
           ),
+          // tooltip: 'Press the circle button',
+          child: const Icon(Icons.center_focus_strong),
         ),
       ),
     ]));

@@ -77,7 +77,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                 )),
           ),
 
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -92,11 +92,11 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                     backgroundColor: Colors.black
                         .withOpacity(0.7), // Dark navy color// Text color
                   ),
-                  child: Text('Share',
+                  child: const Text('Share',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
               ),
-              SizedBox(width: 20), // Space between the buttons
+              const SizedBox(width: 20), // Space between the buttons
               SizedBox(
                 width: 180, // specify the width
                 height: 40,
@@ -108,7 +108,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                     backgroundColor: Colors.black
                         .withOpacity(0.7), // Dark navy color// Text color
                   ),
-                  child: Text('Open Google Maps',
+                  child: const Text('Open Google Maps',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
               ),
@@ -125,14 +125,14 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   Row(
                     children: <Widget>[
                       // const SizedBox(width: 16),
                       Text(
                         widget.placeDetail['Name'] ?? '',
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontSize: 24,
                             fontWeight: FontWeight.bold),
@@ -143,12 +143,12 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                           widget.placeDetail['rating'] != '')
                         Row(
                           children: [
-                            Icon(Icons.star, color: Colors.yellow, size: 16),
+                            const Icon(Icons.star, color: Colors.yellow, size: 16),
                             const SizedBox(width: 4),
                             Text(
                               widget.placeDetail['rating'].toString() ?? '',
                               style:
-                                  TextStyle(color: Colors.black, fontSize: 13),
+                                  const TextStyle(color: Colors.black, fontSize: 13),
                             ),
                           ],
                         ),
@@ -166,13 +166,13 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                         ),
                     ],
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
                     widget.placeDetail['formatted_address'] ?? '',
-                    style: TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                   ),
 
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
                   Padding(
                     padding: const EdgeInsets.only(left: 12.0),
@@ -182,10 +182,10 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                         children: [
                           Text(
                             _savedAIResponse?['Cuisines/Styles'] ?? '',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.normal),
                           ),
-                          SizedBox(width: 5.0),
+                          const SizedBox(width: 5.0),
                           Text(
                             _savedAIResponse?['Restaurant Type'] ?? '',
                             style: TextStyle(
@@ -194,17 +194,17 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                           ),
                         ]),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Padding(
                     padding: const EdgeInsets.only(left: 18),
                     child: Text(
                       widget.placeDetail['editorialSummary'] ?? '',
-                      style: TextStyle(color: Colors.black, fontSize: 16),
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                   ),
-                  SizedBox(height: 15),
-                  Divider(),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
+                  const Divider(),
+                  const SizedBox(height: 15),
 
                   // Text(
                   //   widget.placeDetail['editorialSummary'] ?? '',
@@ -215,7 +215,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.only(left: 12.0),
                     child: Column(
@@ -228,7 +228,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                                 height: 20,
                                 width: 20,
                               ),
-                              SizedBox(width: 3),
+                              const SizedBox(width: 3),
                               const Text(
                                 "Specialty Dishes",
                                 style: TextStyle(
@@ -236,15 +236,15 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
                               _savedAIResponse?['Specialty Dishes'] ?? '',
-                              style: TextStyle(fontSize: 15),
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             children: [
                               Image.asset(
@@ -252,7 +252,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                                 height: 20,
                                 width: 20,
                               ),
-                              SizedBox(width: 3),
+                              const SizedBox(width: 3),
                               const Text(
                                 "Strengths of the Restaurant",
                                 style: TextStyle(
@@ -260,17 +260,17 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
                               _savedAIResponse?[
                                       'Strengths of the Restaurant'] ??
                                   '',
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             children: [
                               Image.asset(
@@ -278,7 +278,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                                 height: 20,
                                 width: 20,
                               ),
-                              SizedBox(width: 3),
+                              const SizedBox(width: 3),
                               const Text(
                                 "Areas for Improvement",
                                 style: TextStyle(
@@ -286,15 +286,15 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
                               _savedAIResponse?['Areas for Improvement'] ?? '',
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             children: [
                               Image.asset(
@@ -302,7 +302,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                                 height: 20,
                                 width: 20,
                               ),
-                              SizedBox(width: 3),
+                              const SizedBox(width: 3),
                               const Text(
                                 "Summary",
                                 style: TextStyle(
@@ -310,41 +310,61 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
                               _savedAIResponse?[
                                       'Overall Summary of the Restaurant'] ??
                                   '',
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                         ]),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               )),
         ]),
       )),
+      // Positioned(
+      //   top: 40,  // Adjust these values as needed
+      //   left: 15,
+      //   child: CircleAvatar(
+      //     backgroundColor: Colors.white,
+      //     radius: 21,
+      //     child: InkWell(
+      //       onTap: () {
+      //         Navigator.pop(context);
+      //       },
+      //       child: Center(
+      //         child: Icon(Icons.arrow_back, size: 21, color: Colors.black),  // Adjust the size and color as needed
+      //       ),
+      //     ),
+      //   ),
+      // )
       Positioned(
-        top: 40,  // Adjust these values as needed
+        top: 40, // Adjust these values as needed
         left: 15,
         child: CircleAvatar(
           backgroundColor: Colors.white,
           radius: 21,
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Center(
-              child: Icon(Icons.arrow_back, size: 21, color: Colors.black),  // Adjust the size and color as needed
+          child: Material(
+            type: MaterialType.transparency, // This makes the Material visually transparent
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Center(
+                child: Icon(Icons.arrow_back,
+                    size: 21,
+                    color: Colors.black), // Adjust the size and color as needed
+              ),
             ),
           ),
         ),
       )
-
     ]);
   }
 }

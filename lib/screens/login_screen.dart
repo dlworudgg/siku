@@ -122,10 +122,10 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 40),
             LoginButton(onTap: signUserIn , text: 'Sign In'),
             const SizedBox(height: 50),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.0),
               child: Row(
-                children: const [
+                children: [
                   Expanded(
                       child: Divider(
                     thickness: 0.5,
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                 SquareTile(imagePath: 'lib/images/Google.png',
                 onTap: () => AuthService().signInWithGoogle(),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 SquareTile(imagePath: 'lib/images/Apple.png',
                     onTap: () => AuthService().signInWithGoogle(),
               ),
