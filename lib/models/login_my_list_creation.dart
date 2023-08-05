@@ -9,9 +9,9 @@ class ShareRoomService {
     final docRef = _firestore.collection('ShareRoom').doc(userId);
     final docSnapshot = await docRef.get();
     if (!docSnapshot.exists) {
-      await docRef.collection("ShareRoom").doc("Dummy Place ID").set({
-        'placeholder': true,
-      });
+      // await docRef.collection("ShareRoom").doc("Dummy Place ID").set({
+      //   'placeholder': true,
+      // });
     }
   }
 }

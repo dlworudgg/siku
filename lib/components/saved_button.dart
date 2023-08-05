@@ -26,13 +26,10 @@ class _SaveButtonState extends State<SaveButton> {
   @override
   void initState() {
     super.initState();
-    _checkIfSaved();      // Existing Firebase check
-    _checkIfSavedInHive();  // New Hive check
-
-    if (!isSavedInHive && isSavedInFirestore) {
+    // _checkIfSaved();      // Existing Firebase check
+    _checkIfSavedInHive(); // New Hive check
+    if (!isSavedInHive){
       _saveToHive();
-    } else if (!isSavedInFirestore && isSavedInHive) {
-      // Your Firestore saving logic here
       var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
       String userId = FirebaseAuth.instance.currentUser!.uid;
       String placeId = widget.placeDetail.placeId!;
@@ -40,18 +37,29 @@ class _SaveButtonState extends State<SaveButton> {
     }
   }
 
+  //   if (!isSavedInHive && isSavedInFirestore) {
+  //     _saveToHive();
+  //   } else if (!isSavedInFirestore && isSavedInHive) {
+  //     // Your Firestore saving logic here
+  //     var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
+  //     String userId = FirebaseAuth.instance.currentUser!.uid;
+  //     String placeId = widget.placeDetail.placeId!;
+  //     collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toFirestoreMap());
+  //   }
+  // }
+
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
 
   Future<void> _saveToHive() async {
     final box = await Hive.openBox('placeDetails');
-    final image_box = await Hive.openBox('placeDetails_images');
-    final order_box = await Hive.openBox('placeDetails_key_order');
+    final imageBox = await Hive.openBox('placeDetails_images');
+    final orderBox = await Hive.openBox('placeDetails_key_order');
 
-    final new_data = widget.placeDetail.toFirestoreMap();
+    final newData = widget.placeDetail.toFirestoreMap();
 
     List<Uint8List> photoReferences = [];
-    if (new_data['photos'] != null) {
-      for (var photo in new_data['photos']) {
+    if (newData['photos'] != null) {
+      for (var photo in newData['photos']) {
         if (photo["photo_reference"] != null) {
           // photoReferences.add(photo["photo_reference"]);
           final response = await http.get(Uri.parse( 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo["photo_reference"]}&key=$googleMapBrowserKey',));
@@ -60,9 +68,9 @@ class _SaveButtonState extends State<SaveButton> {
       }
     }
 
-    await box.put( widget.placeDetail.placeId!, new_data);
-    await image_box.put( widget.placeDetail.placeId!, photoReferences);
-    await order_box.add( widget.placeDetail.placeId!);
+    await box.put( widget.placeDetail.placeId!, newData);
+    await imageBox.put( widget.placeDetail.placeId!, photoReferences);
+    await orderBox.add( widget.placeDetail.placeId!);
   }
 
 // This function will check if the placeDetail is saved in Hive
@@ -75,16 +83,16 @@ class _SaveButtonState extends State<SaveButton> {
 
   }
 
-  Future<void> _checkIfSaved() async {
-    var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    String placeId = widget.placeDetail.placeId!;
-    var doc = await collection.doc(userId).collection('places').doc(placeId).get();
-    setState(() {
-      isSaved = doc.exists;
-      isSavedInFirestore = doc.exists;
-    });
-  }
+  // Future<void> _checkIfSaved() async {
+  //   var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
+  //   String userId = FirebaseAuth.instance.currentUser!.uid;
+  //   String placeId = widget.placeDetail.placeId!;
+  //   var doc = await collection.doc(userId).collection('places').doc(placeId).get();
+  //   setState(() {
+  //     isSaved = doc.exists;
+  //     isSavedInFirestore = doc.exists;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -106,16 +114,21 @@ class _SaveButtonState extends State<SaveButton> {
           await _saveToHive();  // New Hive save
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Place was saved!')),
+            const SnackBar(content: Text('Place was saved!')),
           );
           setState(() {
             isSaved = true;
           });
         }
+        {
+          // final share_box = await Hive.openBox('ShareRoom');
+          // await share_box.add({'hiXr7lr8IwGWAGRMuHRN' : {'Image' : "lib/images/jae_jae_logo.png",
+          //   'Name': "Jae, SuHyun"} });
+        }
       },
       child: Row(
         children: [
-          if (isSaved) Icon(Icons.check), // Show check icon if the place is saved
+          if (isSaved) const Icon(Icons.check), // Show check icon if the place is saved
           Text(
             isSaved ? 'Saved' : 'Save',
             style: TextStyle(

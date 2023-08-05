@@ -1,7 +1,9 @@
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:siku/services/network_utility.dart';
 
@@ -28,7 +30,25 @@ class _SearchScreenState extends State<SearchScreen> {
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String googleMapKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
+  Timer? _debounce;
+  late FocusNode _focusNode;
 
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+
+  @override
+  void dispose() {
+    _focusNode.dispose(); // Important to prevent memory leaks
+    super.dispose();
+  }
 
   Future<void> placeAutoComplete(String query) async {
     Uri uri = Uri.https(
@@ -50,6 +70,16 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     }
   }
+
+  void onSearchTextChanged(String searchText) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      placeAutoComplete(searchText);
+    });
+  }
+
+
+
   Future<Result> placeDetailResponse(String placeId, {bool sortByNewest = false}) async {
     Map<String, String> parameters = {
       "placeid": placeId,
@@ -116,10 +146,9 @@ class _SearchScreenState extends State<SearchScreen> {
             top: 60.0,
             left: 16.0,
             right: 16.0,
-            child: TextFormField(
-              onChanged: (value) {
-                placeAutoComplete(value);
-              },
+       child: TextFormField(
+         focusNode: _focusNode,
+          onChanged: onSearchTextChanged,
               decoration: InputDecoration(
                 hintText: 'Search Restaurants Here',
                 fillColor: AppColors.cardLight,
@@ -148,6 +177,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   press: () async {
                     Result selectedDetail; // Declare here
                     Result additionalDetail; // Declare here
+                    Result selectedDetailCombined;
                     AutocompletePrediction selectedPrediction =
                     placePredictions[index];
                     String? placeId = selectedPrediction.placeId;
@@ -164,18 +194,14 @@ class _SearchScreenState extends State<SearchScreen> {
                           await firestore.collection('PlacesInformation').doc(placeId).update({'reviews': selectedDetail.reviews?.map((review) => review.toMap()).toList()});
                         }
                       } else {
-                        // Document does not exist in Firestore. Fetch data from API and save it in Firestore
                         selectedDetail = await placeDetailResponse(placeId);
                         Result selectedNewestDetail = await placeDetailResponse(placeId, sortByNewest: true);
-                        // Save the data in Firestore for future use
-                        // selectedDetail = selectedDetail.withReviews(mergeReviews(selectedDetail.reviews, selectedNewestDetail.reviews));
+                        selectedDetailCombined = selectedDetail.withReviews(mergeReviews(selectedDetail.reviews, selectedNewestDetail.reviews));
 
                         await firestore.collection('PlacesInformation')
                             .doc(placeId)
-                            .set(selectedDetail.toFirestoreMap());
+                            .set(selectedDetailCombined.toFirestoreMap());
                       }
-                      // This is assuming processPlaceDetailAI only needs selectedDetail, you might need to adjust it as per your needs
-                      // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(selectedDetail);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
