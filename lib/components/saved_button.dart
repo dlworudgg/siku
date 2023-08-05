@@ -18,6 +18,7 @@ class SaveButton extends StatefulWidget {
   _SaveButtonState createState() => _SaveButtonState();
 }
 
+
 class _SaveButtonState extends State<SaveButton> {
   bool isSaved = false;
   bool isSavedInHive = false;
