@@ -12,7 +12,7 @@
 
 
 #### Saved List
-![Siku Saved List](https://github.com/dlworudgg/siku/assets/37742961/cc6fa8d5-20b6-4608-99a5-6ee07c67016d)
+![saved_list](https://github.com/dlworudgg/siku/assets/37742961/f1108837-b20c-45d4-ad91-f8e9d784385d)
 
 
 #### Saved List Detail
