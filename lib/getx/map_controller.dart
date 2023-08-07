@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,22 +7,29 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 
+import '../components/saved_button.dart';
 import '../models/open_ai_response.dart';
 import '../models/place_detail_response.dart';
 import '../pages/share_room_page.dart';
+import '../screens/map_screen.dart';
+import '../screens/search_screen.dart';
 
 class MapController extends GetxController {
 
-  final Function(BuildContext context) showPlaceDetailCallback;
+  // final Function showPlaceDetailCallback;
+  // final Function(BuildContext context) showPlaceDetailCallback;
+
   // final Function buildInfoTabCallback;
   // final Function buildSummaryTabCallback;
 
-  MapController(this.showPlaceDetailCallback,
+  MapController(
+      // this.showPlaceDetailCallback,
       // required this.buildInfoTabCallback,
       // required this.buildSummaryTabCallback
       );
 
 
+  //Google Maps Related
   static const _initialCameraPosition = CameraPosition(
     target: LatLng(40.71918288468455, -74.0415231837935),
     zoom: 14.5,
@@ -35,28 +43,36 @@ class MapController extends GetxController {
   late GoogleMapController googleMapController;
   RxSet<Marker> markers = <Marker>{}.obs; // Using RxSet<Marker> for _markers
   var isMarkerOnMap = false.obs; // Making it observable
-  var isExpanded = false.obs; // Making it observable
-  var items = [].obs;
+
+  // final RxDouble lat = null.obs;
   final RxDouble lat = (40.71918288468455).obs;
   final RxDouble lng = (-74.0415231837935).obs;
 
+  //Search Related
+  // final Rx<double?> lat = (null).obs;
+  // final Rx<double?> lng = (null).obs;
+  var isSeached = false.obs;
 
+  //Share List Related
+  var isExpanded = false.obs; // Making it observable
+  var items = [].obs;
+  // final dragController = ScrollController(); // Assuming you have this controller initialized
+  final DraggableScrollableController dragController = DraggableScrollableController();
 
-
+  //PlaceDetail Related
   Map<String, dynamic>? savedAIResponse;
-
   Rx<Result?> placeDetail = (null as Result?).obs;
-
+  var doesSummary = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     _addSavedRoomList();
+    // ever(lat, (_) => _onSearchToMap(googleMapController));
+    // ever(lng, (_) => _onSearchToMap(googleMapController));
 
-    ever(lat, (_) => _onSearchToMap(googleMapController));
-    ever(lng, (_) => _onSearchToMap(googleMapController));
+    // ever(placeDetail, (_) => _processDataInBackground());
 
-    ever(placeDetail, (_) => _processDataInBackground());
 
   }
 
@@ -70,8 +86,8 @@ class MapController extends GetxController {
         image: 'lib/images/jae_logo_2.png',
         userNumber: '1');
 
-    final share_box = await Hive.openBox('ShareRoom');
-    var value = share_box.get(0);
+    final shareBox = await Hive.openBox('ShareRoom');
+    var value = shareBox.get(0);
 
     items.add(savedPlaceItem);
     items.add(Item(
@@ -83,13 +99,288 @@ class MapController extends GetxController {
   }
 
 
+  //sign-in and out
+  void showSignOutDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('User Name'),
+            // Replace 'User Name' with the actual user name
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Divider(color: Colors.grey),
+                Row(
+                  children: [
+                    const Icon(Icons.logout, color: Colors.black),
+                    // This is the prefix icon
+                    const SizedBox(width: 10),
+                    // Add some space between the icon and the button
+                    TextButton(
+                      child: const Text('Sign Out'),
+                      onPressed: () {
+                          FirebaseAuth.instance.signOut();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+
+  //Searchingn
+
+
+  void onSearchTap() {
+    Get.bottomSheet(
+      Container(
+        constraints: BoxConstraints(
+          maxHeight: Get.size.height,  // using Get.size.height instead of MediaQuery
+          maxWidth: Get.size.width,    // using Get.size.width instead of MediaQuery
+        ),
+        child: const SearchScreen(),
+      ),
+      isScrollControlled: true,
+    );
+  }
+  void resetMarkerOnMap() {
+      isMarkerOnMap.value = false; // reset isMarkerOnMap to false when markers are reset
+      markers.clear(); // clear all markers from the set
+      doesSummary.value = false;
+  }
+    // showModalBottomSheet(
+    //   context: context,
+    //   isScrollControlled: true,
+    //   // This allows the bottom sheet to expand to its full height
+    //   builder: (BuildContext context) {
+    //     return Container(
+    //       constraints: BoxConstraints(
+    //         maxHeight: MediaQuery.of(context).size.height,
+    //         maxWidth: MediaQuery.of(context).size.width,
+    //       ),
+    //       child: const SearchScreen(),
+    //     );
+    //   },
+    // );
+
+
+  void showPlaceDetail() {
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      // This allows you to control the size of the bottom sheet
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.7,
+          // This allows the bottom sheet to take up 60% of the screen
+          child: DefaultTabController(
+            length: 2, // number of tabs
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                ),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const TabBar(
+                    indicatorColor: Colors.black,
+                    tabs: [
+                      Tab(text: 'Info'), // name the tabs as you wish
+                      Tab(text: 'Summary'),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        buildInfoTab(),
+                        // function that returns the widget for Info tab
+                        buildSummaryTab(),
+                        // _buildInfoTab(),
+                        // function that returns the widget for Summary tab
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void afterSearched() {
+    Get.back();
+    _onSearchToMap(googleMapController);
+    // _processDataInBackground();
+    showPlaceDetail();
+
+  }
+
+
+  Widget buildInfoTab() {
+    return SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+            ),
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              // wrap your Column in a SingleChildScrollView
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 25),
+                  Row(
+                    children: <Widget>[
+                      // const SizedBox(width: 16),
+                      Text(
+                        placeDetail.value?.name ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 8),
+                      // Rating
+                      if (placeDetail.value?.rating != null &&
+                          placeDetail.value?.rating != '')
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.yellow, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              placeDetail.value?.rating.toString() ?? '',
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      const SizedBox(width: 4),
+
+                      // Price Level
+                      if (placeDetail.value?.priceLevel != null &&
+                          placeDetail.value?.priceLevel != '')
+                        Text(
+                          '\$' *
+                              int.parse(placeDetail.value!.priceLevel.toString()),
+                          style: TextStyle(color: Colors.grey[40], fontSize: 13),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    placeDetail.value?.formattedAddress ?? '',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                        ]),
+                  ),
+                  // const SizedBox(height: 6),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 18),
+                    child: Text(
+                      placeDetail.value?.editorialSummary?.overview ?? '',
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SaveButton(),
+                  const SizedBox(height: 15),
+                  const Divider(),
+                ],
+              ),
+            ),
+          ),
+          // if (widget.placeDetail != null)
+          //   SaveButton(placeDetail: widget.placeDetail!),
+        ]));
+  }
+
+  //
+  // Widget buildSummaryTab() {
+  //
+  //   if (doesSummary == true) {
+  //     return buildResponseWidgets(savedAIResponse!);
+  //   }{
+  //     _processDataInBackground();
+  //     doesSummary = true;
+  //   }
+  //   return const Center(
+  //     child: SizedBox(
+  //       width: 50,
+  //       height: 50,
+  //       child: Stack(
+  //         alignment: Alignment.center, // This centers the content inside the stack
+  //         children: [
+  //           CircularProgressIndicator(),
+  //           Text('AI is Summarizing...'), // Your desired text
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget buildSummaryTab() {
+    return Obx(
+          () {
+        if (doesSummary.isTrue) {
+          return buildResponseWidgets(savedAIResponse!);
+        } else {
+          _processDataInBackground();
+        }
+        return const Center(
+          child: SizedBox(
+            width: 50,
+            height: 50,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start, // This centers the content inside the stack
+              children: [
+                CircularProgressIndicator(),
+                Text('AI is Summarizing...'), // Your desired text
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _onSearchToMap(GoogleMapController controller) {
-    double currentLatitude = lat.value;
-    double currentLongitude = lat.value;
+    double? currentLatitude = lat.value;
+    double? currentLongitude = lng.value;
 
     googleMapController.animateCamera(
       CameraUpdate.newLatLngZoom(
-        LatLng(currentLatitude  - 0.012, currentLongitude),
+        LatLng(currentLatitude! - 0.012, currentLongitude!),
         14.5,
       ),
     );
@@ -101,43 +392,77 @@ class MapController extends GetxController {
       ),
     );
     isMarkerOnMap.value = true;
-    showPlaceDetailCallback(Get.context!);
+    // showPlaceDetail();
   }
+
+  void resetCameraPosition() {
+    googleMapController
+        .animateCamera(CameraUpdate.newCameraPosition(const CameraPosition(
+      target: LatLng(40.7178, -74.0431),
+      zoom: 14.5,
+    )));
+    // isMarkerOnMap.value = false;
+  }
+
 
 
   //processing OPEN AI Review Summary
+
+
+
   Future<void> _processDataInBackground() async {
+
     Result? currentPlaceDetail = placeDetail.value;
-      final doc = await FirebaseFirestore.instance
+    var result = await processPlaceDetailAI(currentPlaceDetail!);
+    if (result.choices.isNotEmpty) {
+      savedAIResponse = processText(result.choices[0].message.content ?? '');
+      await FirebaseFirestore.instance
           .collection('PlacesReviewSummary')
-          .doc(currentPlaceDetail!.placeId)
-          .get();
-
-      if (doc.exists) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        savedAIResponse = {
-          'Cuisines/Styles': data['Cuisines/Styles'] as String,
-          'Restaurant Type': data['Restaurant Type'] as String,
-          'Specialty Dishes': data['Specialty Dishes'] as String,
-          'Strengths of the Restaurant':
-          data['Strengths of the Restaurant'] as String,
-          'Areas for Improvement': data['Areas for Improvement'] as String,
-          'Overall Summary of the Restaurant':
-          data['Overall Summary of the Restaurant'] as String,
-        };
-      } else {
-        var result = await processPlaceDetailAI(currentPlaceDetail);
-        if (result.choices.isNotEmpty) {
-          savedAIResponse = processText(result.choices[0].message.content ?? '');
-          await FirebaseFirestore.instance
-              .collection('PlacesReviewSummary')
-              .doc(currentPlaceDetail.placeId)
-              .set(savedAIResponse!);
-        }
-      }
+          .doc(currentPlaceDetail.placeId)
+          .set(savedAIResponse!);
+    }
   }
+    //   final doc = await FirebaseFirestore.instance
+    //       .collection('PlacesReviewSummary')
+    //       .doc(currentPlaceDetail!.placeId)
+    //       .get();
+
+      // if (doc.exists) {
+      //   Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   savedAIResponse = {
+      //     'Cuisines/Styles': data['Cuisines/Styles'] as String,
+      //     'Restaurant Type': data['Restaurant Type'] as String,
+      //     'Specialty Dishes': data['Specialty Dishes'] as String,
+      //     'Strengths of the Restaurant':
+      //     data['Strengths of the Restaurant'] as String,
+      //     'Areas for Improvement': data['Areas for Improvement'] as String,
+      //     'Overall Summary of the Restaurant':
+      //     data['Overall Summary of the Restaurant'] as String,
+      //   };
+      // } else {
+      //   var result = await processPlaceDetailAI(currentPlaceDetail);
+      //   if (result.choices.isNotEmpty) {
+      //     savedAIResponse = processText(result.choices[0].message.content ?? '');
+      //     await FirebaseFirestore.instance
+      //         .collection('PlacesReviewSummary')
+      //         .doc(currentPlaceDetail.placeId)
+      //         .set(savedAIResponse!);
+      //   }
+      // }
 
 
 
+  void toggleSheet() {
+    if (isExpanded.value) {
+      dragController.animateTo(0.01,
+          duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+    } else {
+      dragController.animateTo(0.9,
+          duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+    }
+
+    isExpanded.value = !isExpanded.value;
+    update();  // This will refresh any widgets that are bound to _isExpanded
+  }
 
 }

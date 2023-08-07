@@ -5,14 +5,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import '../getx/map_controller.dart';
 import '../models/place_detail_response.dart';
 
 class SaveButton extends StatefulWidget {
-  final Result placeDetail;
+  // final Result placeDetail;
 
-  SaveButton({required this.placeDetail});
+  // SaveButton({required this.placeDetail});
 
   @override
   _SaveButtonState createState() => _SaveButtonState();
@@ -24,6 +26,8 @@ class _SaveButtonState extends State<SaveButton> {
   bool isSavedInHive = false;
   bool isSavedInFirestore = false;
 
+  final MapController mapController = Get.find<MapController>();
+
   @override
   void initState() {
     super.initState();
@@ -33,8 +37,8 @@ class _SaveButtonState extends State<SaveButton> {
       _saveToHive();
       var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      String placeId = widget.placeDetail.placeId!;
-      collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toFirestoreMap());
+      String placeId = mapController.placeDetail.value!.placeId!;
+      collection.doc(userId).collection('places').doc(placeId).set(mapController.placeDetail.value!.toFirestoreMap());
     }
   }
 
@@ -55,8 +59,9 @@ class _SaveButtonState extends State<SaveButton> {
     final box = await Hive.openBox('placeDetails');
     final imageBox = await Hive.openBox('placeDetails_images');
     final orderBox = await Hive.openBox('placeDetails_key_order');
+    final ai_box = await Hive.openBox('placeDetails_AISummary');
 
-    final newData = widget.placeDetail.toFirestoreMap();
+    final newData = mapController.placeDetail.value!.toFirestoreMap();
 
     List<Uint8List> photoReferences = [];
     if (newData['photos'] != null) {
@@ -69,17 +74,18 @@ class _SaveButtonState extends State<SaveButton> {
       }
     }
 
-    await box.put( widget.placeDetail.placeId!, newData);
-    await imageBox.put( widget.placeDetail.placeId!, photoReferences);
-    await orderBox.add( widget.placeDetail.placeId!);
+    await box.put( mapController.placeDetail.value!.placeId!, newData);
+    await imageBox.put( mapController.placeDetail.value!.placeId!, photoReferences);
+    await orderBox.add( mapController.placeDetail.value!.placeId!);
+    await ai_box.put( mapController.placeDetail.value!.placeId!, mapController.savedAIResponse);
   }
 
 // This function will check if the placeDetail is saved in Hive
   Future<void> _checkIfSavedInHive() async {
     final box = await Hive.openBox('placeDetails');
     setState(() {
-      isSaved = box.containsKey(widget.placeDetail.placeId!);
-      isSavedInHive = box.containsKey(widget.placeDetail.placeId!);
+      isSaved = box.containsKey(mapController.placeDetail.value!.placeId!);
+      isSavedInHive = box.containsKey(mapController.placeDetail.value!.placeId!);
     });
 
   }
@@ -110,8 +116,8 @@ class _SaveButtonState extends State<SaveButton> {
         if (!isSaved) {
           var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
           String userId = FirebaseAuth.instance.currentUser!.uid;
-          String placeId = widget.placeDetail.placeId!;
-          await collection.doc(userId).collection('places').doc(placeId).set(widget.placeDetail.toFirestoreMap());
+          String placeId = mapController.placeDetail.value!.placeId!;
+          await collection.doc(userId).collection('places').doc(placeId).set(mapController.placeDetail.value!.toFirestoreMap());
           await _saveToHive();  // New Hive save
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -122,9 +128,9 @@ class _SaveButtonState extends State<SaveButton> {
           });
         }
         {
-          // final share_box = await Hive.openBox('ShareRoom');
-          // await share_box.add({'hiXr7lr8IwGWAGRMuHRN' : {'Image' : "lib/images/jae_jae_logo.png",
-          //   'Name': "Jae, SuHyun"} });
+          // final mapController = Get.find<MapController>();
+          // final share_box = await Hive.openBox('placeDetails_AISummary');
+          // await share_box.put( mapController.placeDetail.value!.placeId!, mapController.savedAIResponse);
         }
       },
       child: Row(
