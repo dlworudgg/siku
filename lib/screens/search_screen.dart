@@ -5,9 +5,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:siku/services/network_utility.dart';
 
 import '../components/location_list_tile.dart';
+import '../getx/map_controller.dart';
 import '../models/autocomplete_prediction.dart';
 import '../models/place_auto_complete_response.dart';
 import '../models/place_detail_response.dart';
@@ -17,6 +19,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class SearchScreen extends StatefulWidget {
+
+
   const SearchScreen({Key? key}) : super(key: key);
 
   @override
@@ -27,6 +31,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   List<AutocompletePrediction> placePredictions = [];
   List<PlaceDetailResponse> placeDetails = [];
+  final mapController = Get.find<MapController>();
+
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String googleMapKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
@@ -136,6 +142,31 @@ class _SearchScreenState extends State<SearchScreen> {
     return false;
   }
 
+  Future<DocumentSnapshot<Map<String, dynamic>>> doesSummaryExist() async {
+    Result? currentPlaceDetail =  mapController.placeDetail.value;
+    final doc = await FirebaseFirestore.instance
+        .collection('PlacesReviewSummary')
+        .doc(currentPlaceDetail!.placeId)
+        .get();
+    return doc;
+  }
+
+  Future<void> setDoesSummary() async {
+    DocumentSnapshot<Map<String, dynamic>> result = await doesSummaryExist();
+    mapController.doesSummary.value = result.exists;
+
+    Map<String, dynamic> data = result.data() as Map<String, dynamic>;
+    mapController.savedAIResponse = {
+      'Cuisines/Styles': data['Cuisines/Styles'] as String,
+      'Restaurant Type': data['Restaurant Type'] as String,
+      'Specialty Dishes': data['Specialty Dishes'] as String,
+      'Strengths of the Restaurant':
+      data['Strengths of the Restaurant'] as String,
+      'Areas for Improvement': data['Areas for Improvement'] as String,
+      'Overall Summary of the Restaurant':
+      data['Overall Summary of the Restaurant'] as String,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +186,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 filled: true,
                 prefixIcon: InkWell(
                   onTap: () {
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
+                    Get.back();
                   },
                   child: const Icon(Icons.arrow_back_ios, color: Colors.blue),
                 ),
@@ -170,7 +202,7 @@ class _SearchScreenState extends State<SearchScreen> {
             top: 100.0,
             left: 0.0,
             right: 0.0,
-            bottom: 0.0,
+            bottom: 200.0,
             child: ListView.builder(
               itemCount: placePredictions.length,
               itemBuilder: (context, index) => LocationListTile(
@@ -202,17 +234,25 @@ class _SearchScreenState extends State<SearchScreen> {
                             .doc(placeId)
                             .set(selectedDetailCombined.toFirestoreMap());
                       }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MapScreen(
-                            lat: selectedDetail.geometry?.location?.lat,
-                            lng: selectedDetail.geometry?.location?.lng,
-                            placeDetail: selectedDetail,
-                            // summary: GPTResponse,
-                          ),
-                        ),
-                      );
+
+
+                      mapController.placeDetail.value = selectedDetail;  // <-- Setting the value in MapController
+                      mapController.lat.value = selectedDetail.geometry?.location?.lat ?? 40.71918288468455;
+                      mapController.lng.value = selectedDetail.geometry?.location?.lng ?? (-74.0415231837935);
+
+                      setDoesSummary();
+                      // double? latValue = selectedDetail.geometry?.location?.lat;
+                      // double? lngValue = selectedDetail.geometry?.location?.lng;
+                      // Get.off(()=>MapScreen());
+                      mapController.afterSearched();
+
+                      // Navigator.pop(context);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => MapScreen(),
+                      //   ),
+                      // );
                     }
                   },
                   location: placePredictions[index]

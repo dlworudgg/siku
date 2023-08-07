@@ -1,82 +1,45 @@
-import 'dart:typed_data';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-
 import '../components/slide_image.dart';
-import '../models/place_detail_response.dart';
+import '../getx/my_list_controller.dart';
 import '../screens/place_information_screen.dart';
 
-class MyListPage extends StatefulWidget {
+
+class MyListPage extends StatelessWidget { // Changed to StatelessWidget
   final String id;
   final String name;
   final bool isSavedList;
 
-  const MyListPage(
-      {Key? key,
-      required this.id,
-      required this.isSavedList,
-      required this.name})
-      : super(key: key);
-
-  @override
-  State<MyListPage> createState() => _MyListPageState();
-}
-
-class _MyListPageState extends State<MyListPage> {
-  Future<List<Box>> _openBox() async {
-    Box box1 = await Hive.openBox('placeDetails');
-    Box box2 = await Hive.openBox('placeDetails_images');
-    Box box3 = await Hive.openBox('placeDetails_key_order');
-    return [box1, box2, box3];
-  }
-
-  final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
+  const MyListPage({
+    Key? key,
+    required this.id,
+    required this.isSavedList,
+    required this.name,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Scaffold(
-        // backgroundColor: Colors.transparent,
-        backgroundColor: Colors.white,
-        // appBar: AppBar(
-        //   // leading: BackButton(),
-        //   automaticallyImplyLeading: false,
-        //   backgroundColor: Colors.white,
-        //   elevation: 0,
-        //   title: Column(
-        //     children: [
-        //       Container(
-        //         // padding: EdgeInsets.only(top: 100.0, bottom: 14.0, left: 120, right: 120),
-        //         decoration: BoxDecoration(
-        //           borderRadius: BorderRadius.circular(15.0),
-        //         ),
-        //         // child: Text(
-        //         //   "${widget.name}",
-        //         //   overflow: TextOverflow.clip,
-        //         //   style: TextStyle(color: Colors.black, fontSize: 14),
-        //         // ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        body: FutureBuilder(
-          future: _openBox(),
-          builder: (BuildContext context, AsyncSnapshot<List<Box>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              final box = snapshot.data![0];
-              final imageBox = snapshot.data![1];
-              final orderBox = snapshot.data![2];
+    // Initialize the controller
+    final ListController = Get.put(MyListController());
 
-              final keys = orderBox.values.toList();
-              return Column(
+    return Stack(
+      children: [Scaffold(
+        // ... [Rest of your code remains unchanged]
+        body: Obx(() {
+              // final box =  ListController.box1;
+              // final imageBox = ListController.box2;
+              // final orderBox = ListController.box3;
+              final box = ListController.box1.value;
+              final imageBox = ListController.box2.value;
+              final orderBox = ListController.box3.value;
+
+              if (box == null || imageBox == null || orderBox == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              {
+                final keys = ListController.keys;
+                return Column(
                 children: [
                   // SizedBox(height: 10),
                   Container(
@@ -86,7 +49,7 @@ class _MyListPageState extends State<MyListPage> {
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     child: Text(
-                      widget.name,
+                      name,
                       overflow: TextOverflow.clip,
                       style: const TextStyle(color: Colors.black, fontSize: 20),
                     ),
@@ -116,32 +79,8 @@ class _MyListPageState extends State<MyListPage> {
                                 placeDetail: placeDetail,
                                 placeDetailImages: placeDetailImages,
                                 placeId: key)));
-
-                            // placeInformationScreen(placeDetail: placeDetail ,placeDetailImages : placeDetailImages,
-                            //     placeId: key ,listIndex: index);
-                            // showModalBottomSheet(
-                            //   context: context,
-                            //   isScrollControlled: true,
-                            //   // This allows the bottom sheet to expand to its full height
-                            //   builder: (BuildContext context) {
-                            //     return Container(
-                            //       constraints: BoxConstraints(
-                            //         maxHeight:
-                            //             MediaQuery.of(context).size.height,
-                            //         maxWidth: MediaQuery.of(context).size.width,
-                            //       ),
-                            //       child: placeInformationScreen(
-                            //           placeDetail: placeDetail,
-                            //           placeDetailImages: placeDetailImages,
-                            //           placeId: key),
-                            //     );
-                            //   },
-                            // );
                           },
                           child: Container(
-                            // key: ValueKey(key),
-                            // Provide a unique key for each item
-                            // ... rest of your existing item-building logic
                             margin: const EdgeInsets.only(bottom: 0.0, top: 0),
                             height: 250,
                             padding: const EdgeInsets.only(
@@ -203,7 +142,7 @@ class _MyListPageState extends State<MyListPage> {
                                       padding: const EdgeInsets.all(12.0),
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: <Widget>[
                                           // Title
                                           Row(
@@ -216,12 +155,12 @@ class _MyListPageState extends State<MyListPage> {
                                                     color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight:
-                                                        FontWeight.bold),
+                                                    FontWeight.bold),
                                               ),
                                               const SizedBox(width: 8),
                                               // Rating
                                               if (placeDetail?['rating'] !=
-                                                      null &&
+                                                  null &&
                                                   placeDetail?['rating'] != '')
                                                 Row(
                                                   children: [
@@ -231,7 +170,7 @@ class _MyListPageState extends State<MyListPage> {
                                                     const SizedBox(width: 4),
                                                     Text(
                                                       placeDetail?['rating']
-                                                              .toString() ??
+                                                          .toString() ??
                                                           '',
                                                       style: const TextStyle(
                                                           color: Colors.black,
@@ -243,13 +182,13 @@ class _MyListPageState extends State<MyListPage> {
 
                                               // Price Level
                                               if (placeDetail?['priceLevel'] !=
-                                                      null &&
+                                                  null &&
                                                   placeDetail?['priceLevel'] !=
                                                       '')
                                                 Text(
                                                   '\$' *
                                                       int.parse(placeDetail![
-                                                              'priceLevel']
+                                                      'priceLevel']
                                                           .toString()),
                                                   style: TextStyle(
                                                       color: Colors.grey[40],
@@ -280,59 +219,18 @@ class _MyListPageState extends State<MyListPage> {
                           ),
                         );
                       },
-                      // onReorder: (oldIndex, newIndex) {
-                      //   setState(() async {
-                      //     if (newIndex > oldIndex) {
-                      //       newIndex -= 1;
-                      //     }
-                      //     final key = keys.removeAt(oldIndex);
-                      //     keys.insert(newIndex, key);
-                      //
-                      //     // Save reordered keys to Hive
-                      //     final orderBox = await Hive.openBox('placeDetails_key_order');
-                      //     await orderBox.clear();  // Remove all existing keys
-                      //
-                      //     for (var key in keys) {
-                      //       await orderBox.add(key);
-                      //     }
-                      //   });
-                      // },
-                      onReorder: (oldIndex, newIndex) async {
-                        if (newIndex > oldIndex) {
-                          newIndex -= 1;
-                        }
-                        final key = keys.removeAt(oldIndex);
-                        keys.insert(newIndex, key);
-
-                        // Save reordered keys to Hive
-                        final orderBox =
-                            await Hive.openBox('placeDetails_key_order');
-                        await orderBox.clear(); // Remove all existing keys
-
-                        for (var key in keys) {
-                          await orderBox.add(key);
-                        }
-
-                        setState(
-                            () {}); // Call setState to rebuild the UI after reordering and saving
+                      onReorder: (oldIndex, newIndex) {
+                        ListController.reorderList( oldIndex, newIndex);
                       },
                     ),
                   ),
                 ],
-              );
-            } else {
-              return const Center(
-                  child: CircularProgressIndicator()); // Loading indicator
-            }
-          },
-        ),
+              );}
+  }),
       ),
-      Positioned(
-        top: 70, // Adjust these values as needed
-        left: 15,
-        child: CircleAvatar(
-          backgroundColor: Colors.black.withOpacity(0.4),
-          radius: 21.5,
+        Positioned(
+          top: 40, // Adjust these values as needed
+          left: 15,
           child: CircleAvatar(
             backgroundColor: Colors.white,
             radius: 21,
@@ -340,7 +238,8 @@ class _MyListPageState extends State<MyListPage> {
               type: MaterialType.transparency, // This makes the Material visually transparent
               child: InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  Get.back();
                 },
                 child: const Center(
                   child: Icon(Icons.arrow_back,
@@ -350,33 +249,10 @@ class _MyListPageState extends State<MyListPage> {
               ),
             ),
           ),
-        ),
-      )
-
-      // Positioned(
-      //   top: 40, // Adjust these values as needed
-      //   left: 15,
-      //   child: CircleAvatar(
-      //     backgroundColor: Colors.white,
-      //     radius: 21,
-      //     child: InkWell(
-      //       onTap: () {
-      //         Navigator.pop(context);
-      //       },
-      //       child: Center(
-      //         child: Icon(Icons.arrow_back,
-      //             size: 21,
-      //             color: Colors.black), // Adjust the size and color as needed
-      //       ),
-      //     ),
-      //   ),
-      // )
+        )
     ]);
   }
-
-  @override
-  void dispose() {
-    Hive.close(); // Close the Hive box when you're done with it
-    super.dispose();
-  }
 }
+
+
+

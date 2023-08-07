@@ -2,9 +2,12 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
 import '../components/slide_image.dart';
+import '../getx/my_list_controller.dart';
+import '../getx/place_information_controller.dart';
 import '../models/place_detail_response.dart';
 
 class placeInformationScreen extends StatefulWidget {
@@ -27,25 +30,32 @@ class placeInformationScreen extends StatefulWidget {
 }
 
 class _placeInformationScreenState extends State<placeInformationScreen> {
-  Map<String, dynamic>? _savedAIResponse;
+  // Map<String, dynamic>? _savedAIResponse;
+  final MListController = Get.put(MyListController());
+  final PListController = Get.put(PlaceListController());
+
   Future<void> getData(placeId) async {
-    final doc = await FirebaseFirestore.instance
-        .collection('PlacesReviewSummary')
-        .doc(placeId)
-        .get();
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    setState(() {
-      _savedAIResponse = {
-        'Cuisines/Styles': data['Cuisines/Styles'] as String,
-        'Restaurant Type': data['Restaurant Type'] as String,
-        'Specialty Dishes': data['Specialty Dishes'] as String,
-        'Strengths of the Restaurant':
-            data['Strengths of the Restaurant'] as String,
-        'Areas for Improvement': data['Areas for Improvement'] as String,
-        'Overall Summary of the Restaurant':
-            data['Overall Summary of the Restaurant'] as String,
-      };
-    });
+
+    final AiBox = MListController.box4.value;
+    PListController.savedAIResponse = AiBox?.get(placeId);
+
+    // final doc = await FirebaseFirestore.instance
+    //     .collection('PlacesReviewSummary')
+    //     .doc(placeId)
+    //     .get();
+    // Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    // setState(() {
+    //   _savedAIResponse = {
+    //     'Cuisines/Styles': data['Cuisines/Styles'] as String,
+    //     'Restaurant Type': data['Restaurant Type'] as String,
+    //     'Specialty Dishes': data['Specialty Dishes'] as String,
+    //     'Strengths of the Restaurant':
+    //         data['Strengths of the Restaurant'] as String,
+    //     'Areas for Improvement': data['Areas for Improvement'] as String,
+    //     'Overall Summary of the Restaurant':
+    //         data['Overall Summary of the Restaurant'] as String,
+    //   };
+    // });
   }
 
   @override
@@ -181,13 +191,13 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            _savedAIResponse?['Cuisines/Styles'] ?? '',
+                            PListController.savedAIResponse?['Cuisines/Styles'] ?? '',
                             style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.normal),
                           ),
                           const SizedBox(width: 5.0),
                           Text(
-                            _savedAIResponse?['Restaurant Type'] ?? '',
+                            PListController.savedAIResponse?['Restaurant Type'] ?? '',
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black.withOpacity(0.7)),
@@ -240,7 +250,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
-                              _savedAIResponse?['Specialty Dishes'] ?? '',
+                              PListController.savedAIResponse?['Specialty Dishes'] ?? '',
                               style: const TextStyle(fontSize: 15),
                             ),
                           ),
@@ -264,7 +274,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
-                              _savedAIResponse?[
+                              PListController.savedAIResponse?[
                                       'Strengths of the Restaurant'] ??
                                   '',
                               style: const TextStyle(fontSize: 16),
@@ -290,7 +300,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
-                              _savedAIResponse?['Areas for Improvement'] ?? '',
+                              PListController.savedAIResponse?['Areas for Improvement'] ?? '',
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
@@ -314,7 +324,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
-                              _savedAIResponse?[
+                              PListController.savedAIResponse?[
                                       'Overall Summary of the Restaurant'] ??
                                   '',
                               style: const TextStyle(fontSize: 16),
@@ -354,7 +364,8 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
             type: MaterialType.transparency, // This makes the Material visually transparent
             child: InkWell(
               onTap: () {
-                Navigator.pop(context);
+                // Navigator.pop(context);
+                Get.back();
               },
               child: const Center(
                 child: Icon(Icons.arrow_back,
