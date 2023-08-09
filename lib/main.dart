@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 import 'package:get/get.dart';  // <-- Import this
+import 'getx/init_controller.dart';
 import 'getx/map_controller.dart';
 //
 void main()  async {
@@ -57,14 +58,15 @@ class MyApp extends StatelessWidget{
       darkTheme: AppTheme.darkBase,
       // title: 'Flutter Google Map',
       debugShowCheckedModeBanner: false,
-      home: Home(),  // <-- We use Home widget here to initialize the controller
+      home:  Home()// <-- We use Home widget here to initialize the controller
     );
   }
 }
 
 // This widget is introduced to initialize the MapController
 class Home extends StatelessWidget {
-  final mapController = Get.put(MapController());  // <-- Initialize the MapController here
+  final mapController = Get.put(MapController());
+  final initControllerInstance = Get.put(initController());
 
   @override
   Widget build(BuildContext context) {

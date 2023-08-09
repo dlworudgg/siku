@@ -55,31 +55,56 @@ class _SearchScreenState extends State<SearchScreen> {
     _focusNode.dispose(); // Important to prevent memory leaks
     super.dispose();
   }
-
   Future<void> placeAutoComplete(String query) async {
-    Uri uri = Uri.https(
-      "maps.googleapis.com",
-      'maps/api/place/autocomplete/json',
-      {
-        "input": query,
-        "key": googleMapKey,
-      },
-    );
-    String? response = await NetworkUtility.fetchUrl(uri);
-    if (response != null) {
-      PlaceAutocompleteResponse result =
-          PlaceAutocompleteResponse.parseAutocompleteResult(response);
-      if (result.predictions != null) {
-        setState(() {
-          placePredictions = result.predictions!;
-        });
+    // If there's an existing timer, cancel it
+    _debounce?.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      Uri uri = Uri.https(
+        "maps.googleapis.com",
+        'maps/api/place/autocomplete/json',
+        {
+          "input": query,
+          "key": googleMapKey,
+        },
+      );
+
+      String? response = await NetworkUtility.fetchUrl(uri);
+      if (response != null) {
+        PlaceAutocompleteResponse result =
+        PlaceAutocompleteResponse.parseAutocompleteResult(response);
+        if (result.predictions != null) {
+          setState(() {
+            placePredictions = result.predictions!;
+          });
+        }
       }
-    }
+    });
   }
+  // Future<void> placeAutoComplete(String query) async {
+  //   Uri uri = Uri.https(
+  //     "maps.googleapis.com",
+  //     'maps/api/place/autocomplete/json',
+  //     {
+  //       "input": query,
+  //       "key": googleMapKey,
+  //     },
+  //   );
+  //   String? response = await NetworkUtility.fetchUrl(uri);
+  //   if (response != null) {
+  //     PlaceAutocompleteResponse result =
+  //         PlaceAutocompleteResponse.parseAutocompleteResult(response);
+  //     if (result.predictions != null) {
+  //       setState(() {
+  //         placePredictions = result.predictions!;
+  //       });
+  //     }
+  //   }
+  // }
 
   void onSearchTextChanged(String searchText) {
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 300), () {
+    _debounce = Timer(const Duration(milliseconds: 100), () {
       placeAutoComplete(searchText);
     });
   }

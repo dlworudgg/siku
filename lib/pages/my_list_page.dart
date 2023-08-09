@@ -50,8 +50,9 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                     ),
                     child: Text(
                       name,
+                      maxLines: 1,
                       overflow: TextOverflow.clip,
-                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                      style: TextStyle(color: Colors.black, fontSize: MediaQuery.of(context).size.width * 0.045),
                     ),
                   ),
                   Expanded(

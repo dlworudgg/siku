@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,17 +18,7 @@ import '../screens/search_screen.dart';
 
 class MapController extends GetxController {
 
-  // final Function showPlaceDetailCallback;
-  // final Function(BuildContext context) showPlaceDetailCallback;
-
-  // final Function buildInfoTabCallback;
-  // final Function buildSummaryTabCallback;
-
-  MapController(
-      // this.showPlaceDetailCallback,
-      // required this.buildInfoTabCallback,
-      // required this.buildSummaryTabCallback
-      );
+  MapController( );
 
 
   //Google Maps Related
@@ -52,10 +44,29 @@ class MapController extends GetxController {
   // final Rx<double?> lat = (null).obs;
   // final Rx<double?> lng = (null).obs;
   var isSeached = false.obs;
+  RxDouble deviceWidth = 0.0.obs;
+  RxDouble deviceHeight = 0.0.obs;
+
+  void setDeviceSize(BuildContext context) {
+    deviceWidth.value = MediaQuery.of(context).size.width;
+    deviceHeight.value = MediaQuery.of(context).size.height;
+  }
 
   //Share List Related
   var isExpanded = false.obs; // Making it observable
-  var items = [].obs;
+  var items = [Item(
+      id: FirebaseAuth.instance.currentUser!.uid,
+      name: 'My Saved Restaurants',
+      isSavedList: true,
+      image: 'lib/images/jae_logo_2.png',
+      userNumber: '1'),
+    Item(
+        id: 'hiXr7lr8IwGWAGRMuHRN',
+        name: "Jae, SuHyun's List",
+        isSavedList: false,
+        image: 'lib/images/jae_jae_logo.png',
+        userNumber: '2')
+  ];
   // final dragController = ScrollController(); // Assuming you have this controller initialized
   final DraggableScrollableController dragController = DraggableScrollableController();
 
@@ -64,39 +75,105 @@ class MapController extends GetxController {
   Rx<Result?> placeDetail = (null as Result?).obs;
   var doesSummary = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _addSavedRoomList();
-    // ever(lat, (_) => _onSearchToMap(googleMapController));
-    // ever(lng, (_) => _onSearchToMap(googleMapController));
+  List<Color> primaryColors = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.yellow,
+    Colors.orange,
+    Colors.purple,
+    Colors.brown,
+    Colors.teal
+  ];
+  List<String> cuisines = [
+    "Korean", "Japanese", "Chinese", "American", "Italian", "French", "Mexican", "Mediterranean"
+  ];
 
-    // ever(placeDetail, (_) => _processDataInBackground());
+  List<double> widthList = [
+    100, 120, 110, 120, 100, 100, 110, 160
+  ];
 
 
-  }
+
+  // @override
+  // Future<void> onInit() async {
+  //   super.onInit();
+  //   final box1 = await Hive.openBox('placeDetails');
+  //   final box2 = await Hive.openBox('placeDetails_images');
+  //   final box3 = await Hive.openBox('placeDetails_key_order');
+  //   final box4 = await Hive.openBox('placeDetails_AISummary');
+  //
+  //   if (box1.isEmpty) {
+  //     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //         .collection('UserSavedPlace')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .collection('places')
+  //         .get();
+  //     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+  //       String placeID = doc.id;
+  //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  //       List<Uint8List> photoReferences = [];
+  //       if (data['photos'] != null) {
+  //         for (var photo in data['photos']) {
+  //           if (photo["photo_reference"] != null) {
+  //             // photoReferences.add(photo["photo_reference"]);
+  //             final response = await http.get(Uri.parse( 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo["photo_reference"]}&key=$googleMapBrowserKey',));
+  //             photoReferences.add(response.bodyBytes);
+  //           }
+  //         }
+  //       }
+  //         final summaryDoc = await FirebaseFirestore.instance
+  //             .collection('PlacesReviewSummary')
+  //             .doc(placeID)
+  //             .get();
+  //
+  //         Map<String, dynamic> suumayData = summaryDoc.data() as Map<String, dynamic>;
+  //         savedAIResponse = {
+  //           'Cuisines/Styles': suumayData['Cuisines/Styles'] as String,
+  //           'Restaurant Type': suumayData['Restaurant Type'] as String,
+  //           'Specialty Dishes': suumayData['Specialty Dishes'] as String,
+  //           'Strengths of the Restaurant':
+  //           suumayData['Strengths of the Restaurant'] as String,
+  //           'Areas for Improvement': suumayData['Areas for Improvement'] as String,
+  //           'Overall Summary of the Restaurant':
+  //           suumayData['Overall Summary of the Restaurant'] as String,
+  //         };
+  //
+  //
+  //       // print("Place ID: $placeID");
+  //       // print("Data: $data");
+  //       // print("Photo: $photoref");
+  //       // print("summary:  $savedAIResponse");
+  //
+  //       await box1.put( placeID, data);
+  //       await box2.put( placeID, photoReferences);
+  //       await box3.add( placeID);
+  //       await box4.put( placeID,  savedAIResponse);
+  //     }
+  //   }
+  // }
 
 
   //Initiating Share List for just now. This should be replaced with process of getting data from firebase
-  Future<void> _addSavedRoomList() async {
-    Item savedPlaceItem = Item(
-        id: FirebaseAuth.instance.currentUser!.uid,
-        name: 'My Saved Restaurants',
-        isSavedList: true,
-        image: 'lib/images/jae_logo_2.png',
-        userNumber: '1');
+  // Future<void> _addSavedRoomList() async {
+  //   Item savedPlaceItem = Item(
+  //       id: FirebaseAuth.instance.currentUser!.uid,
+  //       name: 'My Saved Restaurants',
+  //       isSavedList: true,
+  //       image: 'lib/images/jae_logo_2.png',
+  //       userNumber: '1');
 
-    final shareBox = await Hive.openBox('ShareRoom');
-    var value = shareBox.get(0);
+    // final shareBox = await Hive.openBox('ShareRoom');
+    // var value = shareBox.get(0);
 
-    items.add(savedPlaceItem);
-    items.add(Item(
-        id: 'hiXr7lr8IwGWAGRMuHRN',
-        name: "Jae, SuHyun's List",
-        isSavedList: false,
-        image: 'lib/images/jae_jae_logo.png',
-        userNumber: '2'));
-  }
+  //   items.add(savedPlaceItem);
+  //   items.add(Item(
+  //       id: 'hiXr7lr8IwGWAGRMuHRN',
+  //       name: "Jae, SuHyun's List",
+  //       isSavedList: false,
+  //       image: 'lib/images/jae_jae_logo.png',
+  //       userNumber: '2'));
+  // }
 
 
   //sign-in and out
