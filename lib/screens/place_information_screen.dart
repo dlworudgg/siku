@@ -37,7 +37,14 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
   Future<void> getData(placeId) async {
 
     final AiBox = MListController.box4.value;
-    PListController.savedAIResponse = AiBox?.get(placeId);
+    // PListController.savedAIResponse = AiBox?.get(placeId) as Map<String, dynamic>?;
+    var retrievedData = AiBox?.get(placeId);
+    Map<String, dynamic> formattedData = {};
+    retrievedData.forEach((key, value) {
+      formattedData[key.toString()] = value;
+    });
+    PListController.savedAIResponse = formattedData;
+
 
     // final doc = await FirebaseFirestore.instance
     //     .collection('PlacesReviewSummary')

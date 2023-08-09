@@ -33,7 +33,7 @@ class MyListController extends GetxController {
     box1.value = await Hive.openBox('placeDetails');
     box2.value = await Hive.openBox('placeDetails_images');
     box3.value = await Hive.openBox('placeDetails_key_order');
-    box4.value = await Hive.openBox('placeDetails_key_order');
+    box4.value = await Hive.openBox('placeDetails_AISummary');
     keys.addAll(box3.value!.values.toList());
   }
 
