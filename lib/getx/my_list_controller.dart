@@ -13,18 +13,27 @@ class MyListController extends GetxController {
     if (newIndex > oldIndex) {
       newIndex -= 1;
     }
+    print("Changed oldIndex :  $oldIndex ,  Changed newIndex :  $newIndex");
+    print(keys);
+    print("     ");
+
+
     final key = keys.removeAt(oldIndex);
+    print(key);
     keys.insert(newIndex, key);
+    print(keys);
 
     // Save reordered keys to Hive
     final orderBox = await Hive.openBox('placeDetails_key_order');
     await orderBox.clear(); // Remove all existing keys
-
+  //
     for (var key in keys) {
       await orderBox.add(key);
     }
-    keys.value = orderBox.values.toList();
-    update();
+    // keys.value = orderBox.values.toList();
+
+
+    // update();
   }
 
   @override
@@ -35,12 +44,14 @@ class MyListController extends GetxController {
     box3.value = await Hive.openBox('placeDetails_key_order');
     box4.value = await Hive.openBox('placeDetails_AISummary');
     keys.addAll(box3.value!.values.toList());
+
+    // Hive.close();
   }
 
-
-  @override
-  void onClose() {
-    Hive.close(); // Close the Hive box when you're done with it
-    super.onClose();
-  }
+//
+//   @override
+//   void onClose() {
+//     Hive.close(); // Close the Hive box when you're done with it
+//     super.onClose();
+//   }
 }
