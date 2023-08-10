@@ -51,7 +51,7 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                     child: Text(
                       name,
                       maxLines: 1,
-                      overflow: TextOverflow.clip,
+                      // overflow: TextOverflow.clip,
                       style: TextStyle(color: Colors.black, fontSize: MediaQuery.of(context).size.width * 0.045),
                     ),
                   ),
@@ -115,8 +115,8 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                               child: Column(
                                 children: [
                                   // Image
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(15.0),
+                                  Container(
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0),),
                                     child: SizedBox(
                                       width: 400,
                                       height: 140,
@@ -221,6 +221,7 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                         );
                       },
                       onReorder: (oldIndex, newIndex) {
+                        print("oldIndex :  $oldIndex ,  newIndex :  $newIndex");
                         ListController.reorderList( oldIndex, newIndex);
                       },
                     ),

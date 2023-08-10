@@ -33,7 +33,7 @@ void main()  async {
   final appDocumentDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
 
-
+  print(appDocumentDir.path);
   // final box = await Hive.openBox('placeDetails');
 
   // await Hive.initFlutter();

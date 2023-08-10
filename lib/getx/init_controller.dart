@@ -15,13 +15,15 @@ class initController extends GetxController {
 
   Future<void> onInit() async {
     super.onInit();
-    print("starting Oninit");
+    // print("starting Oninit");
     final box1 = await Hive.openBox('placeDetails');
     final box2 = await Hive.openBox('placeDetails_images');
     final box3 = await Hive.openBox('placeDetails_key_order');
     final box4 = await Hive.openBox('placeDetails_AISummary');
 
-    if (box1.isEmpty) {
+    final boxExist = await Hive.boxExists('placeDetails');
+
+    if (box1.isEmpty ||box2.isEmpty  || box3.isEmpty ||box4.isEmpty  ) {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('UserSavedPlace')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -67,7 +69,7 @@ class initController extends GetxController {
       }
     }
 
-    Get.to(MapScreen());
+    Get.to(() => MapScreen());
   }
 }
 

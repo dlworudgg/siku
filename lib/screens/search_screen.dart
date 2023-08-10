@@ -18,6 +18,13 @@ import 'map_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
+class CancellationToken {
+  bool isCancelled = false;
+
+  void cancel() {
+    isCancelled = true;
+  }
+}
 class SearchScreen extends StatefulWidget {
 
 
@@ -37,29 +44,31 @@ class _SearchScreenState extends State<SearchScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String googleMapKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
   Timer? _debounce;
-  late FocusNode _focusNode;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = FocusNode();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
-    });
-  }
+  // late FocusNode _focusNode;
 
 
-  @override
-  void dispose() {
-    _focusNode.dispose(); // Important to prevent memory leaks
-    super.dispose();
-  }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _focusNode = FocusNode();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     _focusNode.requestFocus();
+  //   });
+  // }
+
+  //
+  // @override
+  // void dispose() {
+  //   _focusNode.dispose(); // Important to prevent memory leaks
+  //   super.dispose();
+  // }
   Future<void> placeAutoComplete(String query) async {
     // If there's an existing timer, cancel it
     _debounce?.cancel();
 
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
       Uri uri = Uri.https(
         "maps.googleapis.com",
         'maps/api/place/autocomplete/json',
@@ -101,9 +110,19 @@ class _SearchScreenState extends State<SearchScreen> {
   //     }
   //   }
   // }
+  CancellationToken? _cancellationToken;
 
   void onSearchTextChanged(String searchText) {
     _debounce?.cancel();
+    if (searchText.trim().isEmpty) {
+      // Clear the predictions if the search text is empty
+      setState(() {
+        placePredictions = [];
+      });
+      return; // Exit the function if searchText is empty
+    }
+
+
     _debounce = Timer(const Duration(milliseconds: 100), () {
       placeAutoComplete(searchText);
     });
@@ -203,7 +222,7 @@ class _SearchScreenState extends State<SearchScreen> {
             left: 16.0,
             right: 16.0,
        child: TextFormField(
-         focusNode: _focusNode,
+         // focusNode: _focusNode,
           onChanged: onSearchTextChanged,
               decoration: InputDecoration(
                 hintText: 'Search Restaurants Here',
