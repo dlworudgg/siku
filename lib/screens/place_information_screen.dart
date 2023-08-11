@@ -90,6 +90,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                   placeDetail: widget.placeDetail,
                   placeDetailImages: widget.placeDetailImages,
                   placeId: widget.placeId,
+                  picNum: 10,
                   // listIndex : 0,
                 )),
           ),

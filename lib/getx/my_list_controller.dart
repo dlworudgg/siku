@@ -13,21 +13,22 @@ class MyListController extends GetxController {
     if (newIndex > oldIndex) {
       newIndex -= 1;
     }
-    print("Changed oldIndex :  $oldIndex ,  Changed newIndex :  $newIndex");
-    print(keys);
-    print("     ");
+    // print("Changed oldIndex :  $oldIndex ,  Changed newIndex :  $newIndex");
+    // print(keys);
+    // print("     ");
 
 
     final key = keys.removeAt(oldIndex);
-    print(key);
+    // print(key);
     keys.insert(newIndex, key);
-    print(keys);
+    // print(keys);
 
     // Save reordered keys to Hive
     final orderBox = await Hive.openBox('placeDetails_key_order');
     await orderBox.clear(); // Remove all existing keys
   //
     for (var key in keys) {
+      print(key);
       await orderBox.add(key);
     }
     // keys.value = orderBox.values.toList();

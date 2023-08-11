@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:siku/screens/map_screen.dart';
 
 import '../getx/map_controller.dart';
 import '../theme.dart';
@@ -31,7 +32,12 @@ class ShareRoomPage  extends StatelessWidget {
   final mapController = Get.find<MapController>();
 
 void getBack(){
+  // Get.to(() => MapScreen(),
+  //   transition: Transition.upToDown,
+    // duration: Duration(seconds: 0),
+  // );
   Get.back();
+  // transition: Transition.downToUp,
 }
 
   @override
@@ -102,7 +108,7 @@ void getBack(){
                 onTap:getBack,
                 // onTap: mapController.toggleSheet,
                 child: Padding(
-                  padding: const EdgeInsets.only( top: 16.0),
+                  padding: const EdgeInsets.only( top: 16.0, bottom : 16.0),
                   child: Container(
                     decoration: BoxDecoration(
                       // color: Colors.black87,
@@ -119,112 +125,87 @@ void getBack(){
                         // onVerticalDragUpdate: (details) {
                         //   mapController.toggleSheet();
                         // },
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            // Drag Handle
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //       top: 8, bottom: 4),
-                            //   child: Row(
-                            //     mainAxisAlignment:
-                            //     MainAxisAlignment.center,
-                            //     children: [
-                            //       Container(
-                            //           width: 160,
-                            //           height: 5,
-                            //           color: Colors.transparent),
-                            //       Container(
-                            //         width: 40,
-                            //         height: 5,
-                            //         decoration: BoxDecoration(
-                            //           color: Colors.grey[300],
-                            //           borderRadius:
-                            //           BorderRadius.circular(10),
-                            //         ),
-                            //       ),
-                            //       Container(
-                            //           width: 160,
-                            //           height: 5,
-                            //           color: Colors.transparent),
-                            //     ],
-                            //   ),
-                            // ),
-                            // Share List Text
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: GestureDetector(
-                                      onTap: getBack,
-                                        // onTap: mapController.toggleSheet,
-                                        child: const Align(
-                                            alignment:
-                                            Alignment.centerLeft,
-                                            child: Text(" Share List",
-                                                // style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold))
-                                                style: TextStyle(
-                                                    fontSize: 30,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight
-                                                        .bold))
-                                        )),
-                                  ),
-                                  // Container(width: 110, height: 36.5, color: Colors.transparent),
-                                  // Icons on the right
-                                  Padding(
-                                    padding:
-                                    const EdgeInsets.only(right: 30),
-                                    child: Row(
-                                      children: [
-                                        // List with a plus
-                                        GestureDetector(
-                                          onTap: () {
-                                            // Your function here
-                                          },
-                                          child: const Icon(Icons.add,
-                                              // color: Colors.white
-                                              color: Colors.black87
-                                          ),
-                                        ),
-                                        SizedBox(width: 15), // Spacer
-
-                                        // Person icon
-                                        GestureDetector(
-                                          onTap: () {
-                                            mapController.showSignOutDialog(context);
-                                            // Your function here
-                                          },
-                                          child: const Icon(Icons.person,
-                                              // color: Colors.white
-                                              color: Colors.black87
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                            width: 15), // Spacer
-
-                                        // Settings icon
-                                        GestureDetector(
-                                          onTap: () {
-                                            // Your function here
-                                          },
-                                          child: const Icon(
-                                              Icons.settings,
-                                              // color: Colors.white
-                                              color: Colors.black87
-                                          ),
-                                        ),
-                                      ],
+                        Padding(
+                          padding: const EdgeInsets.only( bottom : 24.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              // Share List Text
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, top: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: GestureDetector(
+                                        onTap: getBack,
+                                          // onTap: mapController.toggleSheet,
+                                          child: const Align(
+                                              alignment:
+                                              Alignment.centerLeft,
+                                              child: Text(" Share List",
+                                                  // style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold))
+                                                  style: TextStyle(
+                                                      fontSize: 30,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight
+                                                          .bold))
+                                          )),
                                     ),
-                                  ),
-                                ],
+                                    // Container(width: 110, height: 36.5, color: Colors.transparent),
+                                    // Icons on the right
+                                    Padding(
+                                      padding:
+                                      const EdgeInsets.only(right: 30),
+                                      child: Row(
+                                        children: [
+                                          // List with a plus
+                                          GestureDetector(
+                                            onTap: () {
+                                              // Your function here
+                                            },
+                                            child: const Icon(Icons.add,
+                                                // color: Colors.white
+                                                color: Colors.black87
+                                            ),
+                                          ),
+                                          SizedBox(width: 15), // Spacer
+
+                                          // Person icon
+                                          GestureDetector(
+                                            onTap: () {
+                                              mapController.showSignOutDialog(context);
+                                              // Your function here
+                                            },
+                                            child: const Icon(Icons.person,
+                                                // color: Colors.white
+                                                color: Colors.black87
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                              width: 15), // Spacer
+
+                                          // Settings icon
+                                          GestureDetector(
+                                            onTap: () {
+                                              // Your function here
+                                            },
+                                            child: const Icon(
+                                                Icons.settings,
+                                                // color: Colors.white
+                                                color: Colors.black87
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
 
                         // List Content
@@ -232,6 +213,7 @@ void getBack(){
                         Expanded(
                           child: Material(
                             child: ListView.builder(
+                              padding: EdgeInsets.zero,
                               // controller: scrollController,
                               itemCount: mapController.items.length,
                               itemBuilder:

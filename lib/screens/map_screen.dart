@@ -578,11 +578,54 @@ class MapScreen extends StatelessWidget {
           //     );
           //   },
           // ),
+
+          // Positioned(
+          //   top: 60.0,
+          //   left: 16.0,
+          //   right: 50.0,
+          //   child: GestureDetector(
+          //     onTap: mapController.onSearchTap,
+          //     child: Stack(
+          //       alignment: Alignment.centerRight,
+          //       children: [
+          //         AbsorbPointer(
+          //           child: TextFormField(
+          //             decoration: InputDecoration(
+          //               hintText: 'Search Restaurants Here',
+          //               fillColor: AppColors.cardLight,
+          //               filled: true,
+          //               prefixIcon: Icon(
+          //                   mapController.isMarkerOnMap.value ? Icons.arrow_back_ios : Icons.search,
+          //                   color: mapController.isMarkerOnMap.value ? Colors.blue : Colors.grey
+          //               ),
+          //               border: OutlineInputBorder(
+          //                 borderSide: BorderSide.none,
+          //                 borderRadius: BorderRadius.circular(10),
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //         if (mapController.isMarkerOnMap.value)
+          //           Positioned(
+          //             right: 10, // adjust as needed
+          //             child: IconButton(
+          //               icon: Icon(Icons.close, color: Colors.grey),
+          //               onPressed: () {
+          //                 // Reset the marker logic
+          //                 mapController.resetMarkerOnMap();
+          //               },
+          //             ),
+          //           ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+
           Positioned(
             top: 60.0,
             left: 16.0,
             // right: 16.0,
-            right: 50.0,
+            right: 16.0,
             child: GestureDetector(
               onTap: mapController.onSearchTap,
               child: AbsorbPointer(
@@ -602,6 +645,15 @@ class MapScreen extends StatelessWidget {
                         color: mapController.isMarkerOnMap.value
                             ? Colors.blue
                             : Colors.grey),
+                    suffixIcon: mapController.isMarkerOnMap.value
+                        ? IconButton(
+                      icon: Icon(Icons.close, color: Colors.grey),
+                      onPressed: () {
+                        // Reset the marker logic
+                        mapController.resetMarkerOnMap();
+                      },
+                    )
+                        : null,
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(10),

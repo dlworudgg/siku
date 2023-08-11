@@ -33,13 +33,13 @@ class _SaveButtonState extends State<SaveButton> {
     super.initState();
     // _checkIfSaved();      // Existing Firebase check
     _checkIfSavedInHive(); // New Hive check
-    if (!isSavedInHive){
-      _saveToHive();
-      var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      String placeId = mapController.placeDetail.value!.placeId!;
-      collection.doc(userId).collection('places').doc(placeId).set(mapController.placeDetail.value!.toFirestoreMap());
-    }
+    // if (!isSavedInHive){
+    //   _saveToHive();
+    //   // var collection = FirebaseFirestore.instance.collection('UserSavedPlace');
+    //   // String userId = FirebaseAuth.instance.currentUser!.uid;
+    //   // String placeId = mapController.placeDetail.value!.placeId!;
+    //   // collection.doc(userId).collection('places').doc(placeId).set(mapController.placeDetail.value!.toFirestoreMap());
+    // }
   }
 
   //   if (!isSavedInHive && isSavedInFirestore) {
@@ -126,11 +126,6 @@ class _SaveButtonState extends State<SaveButton> {
           setState(() {
             isSaved = true;
           });
-        }
-        {
-          // final mapController = Get.find<MapController>();
-          // final share_box = await Hive.openBox('placeDetails_AISummary');
-          // await share_box.put( mapController.placeDetail.value!.placeId!, mapController.savedAIResponse);
         }
       },
       child: Row(

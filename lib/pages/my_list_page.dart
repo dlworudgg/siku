@@ -56,17 +56,18 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                     ),
                   ),
                   Expanded(
-                    child: ReorderableListView.builder(
+                    // child: ReorderableListView.builder(
+                    child: ListView.builder(
                       shrinkWrap: false,
                       physics: const ClampingScrollPhysics(),
-                      proxyDecorator: (child, index, animation) {
-                        return Material(
-                          elevation: 4.0,
-                          color: Colors
-                              .transparent, // setting background color to transparent
-                          child: child,
-                        );
-                      },
+                      // proxyDecorator: (child, index, animation) {
+                      //   return Material(
+                      //     elevation: 4.0,
+                      //     color: Colors
+                      //         .transparent, // setting background color to transparent
+                      //     child: child,
+                      //   );
+                      // },
                       itemCount: keys.length,
                       itemBuilder: (context, index) {
                         final key = keys[index];
@@ -131,6 +132,7 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                                         placeDetail: placeDetail,
                                         placeDetailImages: placeDetailImages,
                                         placeId: key,
+                                        picNum : 5
                                         // listIndex : index,
                                       ),
                                       // ),
@@ -220,10 +222,10 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                           ),
                         );
                       },
-                      onReorder: (oldIndex, newIndex) {
-                        print("oldIndex :  $oldIndex ,  newIndex :  $newIndex");
-                        ListController.reorderList( oldIndex, newIndex);
-                      },
+                      // onReorder: (oldIndex, newIndex) {
+                      //   print("oldIndex :  $oldIndex ,  newIndex :  $newIndex");
+                      //   ListController.reorderList( oldIndex, newIndex);
+                      // },
                     ),
                   ),
                 ],
