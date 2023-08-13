@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,12 +24,24 @@ class MapController extends GetxController {
 
 
   //Google Maps Related
-  static const _initialCameraPosition = CameraPosition(
+  Position? current_location;
+
+
+  // static const _initialCameraPosition = CameraPosition(
+  //   target: LatLng(40.71918288468455, -74.0415231837935),
+  //   zoom: 14.5,
+  // );
+  //
+  // static CameraPosition get initialCameraPosition => _initialCameraPosition;
+
+  var _initialCameraPosition = CameraPosition(
     target: LatLng(40.71918288468455, -74.0415231837935),
     zoom: 14.5,
-  );
+  ).obs;
 
-  static CameraPosition get initialCameraPosition => _initialCameraPosition;
+  CameraPosition get initialCameraPosition => _initialCameraPosition.value;
+
+
 
   // Variables
   final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
@@ -574,10 +587,27 @@ class MapController extends GetxController {
     // showPlaceDetail();
   }
 
-  void resetCameraPosition() {
-    googleMapController
-        .animateCamera(CameraUpdate.newCameraPosition(const CameraPosition(
-      target: LatLng(40.7178, -74.0431),
+  Future<void> getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      lat.value = position.latitude;
+      lng.value = position.longitude;
+
+      // Update _initialCameraPosition using current location
+      _initialCameraPosition.value = CameraPosition(
+        target: LatLng(lat.value, lng.value),
+        zoom: 14.5,
+      );
+
+    } catch (error) {
+      print("Error getting location: $error");
+    }
+  }
+  Future<void> resetCameraPosition() async {
+    await getCurrentLocation();
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: LatLng(lat.value, lng.value),
       zoom: 14.5,
     )));
     // isMarkerOnMap.value = false;

@@ -58,6 +58,7 @@ class MyListPage extends StatelessWidget { // Changed to StatelessWidget
                   Expanded(
                     // child: ReorderableListView.builder(
                     child: ListView.builder(
+                      padding: EdgeInsets.zero,
                       shrinkWrap: false,
                       physics: const ClampingScrollPhysics(),
                       // proxyDecorator: (child, index, animation) {

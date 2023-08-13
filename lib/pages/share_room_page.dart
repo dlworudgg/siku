@@ -120,11 +120,6 @@ void getBack(){
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Drag Handle with GestureDetector
-                        // onDoubleTap:  mapController.toggleSheet,
-                        // onVerticalDragUpdate: (details) {
-                        //   mapController.toggleSheet();
-                        // },
                         Padding(
                           padding: const EdgeInsets.only( bottom : 24.0),
                           child: Column(
