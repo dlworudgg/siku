@@ -33,6 +33,8 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 
 [  ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
 
+[  ] **Top Restaurant List** : Create list of top Restaurant to explore.
+
 [  ] **Sharing**: Enable sharing of restaurant lists and open reviews to only close friends to enhance the credibility of the reviews
 
 [  ] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
