@@ -15,6 +15,7 @@ class ImageSlider extends StatefulWidget {
   final dynamic placeDetail;
   final dynamic placeDetailImages;
   final String placeId;
+  final int picNum;
   // final int listIndex;
   // final ValueChanged<int> onImageChanged;
   ImageSlider({required this.images, required this.height,
@@ -24,6 +25,7 @@ class ImageSlider extends StatefulWidget {
     required this.placeDetail,
     required this.placeDetailImages,
     required this.placeId,
+    required this.picNum,
     // required this.listIndex
     // required this.onImageChanged
   });
@@ -58,7 +60,8 @@ class _ImageSliderState extends State<ImageSlider> {
               tag : 'my_list_image_${widget.placeId}',
               child: PageView.builder(
                 controller: _controller,
-                itemCount: widget.images.length,
+                // itemCount: widget.images.length,
+                itemCount: widget.picNum,
                 itemBuilder: (context, index) {
                   return  Image.memory(
                       widget.images[index],
@@ -79,8 +82,10 @@ class _ImageSliderState extends State<ImageSlider> {
               right: 16.0,
               bottom: 5.0,
               child: DotsIndicator(
-                dotsCount: 6,
-                position: (_currentPage / 2).round(),
+                // dotsCount: 6,
+                dotsCount: widget.picNum <= 5 ? widget.picNum : (widget.picNum / 2).round() + 1,
+                // position: (_currentPage / 2).round(),
+                position: widget.picNum <= 5 ? _currentPage.round() : (_currentPage / 2).round(),
                 decorator: DotsDecorator(
                   size: const Size.square(7.0),
                   activeSize: const Size(20.0, 7.0),

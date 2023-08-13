@@ -147,6 +147,9 @@ class _SearchScreenState extends State<SearchScreen> {
     );
 
     String? response = await NetworkUtility.fetchUrl(uri);
+    if (_cancellationToken?.isCancelled ?? false) {
+      throw Exception("Stopped fetching due to going back to Map Screen");  // Bypass processing the response
+    }
     if (response != null) {
       PlaceDetailResponse placeDetailResponse =
       PlaceDetailResponse.fromJson(jsonDecode(response));
@@ -230,6 +233,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 filled: true,
                 prefixIcon: InkWell(
                   onTap: () {
+                    // Cancel timer
+                    _debounce?.cancel();
+
+                    // Signal to cancel all ongoing operations
+                    _cancellationToken?.cancel();
+
                     // Navigator.pop(context);
                     Get.back();
                   },
@@ -248,6 +257,7 @@ class _SearchScreenState extends State<SearchScreen> {
             right: 0.0,
             bottom: 200.0,
             child: ListView.builder(
+              padding: EdgeInsets.zero,
               itemCount: placePredictions.length,
               itemBuilder: (context, index) => LocationListTile(
                   press: () async {
@@ -281,14 +291,14 @@ class _SearchScreenState extends State<SearchScreen> {
 
 
                       mapController.placeDetail.value = selectedDetail;  // <-- Setting the value in MapController
-                      mapController.lat.value = selectedDetail.geometry?.location?.lat ?? 40.71918288468455;
-                      mapController.lng.value = selectedDetail.geometry?.location?.lng ?? (-74.0415231837935);
+                      // mapController.lat.value = selectedDetail.geometry?.location?.lat ?? 40.71918288468455;
+                      // mapController.lng.value = selectedDetail.geometry?.location?.lng ?? (-74.0415231837935);
 
                       setDoesSummary();
                       // double? latValue = selectedDetail.geometry?.location?.lat;
                       // double? lngValue = selectedDetail.geometry?.location?.lng;
                       // Get.off(()=>MapScreen());
-                      mapController.afterSearched();
+                      mapController.afterSearched(selectedDetail);
 
                       // Navigator.pop(context);
                       // Navigator.push(

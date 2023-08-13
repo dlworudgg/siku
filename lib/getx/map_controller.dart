@@ -3,11 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:siku/pages/init_loading_page.dart';
 
 import '../components/saved_button.dart';
 import '../models/open_ai_response.dart';
@@ -22,12 +24,24 @@ class MapController extends GetxController {
 
 
   //Google Maps Related
-  static const _initialCameraPosition = CameraPosition(
+  Position? current_location;
+
+
+  // static const _initialCameraPosition = CameraPosition(
+  //   target: LatLng(40.71918288468455, -74.0415231837935),
+  //   zoom: 14.5,
+  // );
+  //
+  // static CameraPosition get initialCameraPosition => _initialCameraPosition;
+
+  var _initialCameraPosition = CameraPosition(
     target: LatLng(40.71918288468455, -74.0415231837935),
     zoom: 14.5,
-  );
+  ).obs;
 
-  static CameraPosition get initialCameraPosition => _initialCameraPosition;
+  CameraPosition get initialCameraPosition => _initialCameraPosition.value;
+
+
 
   // Variables
   final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
@@ -72,6 +86,7 @@ class MapController extends GetxController {
 
   //PlaceDetail Related
   Map<String, dynamic>? savedAIResponse;
+
   Rx<Result?> placeDetail = (null as Result?).obs;
   var doesSummary = false.obs;
 
@@ -135,7 +150,7 @@ class MapController extends GetxController {
 
   void onSearchTap() {
     Get.to(() => const SearchScreen(),
-        // transition: Transition.fade
+        // transition: Transition.downToUp
     );
     // Get.bottomSheet(
     //   Container(
@@ -151,7 +166,8 @@ class MapController extends GetxController {
 
   void onShareListTap(){
     Get.to(() => ShareRoomPage(),
-        transition: Transition.downToUp
+        transition: Transition.downToUp,
+        // duration: Duration(seconds: 0),
     );
   }
 
@@ -216,12 +232,15 @@ class MapController extends GetxController {
     );
   }
 
-  void afterSearched() {
+  void afterSearched(Result selectedDetail) {
     Get.back();
+    // Get.to(() => MapScreen(),);
+    lat.value = selectedDetail.geometry?.location?.lat ?? 40.71918288468455;
+    lng.value = selectedDetail.geometry?.location?.lng ?? (-74.0415231837935);
+
     _onSearchToMap(googleMapController);
     // _processDataInBackground();
     showPlaceDetail();
-
   }
 
 
@@ -325,20 +344,21 @@ class MapController extends GetxController {
           return buildResponseWidgets(savedAIResponse!);
         } else {
           _processDataInBackground();
+
         }
         return const Center(
-          child: SizedBox(
-            width: 50,
-            height: 50,
+          // child: SizedBox(
+          //   width: 200,
+          //   height: 200,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start, // This centers the content inside the stack
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center, // This centers the content inside the stack
               children: [
                 CircularProgressIndicator(),
                 Text('AI is Summarizing...'), // Your desired text
               ],
             ),
-          ),
+          // ),
         );
       },
     );
@@ -567,10 +587,27 @@ class MapController extends GetxController {
     // showPlaceDetail();
   }
 
-  void resetCameraPosition() {
-    googleMapController
-        .animateCamera(CameraUpdate.newCameraPosition(const CameraPosition(
-      target: LatLng(40.7178, -74.0431),
+  Future<void> getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      lat.value = position.latitude;
+      lng.value = position.longitude;
+
+      // Update _initialCameraPosition using current location
+      _initialCameraPosition.value = CameraPosition(
+        target: LatLng(lat.value, lng.value),
+        zoom: 14.5,
+      );
+
+    } catch (error) {
+      print("Error getting location: $error");
+    }
+  }
+  Future<void> resetCameraPosition() async {
+    await getCurrentLocation();
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: LatLng(lat.value, lng.value),
       zoom: 14.5,
     )));
     // isMarkerOnMap.value = false;
@@ -584,15 +621,16 @@ class MapController extends GetxController {
 
   Future<void> _processDataInBackground() async {
 
-    Result? currentPlaceDetail = placeDetail.value;
-    var result = await processPlaceDetailAI(currentPlaceDetail!);
-    if (result.choices.isNotEmpty) {
-      savedAIResponse = processText(result.choices[0].message.content ?? '');
-      await FirebaseFirestore.instance
-          .collection('PlacesReviewSummary')
-          .doc(currentPlaceDetail.placeId)
-          .set(savedAIResponse!);
-    }
+      Result? currentPlaceDetail = placeDetail.value;
+      var result = await processPlaceDetailAI(currentPlaceDetail!);
+      if (result.choices.isNotEmpty) {
+        savedAIResponse = processText(result.choices[0].message.content ?? '');
+        await FirebaseFirestore.instance
+            .collection('PlacesReviewSummary')
+            .doc(currentPlaceDetail.placeId)
+            .set(savedAIResponse!);
+      }
+      doesSummary.value = true;
   }
 
 
