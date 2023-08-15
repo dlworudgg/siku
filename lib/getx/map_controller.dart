@@ -90,6 +90,9 @@ class MapController extends GetxController {
   Rx<Result?> placeDetail = (null as Result?).obs;
   var doesSummary = false.obs;
 
+
+  var selectedIndexes = <int>[].obs;
+
   List<Color?> primaryColors = [
     Colors.red[300],
     Colors.blue[300],
@@ -109,7 +112,13 @@ class MapController extends GetxController {
   ];
 
 
-
+  void toggleSelection(int index) {
+    if (selectedIndexes.contains(index)) {
+      selectedIndexes.remove(index);
+    } else {
+      selectedIndexes.add(index);
+    }
+  }
 
   //sign-in and out
   void showSignOutDialog(BuildContext context) {
@@ -651,8 +660,5 @@ class MapController extends GetxController {
   //   isExpanded.value = !isExpanded.value;
   //   // update();  // This will refresh any widgets that are bound to _isExpanded
   // }
-
-
-
 
 }
