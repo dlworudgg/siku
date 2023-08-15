@@ -342,13 +342,13 @@ class MapScreen extends StatelessWidget {
                     fillColor: AppColors.cardLight,
                     filled: true,
                     prefixIcon: Icon(
-                        mapController.isMarkerOnMap.value
+                        mapController.isSearchMarkerOnMap.value
                             ? Icons.arrow_back_ios
                             : Icons.search,
-                        color: mapController.isMarkerOnMap.value
+                        color: mapController.isSearchMarkerOnMap.value
                             ? Colors.blue
                             : Colors.grey),
-                    suffixIcon: mapController.isMarkerOnMap.value
+                    suffixIcon: mapController.isSearchMarkerOnMap.value
                         ? IconButton(
                       icon: Icon(Icons.close, color: Colors.grey),
                       onPressed: () {
@@ -378,10 +378,10 @@ class MapScreen extends StatelessWidget {
                     fillColor: AppColors.cardLight,
                     filled: true,
                     prefixIcon: Icon(
-                        mapController.isMarkerOnMap.value
+                        mapController.isSearchMarkerOnMap.value
                             ? Icons.close
                             : Icons.search,
-                        color: mapController.isMarkerOnMap.value
+                        color: mapController.isSearchMarkerOnMap.value
                             ? Colors.grey
                             : Colors.transparent),
                     border: OutlineInputBorder(
