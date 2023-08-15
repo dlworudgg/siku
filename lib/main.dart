@@ -20,29 +20,11 @@ void main()  async {
 
 
   await dotenv.load(fileName: '.env');
-  //
-  // Hive.registerAdapter(ResultAdapter());
-  // Hive.registerAdapter(GeometryAdapter());
-  // Hive.registerAdapter(LocationAdapter());
-  // Hive.registerAdapter(EditorialSummaryAdapter());
-  // Hive.registerAdapter(PhotoAdapter());
-  // Hive.registerAdapter(PhotosListAdapter());
-  // Hive.registerAdapter(ReviewsAdapter());
-
 
   final appDocumentDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
 
   print(appDocumentDir.path);
-  // final box = await Hive.openBox('placeDetails');
-
-  // await Hive.initFlutter();
-
-  // var my_list = await Hive.openBox('my list');
-  // // AuthService authService = AuthService();
-  // String? imageUrl = await authService.getProfileImageUrl();
-  // await my_list.put('googleProfileImageUrl', imageUrl);
-  // my_list.close();
 
   runApp(MaterialApp(home: MyApp()));
 }
@@ -67,6 +49,9 @@ class MyApp extends StatelessWidget{
 class Home extends StatelessWidget {
   final mapController = Get.put(MapController());
   final initControllerInstance = Get.put(initController());
+
+
+
 
   @override
   Widget build(BuildContext context) {

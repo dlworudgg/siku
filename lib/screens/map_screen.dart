@@ -76,63 +76,130 @@ class MapScreen extends StatelessWidget {
                     const SizedBox(width: 10),
 
                     // Transparent Slide Menu at the top
-                    Expanded(
-                      child: Container(
-                        height: 50,
-                        color: Colors.transparent,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 8,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 5.0, right: 3.0, top: 8, bottom: 8),
-                              child: Container(
-                                width: mapController.widthList[index],
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                      color: Colors.grey, width: 1),
-                                ),
-                                child: Row(
-                                  children: [
-                                    // Circle with vibrant primary colors
-                                    Padding(
-                                      padding: const EdgeInsets.all(3.0),
-                                      // child: RepaintBoundary(
-                                      child: Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          color: mapController.primaryColors[index],
-                                          shape: BoxShape.circle,
-                                          border:Border.all(
-                                            color: Colors.black
-                                                .withOpacity(0.3), // Set the border color
-                                            width: 0.6,
-                                          ),
-                                        ),
+
+
+            Expanded(
+              child: Container(
+                height: 50,
+                color: Colors.transparent,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: mapController.widthList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 5.0, right: 3.0, top: 8, bottom: 8),
+                      child: GestureDetector(
+                        onTap: () {
+                          mapController.toggleSelection(index);
+                        },
+                        child: Obx(() { // Rebuilds this widget when selectedIndexes changes
+                          return Container(
+                            width: mapController.widthList[index],
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: mapController.selectedIndexes.contains(index)
+                                  ? Colors.lightBlue[100]
+                                  : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey, width: 1),
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: mapController.primaryColors[index],
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.black.withOpacity(0.3),
+                                        width: 0.6,
                                       ),
-                                      // ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Center(
-                                        child: Text(
-                                            mapController.cuisines[index],
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontWeight:
-                                                FontWeight.bold))),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                                const SizedBox(width: 10),
+                                Center(
+                                  child: Text(
+                                    mapController.cuisines[index],
+                                    style: TextStyle(
+                                        color: mapController.selectedIndexes.contains(index)
+                                            ? Colors.blue[900]
+                                            : Colors.black,
+                                        fontWeight: FontWeight.bold
+                                    ),
+                                  )
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                       ),
-                    ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+                    // Expanded(
+                    //   child: Container(
+                    //     height: 50,
+                    //     color: Colors.transparent,
+                    //     child: ListView.builder(
+                    //       scrollDirection: Axis.horizontal,
+                    //       itemCount: 8,
+                    //       itemBuilder: (BuildContext context, int index) {
+                    //         return Padding(
+                    //           padding: const EdgeInsets.only(
+                    //               left: 5.0, right: 3.0, top: 8, bottom: 8),
+                    //           child: Container(
+                    //             width: mapController.widthList[index],
+                    //             height: 10,
+                    //             decoration: BoxDecoration(
+                    //               color: Colors.grey[100],
+                    //               borderRadius: BorderRadius.circular(15),
+                    //               border: Border.all(
+                    //                   color: Colors.grey, width: 1),
+                    //             ),
+                    //             child: Row(
+                    //               children: [
+                    //                 // Circle with vibrant primary colors
+                    //                 Padding(
+                    //                   padding: const EdgeInsets.all(3.0),
+                    //                   // child: RepaintBoundary(
+                    //                   child: Container(
+                    //                     width: 20,
+                    //                     height: 20,
+                    //                     decoration: BoxDecoration(
+                    //                       color: mapController.primaryColors[index],
+                    //                       shape: BoxShape.circle,
+                    //                       border:Border.all(
+                    //                         color: Colors.black
+                    //                             .withOpacity(0.3), // Set the border color
+                    //                         width: 0.6,
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                   // ),
+                    //                 ),
+                    //                 const SizedBox(width: 10),
+                    //                 Center(
+                    //                     child: Text(
+                    //                         mapController.cuisines[index],
+                    //                         style: const TextStyle(
+                    //                             color: Colors.black,
+                    //                             fontWeight:
+                    //                             FontWeight.bold))),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         );
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                     Expanded(
@@ -275,13 +342,13 @@ class MapScreen extends StatelessWidget {
                     fillColor: AppColors.cardLight,
                     filled: true,
                     prefixIcon: Icon(
-                        mapController.isMarkerOnMap.value
+                        mapController.isSearchMarkerOnMap.value
                             ? Icons.arrow_back_ios
                             : Icons.search,
-                        color: mapController.isMarkerOnMap.value
+                        color: mapController.isSearchMarkerOnMap.value
                             ? Colors.blue
                             : Colors.grey),
-                    suffixIcon: mapController.isMarkerOnMap.value
+                    suffixIcon: mapController.isSearchMarkerOnMap.value
                         ? IconButton(
                       icon: Icon(Icons.close, color: Colors.grey),
                       onPressed: () {
@@ -311,10 +378,10 @@ class MapScreen extends StatelessWidget {
                     fillColor: AppColors.cardLight,
                     filled: true,
                     prefixIcon: Icon(
-                        mapController.isMarkerOnMap.value
+                        mapController.isSearchMarkerOnMap.value
                             ? Icons.close
                             : Icons.search,
-                        color: mapController.isMarkerOnMap.value
+                        color: mapController.isSearchMarkerOnMap.value
                             ? Colors.grey
                             : Colors.transparent),
                     border: OutlineInputBorder(

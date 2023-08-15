@@ -17,6 +17,7 @@ import '../models/place_detail_response.dart';
 import '../pages/share_room_page.dart';
 import '../screens/map_screen.dart';
 import '../screens/search_screen.dart';
+import 'my_list_controller.dart';
 
 class MapController extends GetxController {
 
@@ -26,13 +27,6 @@ class MapController extends GetxController {
   //Google Maps Related
   Position? current_location;
 
-
-  // static const _initialCameraPosition = CameraPosition(
-  //   target: LatLng(40.71918288468455, -74.0415231837935),
-  //   zoom: 14.5,
-  // );
-  //
-  // static CameraPosition get initialCameraPosition => _initialCameraPosition;
 
   var _initialCameraPosition = CameraPosition(
     target: LatLng(40.71918288468455, -74.0415231837935),
@@ -48,7 +42,7 @@ class MapController extends GetxController {
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
   late GoogleMapController googleMapController;
   RxSet<Marker> markers = <Marker>{}.obs; // Using RxSet<Marker> for _markers
-  var isMarkerOnMap = false.obs; // Making it observable
+  var isSearchMarkerOnMap = false.obs; // Making it observable
 
   // final RxDouble lat = null.obs;
   final RxDouble lat = (40.71918288468455).obs;
@@ -90,6 +84,9 @@ class MapController extends GetxController {
   Rx<Result?> placeDetail = (null as Result?).obs;
   var doesSummary = false.obs;
 
+
+  var selectedIndexes = <int>[].obs;
+
   List<Color?> primaryColors = [
     Colors.red[300],
     Colors.blue[300],
@@ -108,8 +105,85 @@ class MapController extends GetxController {
     100, 120, 110, 120, 100, 100, 110, 160
   ];
 
+  Map<String, Color?> cuisineColorMap = {};
 
 
+  // var myListBox = Rx<Box?>(null);
+  // var aIListBox = Rx<Box?>(null);
+  Box? myListBox;
+  Box? aIListBox;
+  // final ListController = Get.put(MyListController());
+  double colorToHue(Color? color) {
+    if (color == null) {
+      return 0.0;
+    }
+    HSLColor hslColor = HSLColor.fromColor(color);
+    return hslColor.hue;
+  }
+
+  Future<void> onInit() async {
+    super.onInit();
+
+    for (int i = 0; i < cuisines.length; i++) {
+      cuisineColorMap[cuisines[i]] = primaryColors[i];
+    }
+
+    if (Hive.isBoxOpen('placeDetails')) {
+      myListBox = Hive.box('placeDetails');
+    } else {
+      myListBox = await Hive.openBox('placeDetails');
+    }
+
+    // Check if the 'placeDetails_AISummary' box is already opened.
+    if (Hive.isBoxOpen('placeDetails_AISummary')) {
+      aIListBox = Hive.box('placeDetails_AISummary');
+    } else {
+      aIListBox = await Hive.openBox('placeDetails_AISummary');
+    }
+    // myListBox.value = await Hive.openBox('placeDetails');
+    // aIListBox.value = await Hive.openBox('placeDetails_AISummary');
+    final placeDetailKeys = myListBox?.keys.toList() ?? [];
+
+    for (var key in placeDetailKeys) {
+      var markerplaceDetail = myListBox?.get(key);
+      var markwrAiDetails = aIListBox?.get(key);
+
+      final lat = markerplaceDetail['geometry']['lat'];
+      final lng = markerplaceDetail['geometry']['lng'];
+      final cuisinesStyles = markwrAiDetails['Cuisines/Styles'];
+      final markerColor = cuisineColorMap[cuisinesStyles];
+      final markerHue = colorToHue(markerColor);
+
+      final markerId = key + '_' + cuisinesStyles;
+
+      final marker = Marker(
+        markerId: MarkerId(markerId),
+        position: LatLng(lat, lng),
+        icon: BitmapDescriptor.defaultMarkerWithHue(markerHue),
+        // infoWindow: InfoWindow(
+        //   title: cuisinesStyles,
+        // ),
+      );
+      // print('Lat: $lat, Lng: $lng, Cuisines/Styles: $cuisinesStyles');
+
+      markers.add(marker);
+    }
+    // print(ListController.box1.value!.get(placeDetailKeys[0])['geometry']['lat']);
+    // print(ListController.box1.value!.get(placeDetailKeys[0])['geometry']['lng']);
+    // print(ListController.box4.value!.get(placeDetailKeys[0])['Cuisines/Styles']);
+  }
+
+
+
+
+
+  void toggleSelection(int index) {
+    if (selectedIndexes.contains(index)) {
+      selectedIndexes.remove(index);
+    } else {
+      selectedIndexes.add(index);
+    }
+  }
 
   //sign-in and out
   void showSignOutDialog(BuildContext context) {
@@ -172,8 +246,9 @@ class MapController extends GetxController {
   }
 
   void resetMarkerOnMap() {
-      isMarkerOnMap.value = false; // reset isMarkerOnMap to false when markers are reset
-      markers.clear(); // clear all markers from the set
+      isSearchMarkerOnMap.value = false; // reset isMarkerOnMap to false when markers are reset
+      markers.removeWhere((marker) => marker.markerId.value == 'selected_location');
+      // markers.clear(); // clear all markers from the set
       doesSummary.value = false;
   }
 
@@ -583,7 +658,7 @@ class MapController extends GetxController {
         position: LatLng(currentLatitude , currentLongitude),
       ),
     );
-    isMarkerOnMap.value = true;
+    isSearchMarkerOnMap.value = true;
     // showPlaceDetail();
   }
 
@@ -651,8 +726,5 @@ class MapController extends GetxController {
   //   isExpanded.value = !isExpanded.value;
   //   // update();  // This will refresh any widgets that are bound to _isExpanded
   // }
-
-
-
 
 }
