@@ -129,6 +129,7 @@ class Result {
       'user_ratings_total': userRatingsTotal,
       'website': website,
       'weekday_text': weekdayText,
+      'cuisines/styles' : cuisinesstyles,
     };
   }
 

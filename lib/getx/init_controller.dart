@@ -13,6 +13,19 @@ import '../screens/map_screen.dart';
 class initController extends GetxController {
   final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
 
+
+
+  String convertToString(dynamic value) {
+    if (value == null) {
+      return "Not Available";
+    }
+
+    if (value is double && value.isNaN) {
+      return "Not Available";
+    }
+
+    return value.toString();
+  }
   Future<void> onInit() async {
     super.onInit();
     // print("starting Oninit");
@@ -26,6 +39,11 @@ class initController extends GetxController {
 
     // print(box1.get("ChIJs8MdNo9ZwokRTPUHiArLC-o")['cuisines/styles']);
     if (box1.isEmpty ||box2.isEmpty  || box3.isEmpty ||box4.isEmpty  ) {
+      await box1.clear();
+      await box2.clear();
+      await box3.clear();
+      await box4.clear();
+
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('UserSavedPlace')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -59,19 +77,26 @@ class initController extends GetxController {
         Map<String, dynamic>? savedAIResponse;
         Map<String, dynamic> suumayData = summaryDoc.data() as Map<String, dynamic>;
 
+        String cuisinesStyles = convertToString(suumayData['Cuisines/Styles']);
+        String restaurantType = convertToString(suumayData['Restaurant Type']);
+        String specialtyDishes = convertToString(suumayData['Specialty Dishes']);
+        String strengthsOfTheRestaurant = convertToString(suumayData['Strengths of the Restaurant']);
+        String areasForImprovement = convertToString(suumayData['Areas for Improvement']);
+        String overallSummaryOfTheRestaurant = convertToString(suumayData['Overall Summary of the Restaurant']);
+
         savedAIResponse = {
-          'Cuisines/Styles': suumayData['Cuisines/Styles'] as String,
-          'Restaurant Type': suumayData['Restaurant Type'] as String,
-          'Specialty Dishes': suumayData['Specialty Dishes'] as String,
-          'Strengths of the Restaurant':
-          suumayData['Strengths of the Restaurant'] as String,
-          'Areas for Improvement': suumayData['Areas for Improvement'] as String,
-          'Overall Summary of the Restaurant':
-          suumayData['Overall Summary of the Restaurant'] as String,
+          'Cuisines/Styles': cuisinesStyles,
+          'Restaurant Type': restaurantType,
+          'Specialty Dishes': specialtyDishes,
+          'Strengths of the Restaurant':strengthsOfTheRestaurant,
+          'Areas for Improvement': areasForImprovement,
+          'Overall Summary of the Restaurant': overallSummaryOfTheRestaurant,
         };
 
 
         // await box1.put( placeID, data);
+
+
         await box1.put( placeID, placeData);
         await box2.put( placeID, photoReferences);
         await box3.add( placeID);

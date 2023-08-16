@@ -203,18 +203,34 @@ class _SearchScreenState extends State<SearchScreen> {
     mapController.doesSummary.value = result.exists;
 
     Map<String, dynamic> data = result.data() as Map<String, dynamic>;
+    String cuisinesStyles = convertToString(data['Cuisines/Styles']);
+    String restaurantType = convertToString(data['Restaurant Type']);
+    String specialtyDishes = convertToString(data['Specialty Dishes']);
+    String strengthsOfTheRestaurant = convertToString(data['Strengths of the Restaurant']);
+    String areasForImprovement = convertToString(data['Areas for Improvement']);
+    String overallSummaryOfTheRestaurant = convertToString(data['Overall Summary of the Restaurant']);
+
     mapController.savedAIResponse = {
-      'Cuisines/Styles': data['Cuisines/Styles'] as String,
-      'Restaurant Type': data['Restaurant Type'] as String,
-      'Specialty Dishes': data['Specialty Dishes'] as String,
-      'Strengths of the Restaurant':
-      data['Strengths of the Restaurant'] as String,
-      'Areas for Improvement': data['Areas for Improvement'] as String,
-      'Overall Summary of the Restaurant':
-      data['Overall Summary of the Restaurant'] as String,
+      'Cuisines/Styles': cuisinesStyles,
+      'Restaurant Type': restaurantType,
+      'Specialty Dishes': specialtyDishes,
+      'Strengths of the Restaurant':strengthsOfTheRestaurant,
+      'Areas for Improvement': areasForImprovement,
+      'Overall Summary of the Restaurant': overallSummaryOfTheRestaurant,
     };
   }
 
+  String convertToString(dynamic value) {
+    if (value == null) {
+      return "Not Available";
+    }
+
+    if (value is double && value.isNaN) {
+      return "Not Available";
+    }
+
+    return value.toString();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
