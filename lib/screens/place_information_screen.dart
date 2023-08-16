@@ -33,6 +33,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
   // Map<String, dynamic>? _savedAIResponse;
   final MListController = Get.put(MyListController());
   final PListController = Get.put(PlaceListController());
+  Map<String, dynamic>? placeDetailInformation;
 
   Future<void> getData(placeId) async {
 
@@ -46,29 +47,14 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
     PListController.savedAIResponse = formattedData;
 
 
-    // final doc = await FirebaseFirestore.instance
-    //     .collection('PlacesReviewSummary')
-    //     .doc(placeId)
-    //     .get();
-    // Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    // setState(() {
-    //   _savedAIResponse = {
-    //     'Cuisines/Styles': data['Cuisines/Styles'] as String,
-    //     'Restaurant Type': data['Restaurant Type'] as String,
-    //     'Specialty Dishes': data['Specialty Dishes'] as String,
-    //     'Strengths of the Restaurant':
-    //         data['Strengths of the Restaurant'] as String,
-    //     'Areas for Improvement': data['Areas for Improvement'] as String,
-    //     'Overall Summary of the Restaurant':
-    //         data['Overall Summary of the Restaurant'] as String,
-    //   };
-    // });
   }
 
   @override
   void initState() {
     super.initState();
     getData(widget.placeId);
+    final box = MListController.box1.value;
+    final placeDetailInformation = box?.get(widget.placeId);
   }
 
   @override
@@ -199,7 +185,7 @@ class _placeInformationScreenState extends State<placeInformationScreen> {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            PListController.savedAIResponse?['Cuisines/Styles'] ?? '',
+                            placeDetailInformation?['cuisines/styles'] ?? PListController.savedAIResponse?['Cuisines/Styles'] ?? '',
                             style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.normal),
                           ),

@@ -38,6 +38,7 @@ class Result {
   final bool? servesWine;
   final bool? takeout;
   final String? placeId;
+  final String? cuisinesstyles;
 
   Result({
     this.name,
@@ -62,6 +63,7 @@ class Result {
     this.servesWine,
     this.takeout,
     this.placeId,
+    this.cuisinesstyles,
   });
 
 
@@ -126,7 +128,7 @@ class Result {
       'types': types,
       'user_ratings_total': userRatingsTotal,
       'website': website,
-      'weekday_text': weekdayText
+      'weekday_text': weekdayText,
     };
   }
 
@@ -176,6 +178,7 @@ class Result {
         servesVegetarianFood:  firestoreMap['servesVegetarianFood'] is bool?  firestoreMap['servesVegetarianFood'] as bool : null,
         servesWine:  firestoreMap['servesWine'] is bool?  firestoreMap['servesWine'] as bool : null,
         takeout: firestoreMap['takeout'] is bool?  firestoreMap['takeout'] as bool : null,
+      cuisinesstyles : firestoreMap['cuisines/styles'] as String?,
     );
   }
 
@@ -204,6 +207,7 @@ class Result {
       servesWine: servesWine,
       takeout: takeout,
       placeId: placeId,
+      cuisinesstyles : cuisinesstyles,
     );
   }
 

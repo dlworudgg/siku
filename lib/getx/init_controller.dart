@@ -21,16 +21,26 @@ class initController extends GetxController {
     final box3 = await Hive.openBox('placeDetails_key_order');
     final box4 = await Hive.openBox('placeDetails_AISummary');
 
-    final boxExist = await Hive.boxExists('placeDetails');
+    // final boxExist = await Hive.boxExists('placeDetails');
+    List placeIDList;
 
+    // print(box1.get("ChIJs8MdNo9ZwokRTPUHiArLC-o")['cuisines/styles']);
     if (box1.isEmpty ||box2.isEmpty  || box3.isEmpty ||box4.isEmpty  ) {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('UserSavedPlace')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection('places')
           .get();
+
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         String placeID = doc.id;
+        final placeDoc = await FirebaseFirestore.instance
+            .collection('PlacesInformation')
+            .doc(placeID)
+            .get();
+
+        Map<String, dynamic> placeData = placeDoc.data() as Map<String, dynamic>;
+
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         List<Uint8List> photoReferences = [];
         if (data['photos'] != null) {
@@ -61,8 +71,8 @@ class initController extends GetxController {
         };
 
 
-
-        await box1.put( placeID, data);
+        // await box1.put( placeID, data);
+        await box1.put( placeID, placeData);
         await box2.put( placeID, photoReferences);
         await box3.add( placeID);
         await box4.put( placeID,  savedAIResponse);
