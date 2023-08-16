@@ -127,6 +127,9 @@ class MapController extends GetxController {
     for (int i = 0; i < cuisines.length; i++) {
       cuisineColorMap[cuisines[i]] = primaryColors[i];
     }
+    for (int i = 0; i < cuisines.length; i++) {
+      selectedIndexes.add(i);
+    }
 
     if (Hive.isBoxOpen('placeDetails')) {
       myListBox = Hive.box('placeDetails');
@@ -167,6 +170,7 @@ class MapController extends GetxController {
       // print('Lat: $lat, Lng: $lng, Cuisines/Styles: $cuisinesStyles');
 
       markers.add(marker);
+      allMarkers.add(marker);
     }
     // print(ListController.box1.value!.get(placeDetailKeys[0])['geometry']['lat']);
     // print(ListController.box1.value!.get(placeDetailKeys[0])['geometry']['lng']);
@@ -176,15 +180,44 @@ class MapController extends GetxController {
 
 
 
-
+  //
+  // void toggleSelection(int index) {
+  //   if (selectedIndexes.contains(index)) {
+  //     selectedIndexes.remove(index);
+  //   } else {
+  //     selectedIndexes.add(index);
+  //   }
+  // }
   void toggleSelection(int index) {
     if (selectedIndexes.contains(index)) {
       selectedIndexes.remove(index);
+      removeMarkersForCuisine(cuisines[index]);
     } else {
       selectedIndexes.add(index);
+      addMarkersForCuisine(cuisines[index]);
     }
   }
 
+  void removeMarkersForCuisine(String cuisine) {
+    // print(cuisine);
+    var idsToRemove = markers
+        .where((marker) => marker.markerId.value.contains(cuisine))
+        .map((marker) => marker.markerId)
+        .toList();
+
+    idsToRemove.forEach((id) {
+      markers.removeWhere((marker) => marker.markerId == id);
+    });
+  }
+  final allMarkers = <Marker>[]; // This list holds all the markers
+
+  void addMarkersForCuisine(String cuisine) {
+    var markersToAdd = allMarkers
+        .where((marker) => marker.markerId.value.contains(cuisine))
+        .toList();
+
+    markers.addAll(markersToAdd);
+  }
   //sign-in and out
   void showSignOutDialog(BuildContext context) {
     showDialog(
