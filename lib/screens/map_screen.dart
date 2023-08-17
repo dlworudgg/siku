@@ -84,7 +84,7 @@ class MapScreen extends StatelessWidget {
                 color: Colors.transparent,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: mapController.widthList.length,
+                  itemCount:  mapController.cuisinesStylesList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.only(left: 5.0, right: 3.0, top: 8, bottom: 8),
@@ -94,7 +94,8 @@ class MapScreen extends StatelessWidget {
                         },
                         child: Obx(() { // Rebuilds this widget when selectedIndexes changes
                           return Container(
-                            width: mapController.widthList[index],
+                            // width: mapController.widthList[index],
+                            width:  mapController.buttonWidths[index],
                             height: 10,
                             decoration: BoxDecoration(
                               color: mapController.selectedIndexes.contains(index)
@@ -111,7 +112,8 @@ class MapScreen extends StatelessWidget {
                                     width: 20,
                                     height: 20,
                                     decoration: BoxDecoration(
-                                      color: mapController.primaryColors[index],
+                                      color : mapController.cuisineColorMap[mapController.cuisinesStylesList[index]],
+                                      // color: mapController.primaryColors[index],
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: Colors.black.withOpacity(0.3),
@@ -123,7 +125,8 @@ class MapScreen extends StatelessWidget {
                                 const SizedBox(width: 10),
                                 Center(
                                   child: Text(
-                                    mapController.cuisines[index],
+                                    // mapController.cuisines[index],
+                                    mapController.cuisinesStylesList[index],
                                     style: TextStyle(
                                         color: mapController.selectedIndexes.contains(index)
                                             ? Colors.blue[900]

@@ -97,14 +97,17 @@ class MapController extends GetxController {
     Colors.brown[300],
     Colors.teal[300]
   ];
-  List<String> cuisines = [
-    "Korean", "Japanese", "Chinese", "American", "Italian", "French", "Mexican", "Mediterranean"
-  ];
+  var cuisinesStylesSet = <String>{};
+  List cuisinesStylesList = [];
 
-  List<double> widthList = [
-    100, 120, 110, 120, 100, 100, 110, 160
-  ];
-
+  // List<String> cuisines = [
+  //   "Korean", "Japanese", "Chinese", "American", "Italian", "French", "Mexican", "Mediterranean"
+  // ];
+  //
+  // List<double> widthList = [
+  //   100, 120, 110, 120, 100, 100, 110, 160
+  // ];
+  var buttonWidths = <double>[];
   Map<String, Color?> cuisineColorMap = {};
 
 
@@ -113,78 +116,189 @@ class MapController extends GetxController {
   Box? myListBox;
   Box? aIListBox;
   // final ListController = Get.put(MyListController());
-  double colorToHue(Color? color) {
-    if (color == null) {
-      return 0.0;
-    }
+  // double colorToHue(Color? color) {
+  //   if (color == null) {
+  //     return 0.0;
+  //   }
+  //   HSLColor hslColor = HSLColor.fromColor(color);
+  //   HSLColor hslWithNewLightness = hslColor.withLightness(0.7);
+  //   return hslColor.hue;
+  // }
+  Color adjustLightness(Color color) {
     HSLColor hslColor = HSLColor.fromColor(color);
-    return hslColor.hue;
+    HSLColor hslWithNewLightness = hslColor.withLightness(0.2);
+    return hslWithNewLightness.toColor();
+  }
+
+  // BitmapDescriptor createLighterMarkerIcon(Color color) {
+  //   Color lighterColor = adjustLightness(color);
+  //   return BitmapDescriptor.defaultMarkerWithHue(
+  //     HSLColor.fromColor(lighterColor).hue,
+  //   );
+  // }
+  BitmapDescriptor createMarkerIconFromColor(Color color) {
+    return BitmapDescriptor.defaultMarkerWithHue(
+      HSLColor.fromColor(color).hue,
+    );
   }
 
   Future<void> onInit() async {
     super.onInit();
 
-    for (int i = 0; i < cuisines.length; i++) {
-      cuisineColorMap[cuisines[i]] = primaryColors[i];
-    }
 
+    // Open the Hive boxes or use the existing opened boxes
     if (Hive.isBoxOpen('placeDetails')) {
       myListBox = Hive.box('placeDetails');
     } else {
       myListBox = await Hive.openBox('placeDetails');
     }
-
-    // Check if the 'placeDetails_AISummary' box is already opened.
     if (Hive.isBoxOpen('placeDetails_AISummary')) {
       aIListBox = Hive.box('placeDetails_AISummary');
     } else {
       aIListBox = await Hive.openBox('placeDetails_AISummary');
     }
-    // myListBox.value = await Hive.openBox('placeDetails');
-    // aIListBox.value = await Hive.openBox('placeDetails_AISummary');
+
+    String otherCategory = 'Other';
+    int otherIndex = -1;
+
     final placeDetailKeys = myListBox?.keys.toList() ?? [];
 
+    for (var key in placeDetailKeys) {
+      var markwrAiDetails = aIListBox?.get(key);
+      var markerplaceDetail = myListBox?.get(key);
+
+      String? cuisinesStyles = markerplaceDetail?['cuisines/styles'];
+
+      if (cuisinesStyles == null) {
+        cuisinesStyles = markwrAiDetails?['Cuisines/Styles'];
+      }
+
+      if (cuisinesStyles == "N/A") {
+        cuisinesStyles = "Other";
+      }
+
+      if (cuisinesStyles != null) {
+        cuisinesStylesSet.add(cuisinesStyles);
+      }
+    }
+
+    // Populate cuisineColorMap and selectedIndexes based on cuisinesStylesSet
+    cuisinesStylesList = cuisinesStylesSet.toList();
+
+    for (int i = 0; i < cuisinesStylesList.length; i++) {
+      if (cuisinesStylesList[i] == otherCategory) {
+        otherIndex = i; // Save the index of "Other" category
+        continue; // Skip the "Other" category for now
+      }
+
+      cuisineColorMap[cuisinesStylesList[i]] = primaryColors[i % primaryColors.length]; // Use modulo to avoid index out of bounds
+      selectedIndexes.add(i);
+    } if (otherIndex != -1) {
+      // Move "Other" category and corresponding values to the end
+      cuisinesStylesList.add(cuisinesStylesList.removeAt(otherIndex));
+      selectedIndexes.add(otherIndex);
+      cuisineColorMap[otherCategory] = primaryColors[otherIndex % primaryColors.length]; // Use modulo to avoid index out of bounds
+    }
+
+    // for (int i = 0; i < cuisinesStylesList.length; i++) {
+    //   cuisineColorMap[cuisinesStylesList[i]] = primaryColors[i];
+    //   selectedIndexes.add(i);
+    // }
+
+    // Populate buttonWidths based on cuisinesStylesList
+    for (String style in cuisinesStylesList) {
+      double width = 100; // Default value
+      if (style.length > 5) {
+        width = 100 + ((style.length - 5) * 10);
+      }
+      buttonWidths.add(width);
+    }
+
+    // Create markers
     for (var key in placeDetailKeys) {
       var markerplaceDetail = myListBox?.get(key);
       var markwrAiDetails = aIListBox?.get(key);
 
       final lat = markerplaceDetail['geometry']['lat'];
       final lng = markerplaceDetail['geometry']['lng'];
-      final cuisinesStyles = markwrAiDetails['Cuisines/Styles'];
+      // final cuisinesStyles = markwrAiDetails['Cuisines/Styles'];
+      String? cuisinesStyles = markerplaceDetail?['cuisines/styles'];
+
+      cuisinesStyles ??= markwrAiDetails?['Cuisines/Styles'];
+
+      if (cuisinesStyles == "N/A") {
+        cuisinesStyles = "Other";
+      }
+
       final markerColor = cuisineColorMap[cuisinesStyles];
-      final markerHue = colorToHue(markerColor);
+
+      // final markerHue = adjustLightness(colorToHue(markerColor));
+      // final markerHue = adjustLightness(markerColor);
+      //
+      // print(" ");
+      // print(cuisinesStyles);
+      // print(markerColor);
+      // print(adjustLightness(markerColor!));
 
       final markerId = key + '_' + cuisinesStyles;
-
-      final marker = Marker(
-        markerId: MarkerId(markerId),
-        position: LatLng(lat, lng),
-        icon: BitmapDescriptor.defaultMarkerWithHue(markerHue),
-        // infoWindow: InfoWindow(
-        //   title: cuisinesStyles,
-        // ),
-      );
-      // print('Lat: $lat, Lng: $lng, Cuisines/Styles: $cuisinesStyles');
-
-      markers.add(marker);
+      if (markerColor != null) {
+        final marker = Marker(
+          markerId: MarkerId(markerId),
+          position: LatLng(lat, lng),
+          icon: createMarkerIconFromColor(markerColor),
+          infoWindow: InfoWindow(
+            title: (markerplaceDetail?["Name"] ?? "Unknown Name") + ": " + (cuisinesStyles ?? "Unknown Style"),
+          ),
+          // icon: createLighterMarkerIcon(markerColor),
+        );
+        markers.add(marker);
+        allMarkers.add(marker);
+      }
     }
-    // print(ListController.box1.value!.get(placeDetailKeys[0])['geometry']['lat']);
-    // print(ListController.box1.value!.get(placeDetailKeys[0])['geometry']['lng']);
-    // print(ListController.box4.value!.get(placeDetailKeys[0])['Cuisines/Styles']);
   }
 
 
 
-
-
+  //
+  // void toggleSelection(int index) {
+  //   if (selectedIndexes.contains(index)) {
+  //     selectedIndexes.remove(index);
+  //   } else {
+  //     selectedIndexes.add(index);
+  //   }
+  // }
   void toggleSelection(int index) {
     if (selectedIndexes.contains(index)) {
       selectedIndexes.remove(index);
+      // removeMarkersForCuisine(cuisines[index]);
+      removeMarkersForCuisine(cuisinesStylesList[index]);
     } else {
       selectedIndexes.add(index);
+      // addMarkersForCuisine(cuisines[index]);
+      addMarkersForCuisine(cuisinesStylesList[index]);
     }
   }
 
+  void removeMarkersForCuisine(String cuisine) {
+    // print(cuisine);
+    var idsToRemove = markers
+        .where((marker) => marker.markerId.value.contains(cuisine))
+        .map((marker) => marker.markerId)
+        .toList();
+
+    idsToRemove.forEach((id) {
+      markers.removeWhere((marker) => marker.markerId == id);
+    });
+  }
+  final allMarkers = <Marker>[]; // This list holds all the markers
+
+  void addMarkersForCuisine(String cuisine) {
+    var markersToAdd = allMarkers
+        .where((marker) => marker.markerId.value.contains(cuisine))
+        .toList();
+
+    markers.addAll(markersToAdd);
+  }
   //sign-in and out
   void showSignOutDialog(BuildContext context) {
     showDialog(
