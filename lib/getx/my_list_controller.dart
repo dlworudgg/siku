@@ -8,6 +8,8 @@ class MyListController extends GetxController {
   var box4 = Rx<Box?>(null);
 
   var keys = RxList<dynamic>();
+  var isSimpleView = false.obs;
+
 
   Future<void> reorderList( int oldIndex, int newIndex) async {
     if (newIndex > oldIndex) {
@@ -46,8 +48,12 @@ class MyListController extends GetxController {
     box4.value = await Hive.openBox('placeDetails_AISummary');
     keys.addAll(box3.value!.values.toList());
 
+
     // Hive.close();
   }
+
+
+
 
 //
 //   @override
@@ -56,3 +62,4 @@ class MyListController extends GetxController {
 //     super.onClose();
 //   }
 }
+
