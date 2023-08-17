@@ -10,6 +10,7 @@ class MyListController extends GetxController {
   var keys = RxList<dynamic>();
   var isSimpleView = false.obs;
 
+  var filteredKeys = RxList<dynamic>();
 
   Future<void> reorderList( int oldIndex, int newIndex) async {
     if (newIndex > oldIndex) {
@@ -48,11 +49,23 @@ class MyListController extends GetxController {
     box4.value = await Hive.openBox('placeDetails_AISummary');
     keys.addAll(box3.value!.values.toList());
 
-
+    filteredKeys.addAll(keys);
     // Hive.close();
   }
 
-
+  void runFilter(String enteredKeyword) {
+    List<dynamic> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = keys;
+    } else {
+      results = keys.where((key) {
+        var placeDetail = box1.value!.get(key);
+        return placeDetail['Name'].toLowerCase().contains(enteredKeyword.toLowerCase());
+      }).toList();
+    }
+    // update the filtered keys
+    filteredKeys.assignAll(results);
+  }
 
 
 //
