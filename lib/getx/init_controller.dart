@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
+import '../pages/auth_page.dart';
 import '../screens/map_screen.dart';
 
 
@@ -28,7 +29,7 @@ class initController extends GetxController {
   }
   Future<void> onInit() async {
     super.onInit();
-    // print("starting Oninit");
+    print("starting Oninit");
     final box1 = await Hive.openBox('placeDetails');
     final box2 = await Hive.openBox('placeDetails_images');
     final box3 = await Hive.openBox('placeDetails_key_order');
@@ -43,7 +44,7 @@ class initController extends GetxController {
       await box2.clear();
       await box3.clear();
       await box4.clear();
-
+      print("Getting Firebase");
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('UserSavedPlace')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -104,6 +105,7 @@ class initController extends GetxController {
       }
     }
 
+    // Get.to(() => AuthPage());
     Get.to(() => MapScreen());
   }
 }

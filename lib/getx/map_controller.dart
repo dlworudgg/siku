@@ -63,7 +63,8 @@ class MapController extends GetxController {
   //Share List Related
   // var isExpanded = false.obs; // Making it observable
   var items = [Item(
-      id: FirebaseAuth.instance.currentUser!.uid,
+    id :'sss',
+      // id:  FirebaseAuth.instance.currentUser!.uid,
       name: 'My Saved Restaurants',
       isSavedList: true,
       image: 'lib/images/jae_logo_2.png',

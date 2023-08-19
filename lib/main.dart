@@ -51,10 +51,8 @@ class Home extends StatelessWidget {
   final initControllerInstance = Get.put(initController());
 
 
-
-
   @override
   Widget build(BuildContext context) {
-    return AuthPage();
+    return const AuthPage();
   }
 }
