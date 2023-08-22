@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+
+import '../models/place_detail_response.dart';
 
 class SharedListPage extends StatefulWidget {
   final String id;
@@ -11,18 +14,44 @@ class SharedListPage extends StatefulWidget {
   const SharedListPage({Key? key, required this.id, required this.isSavedList, required this.name})
       : super(key: key);
 
+
+
   @override
   State<SharedListPage> createState() => _SharedListPageState();
 }
 
 
 class _SharedListPageState extends State<SharedListPage> {
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  //
-  // if (isSavedList == true){
-  //
+
+
+  Future<QuerySnapshot> _fetchFromFirestore() async {
+    return await FirebaseFirestore.instance.collection('YourFirestoreCollection').get();
+  }
+
+  Future<Box<PlaceDetailResponse>> _fetchFromHive() async {
+    return await Hive.openBox<PlaceDetailResponse>('PlaceDetailResponseBox');
+  }
+
+
+
+
+  late Stream<QuerySnapshot> roomsStream;
+
+  // @override
+  // void initState() {
+  //   super.initState();
   // }
+    // Assigning the stream of documents to roomsStream
+  //   roomsStream = _firestore
+  //       .collection('UserSavedPlace')
+  //       .doc(widget.id)
+  //       .collection('places')
+  //       .snapshots();
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +65,21 @@ class _SharedListPageState extends State<SharedListPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Container(
-          padding: EdgeInsets.only(top :12.0, bottom: 12.0, left: 100, right: 100),
+          padding: const EdgeInsets.only(top :12.0, bottom: 12.0, left: 100, right: 100),
           // margin: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.white.withOpacity(0.85),
-                offset: Offset(0, -1),  // Negative offset to simulate top border
+                offset: const Offset(0, -1),  // Negative offset to simulate top border
                 spreadRadius: 1.0,
                 blurRadius: 0,
               )
             ],
           ),
-          child : Text("${widget.name}",
-            style: TextStyle(color: Colors.black,  fontSize :16),
+          child : Text(widget.name,
+            style: const TextStyle(color: Colors.black,  fontSize :16),
           ),
         ),
       ),
@@ -71,7 +100,7 @@ class _SharedListPageState extends State<SharedListPage> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.white.withOpacity(0.85),
-                          offset: Offset(
+                          offset: const Offset(
                               0, -1), // Negative offset to simulate top border
                           spreadRadius: 1.0,
                           blurRadius: 0,
@@ -83,10 +112,10 @@ class _SharedListPageState extends State<SharedListPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text('${widget.id} - ${index + 1}',
-                      style : TextStyle(color : Colors.black, fontSize :12),
+                      style : const TextStyle(color : Colors.black, fontSize :12),
                     ),
                         const SizedBox(height: 2),
-                    Text("The Best",
+                    const Text("The Best",
                       style : TextStyle(color : Colors.black, fontSize :22),
                     ),
                       ],

@@ -1,597 +1,408 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:siku/screens/search_screen.dart';
 import 'package:siku/theme.dart';
-import '../components/saved_button.dart';
-import '../helpers.dart';
-import '../models/open_ai_response.dart';
-import '../pages/messaging_page.dart';
-import '../pages/share_room_page.dart';
-import '../widgets/avatar.dart';
+import '../getx/map_controller.dart';
+import '../pages/my_list_page.dart';
 import 'dart:ui';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../models/place_detail_response.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class MapScreen extends StatefulWidget {
-  final double? lat;
-  final double? lng;
-  final Result? placeDetail;
-  // final ChatCompletionResponse? summary;
+class MapScreen extends StatelessWidget {
+  final mapController = Get.find<MapController>();
+  // Initialize the GetX Controller
 
-
-  const MapScreen(
-      {Key? key, this.lat, this.lng, this.placeDetail
-        // , this.summary
-      })
-      : super(key: key);
-
-  @override
-  State<MapScreen> createState() => _MapScreenState();
-}
-
-class _MapScreenState extends State<MapScreen> {
-  static const _initialCameraPosition = CameraPosition(
-    target: LatLng(40.71918288468455, -74.0415231837935),
-    zoom: 14.5,
-  );
-
-
-
-  // var imageUrl = my_list.get('googleProfileImageUrl');
-  final String googleMapKey = dotenv.get('GOOGLE_MAP_API_KEY');
-  final String googleMapBrowserKey = dotenv.get('GOOGLE_MAP_BROWSER_API_KEY');
-  late GoogleMapController _googleMapController;
-  Set<Marker> _markers = {};
-  bool isMarkerOnMap = false;
-
-
-  void _onMapCreated(GoogleMapController controller) {
-    _googleMapController = controller;
-
-    if (widget.lat != null && widget.lng != null) {
-      _googleMapController.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(widget.lat! - 0.012, widget.lng!),
-          14.5,
-        ),
-      );
-
-      setState(() {
-        _markers.add(
-          Marker(
-            markerId: MarkerId('selected_location'),
-            position: LatLng(widget.lat!, widget.lng!),
-          ),
-        );
-        isMarkerOnMap =
-            true; // set isMarkerOnMap to true when a marker is added
-      });
-      _showPlaceDetail();
-    }
-  }
-
-  void _resetCameraPosition() {
-    _googleMapController
-        .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-      target: LatLng(40.7178, -74.0431),
-      zoom: 14.5,
-    )));
-    setState(() {
-      isMarkerOnMap =
-          false; // reset isMarkerOnMap to false when camera position is reset
-    });
-  }
-
-  void _resetMarkerOnMap() {
-    setState(() {
-      isMarkerOnMap =
-          false; // reset isMarkerOnMap to false when markers are reset
-      _markers.clear(); // clear all markers from the set
-    });
-  }
-
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
-  }
-
-
-  void _showSignOutDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('User Name'),
-            // Replace 'User Name' with the actual user name
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Divider(color: Colors.grey),
-                Row(
-                  children: [
-                    Icon(Icons.logout, color: Colors.black),
-                    // This is the prefix icon
-                    SizedBox(width: 10),
-                    // Add some space between the icon and the button
-                    TextButton(
-                      child: Text('Sign Out'),
-                      onPressed: () {
-                        signUserOut();
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        });
-  }
-
-  void _onSearchTap() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      // This allows the bottom sheet to expand to its full height
-      builder: (BuildContext context) {
-        return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height,
-            maxWidth: MediaQuery.of(context).size.width,
-          ),
-          child: SearchScreen(),
-        );
-      },
-    );
-  }
-
-  void _onMenuTap() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      // This allows the bottom sheet to expand to its full height
-      builder: (BuildContext context) {
-        return SafeArea(
-          top: true,
-          child: Container(
-            decoration: const BoxDecoration(
-              // color: Colors.transparent,
-            ),
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.9,
-            maxWidth: MediaQuery.of(context).size.width,
-          ),
-          // child: MessagesPage(),
-          child: ShareRoomPage(),
-        ),)
-        ;
-      },
-    );
-  }
-
-  void _showPlaceDetail() {
-    // ChatCompletionResponse GPTResponse = await processPlaceDetailAI(placeDetail);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      // This allows you to control the size of the bottom sheet
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return FractionallySizedBox(
-          heightFactor: 0.7,
-          // This allows the bottom sheet to take up 60% of the screen
-          child: DefaultTabController(
-            length: 2, // number of tabs
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
-                ),
-              ),
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  TabBar(
-                    indicatorColor: Colors.black,
-                    tabs: [
-                      Tab(text:'Info'), // name the tabs as you wish
-                      Tab(text: 'Summary'),
-                    ],
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        _buildInfoTab(),
-                        // function that returns the widget for Info tab
-                        _buildSummaryTab(),
-                        // _buildInfoTab(),
-                        // function that returns the widget for Summary tab
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-
-      },
-    );
-  }
-
-  Widget _buildInfoTab() {
-    // You can move the content you want for the Info tab from _showPlaceDetail method here
-    return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-        ),
-        padding: EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          // wrap your Column in a SingleChildScrollView
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (widget.placeDetail != null)
-                Row(
-                  children: [
-                    Expanded( // Make sure the Text widget does not overflow
-                      child: Text(
-                        widget.placeDetail!.name ?? '', // If name is null, use empty string
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(width: 10), // Adds some spacing between the button and the name
-                    SaveButton(placeDetail: widget.placeDetail!),
-                  ],
-                ),
-              SizedBox(height: 10),
-              Text(
-                widget.placeDetail!.formattedAddress ?? '',
-                style: TextStyle(fontSize: 18),
-              ),
-            //   SizedBox(height: 10),
-            // for ( var review in widget.placeDetail!.reviews! ?? [])
-            //   Text(
-            //    review.text,
-            //     style: TextStyle(fontSize: 18),
-            //   ),
-              SizedBox(height: 10),
-              for (var text in widget.placeDetail!.weekdayText ?? [])
-                Text(
-                  text,
-                  style: TextStyle(fontSize: 16),
-                ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    widget.placeDetail!.rating != null
-                        ? widget.placeDetail!.rating!.toStringAsFixed(1)
-                        : "0", // Or any default value you'd like
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  SizedBox(width: 10),
-                  ...List<Widget>.generate(5, (index) {
-                    return Icon(
-                      widget.placeDetail!.rating != null &&
-                              index < widget.placeDetail!.rating!.round()
-                          ? Icons.star
-                          : Icons.star_border,
-                      // choose the icon based on the rating
-                      color: Colors.pink,
-                    );
-                  }),
-                ],
-              ),
-              SizedBox(height: 10),
-              if (widget.placeDetail!.photosList?.photos?.isNotEmpty ?? false)
-                SizedBox(
-                  height: 300,  // Adjust the height as required
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: widget.placeDetail!.photosList!.photos!.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),  // Adjust the spacing between images as required
-                        child: Image.network(
-                          'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${widget.placeDetail!.photosList!.photos![index].photoReference}&key=$googleMapBrowserKey',
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-          // if (widget.placeDetail != null)
-          //   SaveButton(placeDetail: widget.placeDetail!),
-        ]));
-  }
-
-
-  final _summaryTabVisited = ValueNotifier<bool>(false);
-  Map<String, dynamic>? _savedAIResponse;
-
-  @override
-  void initState() {
-    super.initState();
-    _processDataInBackground();
-  }
-  void _processDataInBackground() async {
-
-    if (widget.placeDetail == null) {
-      return;
-    }
-
-    final doc = await FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).get();
-    if (doc.exists) {
-      Map<String, dynamic> data  = doc.data() as Map<String, dynamic>;
-      _savedAIResponse = {
-        'Cuisines/Styles': data['Cuisines/Styles'] as String,
-        'Restaurant Type': data['Restaurant Type'] as String,
-        'Specialty Dishes': data['Specialty Dishes'] as String,
-        'Strengths of the Restaurant': data['Strengths of the Restaurant'] as String,
-        'Areas for Improvement': data['Areas for Improvement'] as String,
-        'Overall Summary of the Restaurant': data['Overall Summary of the Restaurant'] as String,
-              };
-      _summaryTabVisited.value = true;
-    } else {
-      var result = await processPlaceDetailAI(widget.placeDetail!);
-      if (result.choices.isNotEmpty) {
-        _savedAIResponse = processText(result.choices[0].message.content ?? '');
-        // print(widget.placeDetail!.placeId);
-        FirebaseFirestore.instance.collection('PlacesReviewSummary').doc(widget.placeDetail!.placeId).set(_savedAIResponse!);
-
-      }
-    }
-    _summaryTabVisited.value = true;
-  }
-  @override
-  void dispose() {
-    _summaryTabVisited.dispose();  // Dispose the ValueNotifier when not needed
-    super.dispose();
-  }
-
-  Widget _buildSummaryTab() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _summaryTabVisited,
-      builder: (context, value, child) {
-        if (_savedAIResponse != null) {
-          return buildResponseWidgets(_savedAIResponse!);
-        }
-
-        return const Center(
-          child : SizedBox(
-            width: 50,
-            height: 50,
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
-    );
-  }
-
-
-  Widget buildResponseWidgets(Map<String, dynamic> _savedAIResponse) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 10),
-          Text(
-            widget.placeDetail!.name ?? '',
-            // If name is null, use empty string
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-
-                Text(
-            _savedAIResponse['Cuisines/Styles']! ,
-            style: TextStyle(fontSize: 18,color: Colors.black.withOpacity(0.8)),
-          ),
-          SizedBox(height: 2),
-                    Text(
-              _savedAIResponse['Restaurant Type']!,
-              style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7)),
-                    ),
-
-          SizedBox(height: 10),
-          const Text(
-            "Summary",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Overall Summary of the Restaurant']!,
-            style: TextStyle(fontSize: 16),
-          ),
-
-          SizedBox(height: 10),
-          const Text(
-            "Specialty Dishes",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Specialty Dishes']!,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          const Text(
-            "Strengths of the Restaurant",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Strengths of the Restaurant']!,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          const Text(
-            "Areas for Improvement",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _savedAIResponse['Areas for Improvement']!,
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
-
-
+  MapScreen({
+    Key? key,
+  }) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(children: [
-      GoogleMap(
-        mapType: MapType.normal,
-        myLocationButtonEnabled: false,
-        zoomControlsEnabled: false,
-        initialCameraPosition: _initialCameraPosition,
-        onMapCreated: _onMapCreated,
-        markers: _markers,
-        // onMarkerTapped: _onMarkerTapped,
-      ),
-      Positioned(
-        top: 60.0,
-        left: 16.0,
-        // right: 16.0,
-        right: 50.0,
-        child: GestureDetector(
-          onTap: _onSearchTap,
-          child: AbsorbPointer(
-            child: TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Search Restaurants Here',
-                fillColor: AppColors.cardLight,
-                filled: true,
-                prefixIcon: Icon(
-                    isMarkerOnMap ? Icons.arrow_back_ios : Icons.search,
-                    color: isMarkerOnMap ? Colors.blue : Colors.grey),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+      body: Obx(() {
+        return Stack(children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: GoogleMap(
+              initialCameraPosition: mapController.initialCameraPosition,
+              markers: mapController.markers.toSet(),
+              myLocationButtonEnabled: false,
+              myLocationEnabled: true,
+              onMapCreated: (controller) {
+                mapController.googleMapController = controller;
+              },
             ),
           ),
-        ),
-      ),
-      Positioned(
-        top: 60.0,
-        left: 370.0,
-        right: 16.0,
-        child: GestureDetector(
-          onTap: _resetMarkerOnMap,
-          child: AbsorbPointer(
-            child: TextFormField(
-              decoration: InputDecoration(
-                fillColor: AppColors.cardLight,
-                filled: true,
-                prefixIcon: Icon(isMarkerOnMap ? Icons.close : Icons.search,
-                    color: isMarkerOnMap ? Colors.grey : Colors.transparent),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  // borderSide: BorderSide(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              // textInputAction: TextInputAction.search,
-            ),
-          ),
-        ),
-      ),
-      Positioned(
-          bottom: 40,
-          left: 10,
-          right: 0,
-          child: Padding(
-              // padding: const EdgeInsets.all(16.0),
-              padding:
-                  const EdgeInsets.only(left: 16.0, right: 110.0, bottom: 16.0),
-              child: ElevatedButton.icon(
-                  onPressed: () {
-                    _onMenuTap();
-                  },
-                  icon: const Icon(CupertinoIcons.group, size: 40),
-                  label: const Text('Siku',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.cardLight,
-                      foregroundColor: Colors.black,
-                      elevation: 0,
-                      fixedSize: const Size(double.infinity, 50),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      side: const BorderSide(
-                        width: 1.0,
-                        color: Colors.grey,
-                      ))))),
-      Positioned(
-        bottom: 56,
-        right: 30,
-        child: ElevatedButton(
-          onPressed: () => _showSignOutDialog(context),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black,
-            backgroundColor: AppColors.cardLight,
-            // foreground color
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            side: const BorderSide(
-              width: 1.0,
-              color: Colors.grey,
-            ),
-            elevation: 0,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 7.3, top: 7.3),
-            // Padding for the child widget
-            child: Avatar.small(url: Helpers.randomPictureUrl()),
-          ),
-        ),
-      ),
-      Positioned(
-        bottom: 120,
-        left: 30,
-        child: FloatingActionButton(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          onPressed: _resetCameraPosition,
-          // tooltip: 'Press the circle button',
-          child: const Icon(Icons.center_focus_strong),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50.0),
-          ),
-        ),
-      ),
-    ]));
-  }
 
+
+
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.15,
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+                // borderRadius: BorderRadius.circular(35),
+              ),
+              child :Column(
+                children: [ Row(
+                  children: [
+                    // Circle Button
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: InkWell(
+                        onTap: mapController.resetCameraPosition,
+                        child: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.center_focus_strong,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Spacer for some space between button and menu
+                    const SizedBox(width: 10),
+
+                    // Transparent Slide Menu at the top
+
+
+            Expanded(
+              child: Container(
+                height: 50,
+                color: Colors.transparent,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount:  mapController.cuisinesStylesList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 5.0, right: 3.0, top: 8, bottom: 8),
+                      child: GestureDetector(
+                        onTap: () {
+                          mapController.toggleSelection(index);
+                        },
+                        child: Obx(() { // Rebuilds this widget when selectedIndexes changes
+                          return Container(
+                            // width: mapController.widthList[index],
+                            width:  mapController.buttonWidths[index],
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: mapController.selectedIndexes.contains(index)
+                                  ? Colors.lightBlue[100]
+                                  : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey, width: 1),
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color : mapController.cuisineColorMap[mapController.cuisinesStylesList[index]],
+                                      // color: mapController.primaryColors[index],
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.black.withOpacity(0.3),
+                                        width: 0.6,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Center(
+                                  child: Text(
+                                    // mapController.cuisines[index],
+                                    mapController.cuisinesStylesList[index],
+                                    style: TextStyle(
+                                        color: mapController.selectedIndexes.contains(index)
+                                            ? Colors.blue[900]
+                                            : Colors.black,
+                                        fontWeight: FontWeight.bold
+                                    ),
+                                  )
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+                    // Expanded(
+                    //   child: Container(
+                    //     height: 50,
+                    //     color: Colors.transparent,
+                    //     child: ListView.builder(
+                    //       scrollDirection: Axis.horizontal,
+                    //       itemCount: 8,
+                    //       itemBuilder: (BuildContext context, int index) {
+                    //         return Padding(
+                    //           padding: const EdgeInsets.only(
+                    //               left: 5.0, right: 3.0, top: 8, bottom: 8),
+                    //           child: Container(
+                    //             width: mapController.widthList[index],
+                    //             height: 10,
+                    //             decoration: BoxDecoration(
+                    //               color: Colors.grey[100],
+                    //               borderRadius: BorderRadius.circular(15),
+                    //               border: Border.all(
+                    //                   color: Colors.grey, width: 1),
+                    //             ),
+                    //             child: Row(
+                    //               children: [
+                    //                 // Circle with vibrant primary colors
+                    //                 Padding(
+                    //                   padding: const EdgeInsets.all(3.0),
+                    //                   // child: RepaintBoundary(
+                    //                   child: Container(
+                    //                     width: 20,
+                    //                     height: 20,
+                    //                     decoration: BoxDecoration(
+                    //                       color: mapController.primaryColors[index],
+                    //                       shape: BoxShape.circle,
+                    //                       border:Border.all(
+                    //                         color: Colors.black
+                    //                             .withOpacity(0.3), // Set the border color
+                    //                         width: 0.6,
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                   // ),
+                    //                 ),
+                    //                 const SizedBox(width: 10),
+                    //                 Center(
+                    //                     child: Text(
+                    //                         mapController.cuisines[index],
+                    //                         style: const TextStyle(
+                    //                             color: Colors.black,
+                    //                             fontWeight:
+                    //                             FontWeight.bold))),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         );
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          mapController.onShareListTap();
+                        },
+                        child : Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(35),
+                          ),
+                          child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            // Drag Handle
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, bottom: 4),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      width: 160,
+                                      height: 5,
+                                      color: Colors.transparent),
+                                  Container(
+                                    width: 40,
+                                    height: 5,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  Container(
+                                      width: 160,
+                                      height: 5,
+                                      color: Colors.transparent),
+                                ],
+                              ),
+                            ),
+                            // Share List Text
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, top: 8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Flexible(
+                                        child: Align(
+                                            alignment:
+                                            Alignment.centerLeft,
+                                            child: Text(" Share List",
+                                                // style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold))
+                                                style: TextStyle(
+                                                    fontSize: 30,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight
+                                                        .bold))
+                                        ),
+                                  ),
+                                  // Container(width: 110, height: 36.5, color: Colors.transparent),
+                                  // Icons on the right
+                                  Padding(
+                                    padding:
+                                    const EdgeInsets.only(right: 30),
+                                    child: Row(
+                                      children: [
+                                        // List with a plus
+                                        GestureDetector(
+                                          onTap: () {
+                                            // Your function here
+                                          },
+                                          child: const Icon(Icons.add,
+                                              // color: Colors.white
+                                              color: Colors.black87
+                                          ),
+                                        ),
+                                        SizedBox(width: 15), // Spacer
+
+                                        // Person icon
+                                        GestureDetector(
+                                          onTap: () {
+                                            mapController.showSignOutDialog(context);
+                                            // Your function here
+                                          },
+                                          child: const Icon(Icons.person,
+                                              // color: Colors.white
+                                              color: Colors.black87
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 15), // Spacer
+
+                                        // Settings icon
+                                        GestureDetector(
+                                          onTap: () {
+                                            // Your function here
+                                          },
+                                          child: const Icon(
+                                              Icons.settings,
+                                              // color: Colors.white
+                                              color: Colors.black87
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                ),
+                        ),
+                      ),
+                    ),
+                  // ),
+              ]),
+            ),
+          ),
+
+          Positioned(
+            top: 60.0,
+            left: 16.0,
+            // right: 16.0,
+            right: 16.0,
+            child: GestureDetector(
+              onTap: mapController.onSearchTap,
+              child: AbsorbPointer(
+                // child: Container(
+                //   color: Colors.red,
+                //   width: mapController.deviceWidth.value,
+                //   height: mapController.deviceHeight.value , // 8% of device height
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Search Restaurants Here',
+                    fillColor: AppColors.cardLight,
+                    filled: true,
+                    prefixIcon: Icon(
+                        mapController.isSearchMarkerOnMap.value
+                            ? Icons.arrow_back_ios
+                            : Icons.search,
+                        color: mapController.isSearchMarkerOnMap.value
+                            ? Colors.blue
+                            : Colors.grey),
+                    suffixIcon: mapController.isSearchMarkerOnMap.value
+                        ? IconButton(
+                      icon: Icon(Icons.close, color: Colors.grey),
+                      onPressed: () {
+                        // Reset the marker logic
+                        mapController.resetMarkerOnMap();
+                      },
+                    )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 60.0,
+            left: 370.0,
+            right: 16.0,
+            child: GestureDetector(
+              onTap: mapController.resetMarkerOnMap,
+              child: AbsorbPointer(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    fillColor: AppColors.cardLight,
+                    filled: true,
+                    prefixIcon: Icon(
+                        mapController.isSearchMarkerOnMap.value
+                            ? Icons.close
+                            : Icons.search,
+                        color: mapController.isSearchMarkerOnMap.value
+                            ? Colors.grey
+                            : Colors.transparent),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      // borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  // textInputAction: TextInputAction.search,
+                ),
+              ),
+            ),
+          ),
+        ]);
+      }),
+    );
+  }
 }
+
+
+// onPressed: mapController.toggleSheet,

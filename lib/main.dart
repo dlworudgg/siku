@@ -7,8 +7,9 @@ import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
-
-import 'models/result_adapter.dart';
+import 'package:get/get.dart';  // <-- Import this
+import 'getx/init_controller.dart';
+import 'getx/map_controller.dart';
 //
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,26 +17,14 @@ void main()  async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await dotenv.load(fileName: '.env');
-  Hive.registerAdapter(ResultAdapter());
-  Hive.registerAdapter(GeometryAdapter());
-  Hive.registerAdapter(LocationAdapter());
-  Hive.registerAdapter(EditorialSummaryAdapter());
-  Hive.registerAdapter(PhotoAdapter());
-  Hive.registerAdapter(PhotosListAdapter());
-  Hive.registerAdapter(ReviewsAdapter());
 
+
+  await dotenv.load(fileName: '.env');
 
   final appDocumentDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
 
-  // await Hive.initFlutter();
-
-  // var my_list = await Hive.openBox('my list');
-  // // AuthService authService = AuthService();
-  // String? imageUrl = await authService.getProfileImageUrl();
-  // await my_list.put('googleProfileImageUrl', imageUrl);
-  // my_list.close();
+  print(appDocumentDir.path);
 
   runApp(MaterialApp(home: MyApp()));
 }
@@ -45,20 +34,25 @@ class MyApp extends StatelessWidget{
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
-    return MaterialApp(
+  Widget build(BuildContext context) {
+    return GetMaterialApp(  // <-- Change this to GetMaterialApp
       theme: AppTheme.lightBase,
       darkTheme: AppTheme.darkBase,
-      // themeMode: ThemeMode.dark,
-      title : 'Flutter Google Map',
-      // debugShowCheckedModeBanner: false,
-      // theme : ThemeData(
-      //     primaryColor: Colors.white
-      // ),
-        debugShowCheckedModeBanner: false,
-      home: AuthPage()
+      // title: 'Flutter Google Map',
+      debugShowCheckedModeBanner: false,
+      home:  Home()// <-- We use Home widget here to initialize the controller
     );
   }
 }
 
+// This widget is introduced to initialize the MapController
+class Home extends StatelessWidget {
+  final mapController = Get.put(MapController());
+  final initControllerInstance = Get.put(initController());
 
+
+  @override
+  Widget build(BuildContext context) {
+    return const AuthPage();
+  }
+}
