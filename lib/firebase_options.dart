@@ -4,16 +4,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -51,7 +41,31 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDULT2sQAOXlh5BmbZ6jMpFzk6_pbaZWs4',
+    appId: '1:411085167335:web:672011637776344bc22042',
+    messagingSenderId: '411085167335',
+    projectId: 'siku-a1d19',
+    authDomain: 'siku-a1d19.firebaseapp.com',
+    storageBucket: 'siku-a1d19.appspot.com',
+    measurementId: 'G-CW3L8345Y9',
+  );
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyC-kzaVvdp0FmOrlO6R_hCYLds6ewdy34Y',
+    appId: '1:411085167335:ios:9bd171b1546e362ac22042',
+    messagingSenderId: '411085167335',
+    projectId: 'siku-a1d19',
+    storageBucket: 'siku-a1d19.appspot.com',
+    iosClientId: '411085167335-4okji0afqrbt27hpjif9lt9qrblj6ua9.apps.googleusercontent.com',
+    iosBundleId: 'allaboutjae.com.sikumeal.RunnerTests',
+  );
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDokcOeE3eGLYOLR0InbGok5UcQ314hc18',
+    appId: '1:411085167335:android:dd076c881c65ccccc22042',
+    messagingSenderId: '411085167335',
+    projectId: 'siku-a1d19',
+    storageBucket: 'siku-a1d19.appspot.com',
+  );
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC-kzaVvdp0FmOrlO6R_hCYLds6ewdy34Y',
     appId: '1:411085167335:ios:ea23ba7e6d89ac20c22042',
