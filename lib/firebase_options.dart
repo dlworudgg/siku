@@ -4,28 +4,28 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-
+/// Default [FirebaseOptions] for use with your Firebase apps.
+///
+/// Example:
+/// ```dart
+/// import 'firebase_options.dart';
+/// // ...
+/// await Firebase.initializeApp(
+///   options: DefaultFirebaseOptions.currentPlatform,
+/// );
+/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,6 +43,26 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDULT2sQAOXlh5BmbZ6jMpFzk6_pbaZWs4',
+    appId: '1:411085167335:web:4ee8b6875186ce4ec22042',
+    messagingSenderId: '411085167335',
+    projectId: 'siku-a1d19',
+    authDomain: 'siku-a1d19.firebaseapp.com',
+    databaseURL: 'https://siku-a1d19-default-rtdb.firebaseio.com',
+    storageBucket: 'siku-a1d19.appspot.com',
+    measurementId: 'G-W68J330VFK',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDokcOeE3eGLYOLR0InbGok5UcQ314hc18',
+    appId: '1:411085167335:android:5f9818c42f8651ffc22042',
+    messagingSenderId: '411085167335',
+    projectId: 'siku-a1d19',
+    databaseURL: 'https://siku-a1d19-default-rtdb.firebaseio.com',
+    storageBucket: 'siku-a1d19.appspot.com',
+  );
+
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC-kzaVvdp0FmOrlO6R_hCYLds6ewdy34Y',
     appId: '1:411085167335:ios:ea23ba7e6d89ac20c22042',
@@ -52,5 +72,16 @@ class DefaultFirebaseOptions {
     storageBucket: 'siku-a1d19.appspot.com',
     iosClientId: '411085167335-uggto8dibaoh2dnfsg2o71050s1prsu6.apps.googleusercontent.com',
     iosBundleId: 'com.jaekyeong.siku',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyC-kzaVvdp0FmOrlO6R_hCYLds6ewdy34Y',
+    appId: '1:411085167335:ios:8e890d3fc4498fc7c22042',
+    messagingSenderId: '411085167335',
+    projectId: 'siku-a1d19',
+    databaseURL: 'https://siku-a1d19-default-rtdb.firebaseio.com',
+    storageBucket: 'siku-a1d19.appspot.com',
+    iosClientId: '411085167335-gff8snvfblgaedocfgk991kvl2kqm22r.apps.googleusercontent.com',
+    iosBundleId: 'com.example.siku',
   );
 }
