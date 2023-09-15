@@ -3,6 +3,58 @@
 
 ### SIKU CURRENT STATUS
 
+#### Overall
+![Jae_Lee_AppDevelopment](https://github.com/dlworudgg/siku/assets/37742961/deca7a57-60d5-48e7-8fd2-7159cd6489ee)
+
+
+#### Structure
+```
+lib
+  ├─pages
+  │  └─auth_page.dart
+  │  └─init_loading_page.dart
+  │  └─login_or_register_page.dart
+  │  └─messaging_page.dart
+  │  └─my_list_page.dart
+  │  └─register_page.dart
+  │  └─share_room_page.dart
+  │  └─shared_list_page.dart
+  ├─getx
+  │  └─init_controller.dart
+  │  └─map_controller.dart
+  │  └─my_list_controller.dart
+  │  └─place_information_controller.dart 
+  ├─models
+  │  └─autocomplete_prediction.dart
+  │  └─login_my_list_creation.dart
+  │  └─open_ai_response.dart
+  │  └─place_auto_complete_response.dart
+  │  └─place_detail_response.dart
+  │  └─result_adapter.dart
+  ├─screens
+  │  └─login_screen.dart
+  │  └─map_screen.dart
+  │  └─open_ai_response.dart
+  │  └─place_information_screen.dart
+  │  └─search_screen.dart
+  ├─services
+  │  └─auth_service.dart
+  │  └─location_service.dart
+  │  └─newtwork_utility.dart
+  ├─widgets
+  │  └─avatar.dart
+  │  └─glowing_action_button.dart
+  │  └─map_screen_widget.dart
+  │  └─widgets.dart
+  ├─images    
+  └─contstants.dart
+  └─helpers.dart
+  └─theme.dart
+  └─main.dart
+  ```
+
+
+
 #### Login and Searching
 ![sign-in and map](https://github.com/dlworudgg/siku/assets/37742961/e86612be-15e8-4e4c-8d15-1f5dd8911452)
 
