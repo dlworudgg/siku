@@ -5,7 +5,7 @@
 
 
 #### Overall
-![Jae_Lee_AppDevelopment](https://github.com/dlworudgg/siku/assets/37742961/deca7a57-60d5-48e7-8fd2-7159cd6489ee)
+![Jae_Lee_AppDevelopment](https://github.com/dlworudgg/siku/assets/37742961/5da18934-ff45-4aaa-bd0e-20449354b97b)
 
 
 #### Structure
