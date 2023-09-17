@@ -102,6 +102,22 @@ class initController extends GetxController {
         await box2.put( placeID, photoReferences);
         await box3.add( placeID);
         await box4.put( placeID,  savedAIResponse);
+
+
+
+        CollectionReference colRef = FirebaseFirestore.instance.collection('ShareRoom')
+            .doc('ShareRoomByUser')
+            .collection(FirebaseAuth.instance.currentUser!.uid);
+
+        QuerySnapshot querySnapshot = await colRef.limit(1).get();
+
+        if (querySnapshot.docs.isEmpty) {
+          FirebaseFirestore.instance.collection('ShareRoom')
+              .doc('ShareRoomByUser').update({FirebaseAuth.instance.currentUser!.uid : 'My List'})
+        } else {
+          // The collection exists and is not empty
+          print("Collection exists and is not empty!");
+        }
       }
     }
 
