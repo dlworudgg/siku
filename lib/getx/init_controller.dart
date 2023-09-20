@@ -113,10 +113,7 @@ class initController extends GetxController {
 
         if (querySnapshot.docs.isEmpty) {
           FirebaseFirestore.instance.collection('ShareRoom')
-              .doc('ShareRoomByUser').update({FirebaseAuth.instance.currentUser!.uid : 'My List'})
-        } else {
-          // The collection exists and is not empty
-          print("Collection exists and is not empty!");
+              .doc('ShareRoomByUser').update({FirebaseAuth.instance.currentUser!.uid : 'My List'});
         }
       }
     }
