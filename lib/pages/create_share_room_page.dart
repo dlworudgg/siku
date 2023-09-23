@@ -7,7 +7,9 @@ import '../getx/share_room_controller.dart';
 //I need to create a user ID section and let user search with email or user_id 
 class ComposeChatRoomPage extends StatelessWidget {
   final ShareRoomController chatController = Get.put(ShareRoomController());
-
+  //Need to have only search section like search_page
+  //And It will search with in all the emails in authentication,
+  //
   @override
   Widget build(BuildContext context) {
     return Scaffold(
