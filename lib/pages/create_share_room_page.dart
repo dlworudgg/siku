@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../getx/share_room_controller.dart';
 
+
+
+//I need to create a user ID section and let user search with email or user_id 
 class ComposeChatRoomPage extends StatelessWidget {
   final ShareRoomController chatController = Get.put(ShareRoomController());
 
