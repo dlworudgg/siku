@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../getx/share_room_controller.dart';
+import '../theme.dart';
 
 
 class CancellationToken {
@@ -15,6 +16,8 @@ class CancellationToken {
 Timer? _debounce;
 CancellationToken? _cancellationToken;
 
+
+
 //I need to create a user ID section and let user search with email or user_id
 class ComposeChatRoomPage extends StatelessWidget {
   final ShareRoomController chatController = Get.put(ShareRoomController());
@@ -23,6 +26,21 @@ class ComposeChatRoomPage extends StatelessWidget {
   //
 
 
+  void onSearchTextChanged(String searchText) {
+    _debounce?.cancel();
+    if (searchText.trim().isEmpty) {
+      // Clear the predictions if the search text is empty
+      setState(() {
+        placePredictions = [];
+      });
+      return; // Exit the function if searchText is empty
+    }
+
+
+    _debounce = Timer(const Duration(milliseconds: 100), () {
+      placeAutoComplete(searchText);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
