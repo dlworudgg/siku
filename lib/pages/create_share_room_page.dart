@@ -1,10 +1,9 @@
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../getx/share_room_controller.dart';
 import '../theme.dart';
-
 
 class CancellationToken {
   bool isCancelled = false;
@@ -13,32 +12,43 @@ class CancellationToken {
     isCancelled = true;
   }
 }
-Timer? _debounce;
-CancellationToken? _cancellationToken;
 
+class ComposeChatRoomPage extends StatefulWidget {
+  @override
+  _ComposeChatRoomPageState createState() => _ComposeChatRoomPageState();
+}
 
-
-//I need to create a user ID section and let user search with email or user_id
-class ComposeChatRoomPage extends StatelessWidget {
+class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
   final ShareRoomController chatController = Get.put(ShareRoomController());
-  //Need to have only search section like search_page
-  //And It will search with in all the emails in authentication,
-  //
-
+  Timer? _debounce;
+  CancellationToken? _cancellationToken;
+  List<DocumentSnapshot> searchPredictions = [];
 
   void onSearchTextChanged(String searchText) {
     _debounce?.cancel();
     if (searchText.trim().isEmpty) {
-      // Clear the predictions if the search text is empty
       setState(() {
-        placePredictions = [];
+        searchPredictions = [];
       });
-      return; // Exit the function if searchText is empty
+      return;
     }
 
-
     _debounce = Timer(const Duration(milliseconds: 100), () {
-      placeAutoComplete(searchText);
+      searchAutoComplete(searchText);
+    });
+  }
+
+  Future<void> searchAutoComplete(String searchText) async {
+    // Assuming you have a 'users' collection and 'email' field in your Firestore
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isGreaterThanOrEqualTo: searchText)
+        .get();
+
+    if (_cancellationToken!.isCancelled) return;
+
+    setState(() {
+      searchPredictions = querySnapshot.docs;
     });
   }
 
@@ -52,11 +62,10 @@ class ComposeChatRoomPage extends StatelessWidget {
             left: 16.0,
             right: 16.0,
             child: TextFormField(
-              // focusNode: _focusNode,
               onChanged: onSearchTextChanged,
               decoration: InputDecoration(
-                hintText: 'Search Restaurants Here',
-                fillColor: AppColors.cardLight,
+                hintText: 'Search Email or User ID Here',
+                fillColor: AppColors.cardLight, // This should be defined in your theme file.
                 filled: true,
                 prefixIcon: InkWell(
                   onTap: () {
@@ -77,6 +86,19 @@ class ComposeChatRoomPage extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          // Display search results
+          ListView.builder(
+            itemCount: searchPredictions.length,
+            itemBuilder: (context, index) {
+              final userData = searchPredictions[index].data() as Map<String, dynamic>;
+              final userEmail = userData['email'];
+              // Return a widget displaying user data
+              return ListTile(
+                title: Text(userEmail),
+                // Add other UI elements or data as needed
+              );
+            },
           ),
         ],
       ),
