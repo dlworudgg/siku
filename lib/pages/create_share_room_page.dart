@@ -27,9 +27,7 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
   void onSearchTextChanged(String searchText) {
     _debounce?.cancel();
     if (searchText.trim().isEmpty) {
-      setState(() {
-        searchPredictions = [];
-      });
+      chatController.clearSearchPredictions();
       return;
     }
 
@@ -39,18 +37,18 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
   }
 
   Future<void> searchAutoComplete(String searchText) async {
-    // Assuming you have a 'users' collection and 'email' field in your Firestore
     final querySnapshot = await FirebaseFirestore.instance
         .collection('users')
         .where('email', isGreaterThanOrEqualTo: searchText)
+        .orderBy('email')  // Order by email
+        .limit(7)          // Limit results to 7
         .get();
 
     if (_cancellationToken!.isCancelled) return;
 
-    setState(() {
-      searchPredictions = querySnapshot.docs;
-    });
+    chatController.updateSearchPredictions(querySnapshot.docs);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,18 +86,20 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
             ),
           ),
           // Display search results
-          ListView.builder(
-            itemCount: searchPredictions.length,
-            itemBuilder: (context, index) {
-              final userData = searchPredictions[index].data() as Map<String, dynamic>;
-              final userEmail = userData['email'];
-              // Return a widget displaying user data
-              return ListTile(
-                title: Text(userEmail),
-                // Add other UI elements or data as needed
-              );
-            },
-          ),
+          Obx(() {
+            return ListView.builder(
+              itemCount: chatController.searchPredictions.length,
+              itemBuilder: (context, index) {
+                final userData = chatController.searchPredictions[index].data() as Map<String, dynamic>;
+                final userEmail = userData['email'];
+                // Return a widget displaying user data
+                return ListTile(
+                  title: Text(userEmail),
+                  // Add other UI elements or data as needed
+                );
+              },
+            );
+          })
         ],
       ),
     );
