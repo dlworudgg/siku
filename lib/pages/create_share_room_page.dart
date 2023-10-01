@@ -23,6 +23,8 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
   Timer? _debounce;
   CancellationToken? _cancellationToken;
   List<DocumentSnapshot> searchPredictions = [];
+  List<DocumentSnapshot> selectedUsers = [];
+
 
   void onSearchTextChanged(String searchText) {
     _debounce?.cancel();
@@ -86,20 +88,47 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
             ),
           ),
           // Display search results
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: selectedUsers.length,
+            itemBuilder: (context, index) {
+              final userData = selectedUsers[index].data() as Map<String, dynamic>;
+              final userEmail = userData['email'];
+              return ListTile(
+                title: Text(userEmail),
+                trailing: ElevatedButton(
+                  child: Text("Remove"),
+                  onPressed: () {
+                    setState(() {
+                      selectedUsers.removeAt(index);
+                    });
+                  },
+                ),
+              );
+            },
+          ),
           Obx(() {
             return ListView.builder(
               itemCount: chatController.searchPredictions.length,
               itemBuilder: (context, index) {
                 final userData = chatController.searchPredictions[index].data() as Map<String, dynamic>;
                 final userEmail = userData['email'];
-                // Return a widget displaying user data
                 return ListTile(
                   title: Text(userEmail),
+                  trailing: ElevatedButton(
+                    child: Text("Add"),
+                    onPressed: () {
+                      setState(() {
+                        selectedUsers.add(chatController.searchPredictions[index]);
+                      });
+                    },
+                  ),
                   // Add other UI elements or data as needed
                 );
               },
             );
           })
+
         ],
       ),
     );
