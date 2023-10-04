@@ -107,27 +107,27 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
               );
             },
           ),
-          Obx(() {
-            return ListView.builder(
-              itemCount: chatController.searchPredictions.length,
-              itemBuilder: (context, index) {
-                final userData = chatController.searchPredictions[index].data() as Map<String, dynamic>;
-                final userEmail = userData['email'];
-                return ListTile(
-                  title: Text(userEmail),
-                  trailing: ElevatedButton(
-                    child: Text("Add"),
-                    onPressed: () {
-                      setState(() {
-                        selectedUsers.add(chatController.searchPredictions[index]);
-                      });
-                    },
-                  ),
-                  // Add other UI elements or data as needed
-                );
-              },
-            );
-          })
+          // Obx(() {
+          //   return ListView.builder(
+          //     itemCount: chatController.searchPredictions.length,
+          //     itemBuilder: (context, index) {
+          //       final userData = chatController.searchPredictions[index].data() as Map<String, dynamic>;
+          //       final userEmail = userData['email'];
+          //       return ListTile(
+          //         title: Text(userEmail),
+          //         trailing: ElevatedButton(
+          //           child: Text("Add"),
+          //           onPressed: () {
+          //             setState(() {
+          //               selectedUsers.add(chatController.searchPredictions[index]);
+          //             });
+          //           },
+          //         ),
+          //         // Add other UI elements or data as needed
+          //       );
+          //     },
+          //   );
+          // })
 
         ],
       ),
