@@ -55,80 +55,100 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          Positioned(
-            top: 60.0,
-            left: 16.0,
-            right: 16.0,
-            child: TextFormField(
-              onChanged: onSearchTextChanged,
-              decoration: InputDecoration(
-                hintText: 'Search Email or User ID Here',
-                fillColor: AppColors.cardLight, // This should be defined in your theme file.
-                filled: true,
-                prefixIcon: InkWell(
-                  onTap: () {
-                    // Cancel timer
-                    _debounce?.cancel();
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 60.0,
+                  left: 16.0,
+                  right: 16.0,
+                  child: TextFormField(
+                    onChanged: onSearchTextChanged,
+                    decoration: InputDecoration(
+                      hintText: 'Search Email or User ID Here',
+                      fillColor: AppColors.cardLight, // This should be defined in your theme file.
+                      filled: true,
+                      prefixIcon: InkWell(
+                        onTap: () {
+                          // Cancel timer
+                          _debounce?.cancel();
 
-                    // Signal to cancel all ongoing operations
-                    _cancellationToken?.cancel();
+                          // Signal to cancel all ongoing operations
+                          _cancellationToken?.cancel();
 
-                    // Navigator.pop(context);
-                    Get.back();
+                          // Navigator.pop(context);
+                          Get.back();
+                        },
+                        child: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                // Display search results
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: selectedUsers.length,
+                  itemBuilder: (context, index) {
+                    final userData = selectedUsers[index].data() as Map<String, dynamic>;
+                    final userEmail = userData['email'];
+                    return ListTile(
+                      title: Text(userEmail),
+                      trailing: ElevatedButton(
+                        child: Text("Remove"),
+                        onPressed: () {
+                          setState(() {
+                            selectedUsers.removeAt(index);
+                          });
+                        },
+                      ),
+                    );
                   },
-                  child: const Icon(Icons.arrow_back_ios, color: Colors.blue),
                 ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+                Obx(() {
+                  return ListView.builder(
+                    itemCount: chatController.searchPredictions.length,
+                    itemBuilder: (context, index) {
+                      final userData = chatController.searchPredictions[index].data() as Map<String, dynamic>;
+                      final userEmail = userData['email'];
+                      return ListTile(
+                        title: Text(userEmail),
+                        trailing: ElevatedButton(
+                          child: Text("Add"),
+                          onPressed: () {
+                            setState(() {
+                              selectedUsers.add(chatController.searchPredictions[index]);
+                            });
+                          },
+                        ),
+                        // Add other UI elements or data as needed
+                      );
+                    },
+                  );
+                })
+
+              ],
             ),
           ),
-          // Display search results
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: selectedUsers.length,
-            itemBuilder: (context, index) {
-              final userData = selectedUsers[index].data() as Map<String, dynamic>;
-              final userEmail = userData['email'];
-              return ListTile(
-                title: Text(userEmail),
-                trailing: ElevatedButton(
-                  child: Text("Remove"),
-                  onPressed: () {
-                    setState(() {
-                      selectedUsers.removeAt(index);
-                    });
-                  },
-                ),
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                // For now, print the emails of the selected users
+                for (var userDoc in selectedUsers) {
+                  var userData = userDoc.data() as Map<String, dynamic>;
+                  print(userData['email']);
+                }
+                // You can add logic to initiate the chat here
+              },
+              child: Text('Start Share'),
+            ),
           ),
-          // Obx(() {
-          //   return ListView.builder(
-          //     itemCount: chatController.searchPredictions.length,
-          //     itemBuilder: (context, index) {
-          //       final userData = chatController.searchPredictions[index].data() as Map<String, dynamic>;
-          //       final userEmail = userData['email'];
-          //       return ListTile(
-          //         title: Text(userEmail),
-          //         trailing: ElevatedButton(
-          //           child: Text("Add"),
-          //           onPressed: () {
-          //             setState(() {
-          //               selectedUsers.add(chatController.searchPredictions[index]);
-          //             });
-          //           },
-          //         ),
-          //         // Add other UI elements or data as needed
-          //       );
-          //     },
-          //   );
-          // })
-
         ],
       ),
     );
