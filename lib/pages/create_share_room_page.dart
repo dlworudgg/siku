@@ -131,26 +131,23 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
                     },
                   );
                 })
-
               ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: (
-                  //I need to take back to share_room_page
-
-                  ) {
-                // For now, print the emails of the selected users
+              onPressed: () {
+                // Print the emails of the selected users.
                 for (var userDoc in selectedUsers) {
                   var userData = userDoc.data() as Map<String, dynamic>;
                   print(userData['email']);
                 }
-                // You can add logic to initiate the chat here
+                // Navigate back to the previous page.
+                Get.back();
               },
               child: Text('Start Share'),
-            ),
+            )
           ),
         ],
       ),
