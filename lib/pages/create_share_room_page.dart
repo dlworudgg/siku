@@ -131,7 +131,6 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
                     },
                   );
                 })
-
               ],
             ),
           ),
@@ -139,15 +138,16 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                // For now, print the emails of the selected users
+                // Print the emails of the selected users.
                 for (var userDoc in selectedUsers) {
                   var userData = userDoc.data() as Map<String, dynamic>;
                   print(userData['email']);
                 }
-                // You can add logic to initiate the chat here
+                // Navigate back to the previous page.
+                Get.back();
               },
               child: Text('Start Share'),
-            ),
+            )
           ),
         ],
       ),

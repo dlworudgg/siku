@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:siku/theme.dart';
 import '../getx/map_controller.dart';
+import '../pages/create_share_room_page.dart';
 import '../pages/my_list_page.dart';
 import 'dart:ui';
 
@@ -278,6 +279,7 @@ class MapScreen extends StatelessWidget {
                                         GestureDetector(
                                           onTap: () {
                                             // Your function here
+                                            Get.to(() => ComposeChatRoomPage());
                                           },
                                           child: const Icon(Icons.add,
                                               // color: Colors.white
