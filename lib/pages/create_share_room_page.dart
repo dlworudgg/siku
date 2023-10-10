@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:siku/pages/share_room_page.dart';
+import 'package:siku/pages/shared_list_page.dart';
 import '../getx/share_room_controller.dart';
 import '../theme.dart';
 
@@ -144,7 +146,14 @@ class _ComposeChatRoomPageState extends State<ComposeChatRoomPage> {
                   print(userData['email']);
                 }
                 // Navigate back to the previous page.
-                Get.back();
+                // Get.back();
+
+              //  It should take to newly created share_room_page
+                Get.to(() => SharedListPage());
+                // Need to add these
+                // final String id;
+                // final String name;
+                // final bool isSavedList;
               },
               child: Text('Start Share'),
             )
