@@ -207,6 +207,8 @@ Widget buildListView(MyListController ListController, List<dynamic> keys,
                     placeDetailImages: placeDetailImages,
                     placeId: key)));
           },
+
+
           child: Container(
             margin: const EdgeInsets.only(left: 10, bottom: 0.0, top: 0),
             height: 90,
