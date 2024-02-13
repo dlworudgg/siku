@@ -5,6 +5,10 @@
 
 
 #### Overall
+<img width="628" alt="Screenshot 2024-02-13 at 11 16 17 AM" src="https://github.com/dlworudgg/siku/assets/37742961/dbcb50ee-a64b-4f89-b98d-b832235141ce">
+
+#### Video
+
 ![Jae_Lee_AppDevelopment](https://github.com/dlworudgg/siku/assets/37742961/5da18934-ff45-4aaa-bd0e-20449354b97b)
 
 
