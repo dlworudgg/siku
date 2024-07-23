@@ -9,7 +9,9 @@
 
 #### Video
 
-![Jae_Lee_AppDevelopment](https://github.com/dlworudgg/siku/assets/37742961/5da18934-ff45-4aaa-bd0e-20449354b97b)
+
+
+
 
 
 #### Structure
@@ -88,9 +90,9 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 
 [X] **Place Information Enrichment via Chat-GPT**: Employ Chat-GPT to summarize reviews, providing detailed and user-friendly data to enhance decision-making.
 
-[  ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
+[X] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
 
-[  ] **Top Restaurant List** : Create list of top Restaurant to explore.
+[X] **Top Restaurant List** : Create list of top Restaurant to explore.
 
 [  ] **Sharing**: Enable sharing of restaurant lists and open reviews to only close friends to enhance the credibility of the reviews
 
