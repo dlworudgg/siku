@@ -9,7 +9,8 @@
 
 #### Video
 
-![Screen Recording 2024-04-05 at 5 02 03 PM (1)](https://github.com/user-attachments/assets/fe5dc7f1-9665-4a79-b10e-316e51379426)
+![Screen Recording 2024-04-05 at 5 02 03 PM](https://github.com/user-attachments/assets/2bc120d1-5234-475a-9e33-bb01e247a9bd)
+
 
 
 #### Structure
