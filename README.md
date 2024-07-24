@@ -5,12 +5,14 @@
 
 
 #### Overall
-<img width="628" alt="Screenshot 2024-02-13 at 11 16 17 AM" src="https://github.com/dlworudgg/siku/assets/37742961/dbcb50ee-a64b-4f89-b98d-b832235141ce">
 
 #### Video
 
-![Screen Recording 2024-04-05 at 5 02 03 PM](https://github.com/user-attachments/assets/2bc120d1-5234-475a-9e33-bb01e247a9bd)
+![Jul-23-2024 19-54-45 part1](https://github.com/user-attachments/assets/46e037f5-9ebc-4f05-a2b2-36d96135b0de)
 
+![Jul-23-2024 19-58-43 part2](https://github.com/user-attachments/assets/4ba2a02a-d67e-498c-8c96-f5daf5cb66d5)
+
+![Jul-23-2024 20-05-02 part3](https://github.com/user-attachments/assets/fb21ba7d-a42e-49cc-aae1-459fee072048)
 
 
 #### Structure
@@ -62,20 +64,6 @@ lib
 
 
 #### Login and Searching
-![sign-in and map](https://github.com/dlworudgg/siku/assets/37742961/e86612be-15e8-4e4c-8d15-1f5dd8911452)
-
-
-#### Searching Result and Save
-![Search and Result](https://github.com/dlworudgg/siku/assets/37742961/f8c10332-f549-4c03-8090-79705825a63e)
-
-
-#### Saved List
-![saved_list](https://github.com/dlworudgg/siku/assets/37742961/f1108837-b20c-45d4-ad91-f8e9d784385d)
-
-
-#### Saved List Detail
-![Siku Saved List detail](https://github.com/dlworudgg/siku/assets/37742961/a17c095e-c63a-4454-a7f9-93f1ec425b3e)
-
 
 ###  Project Objective
 
@@ -87,15 +75,15 @@ SIKU is designed to enhance the user's culinary journey through a focus on resta
 [X] **Google Map Integration and Place Search**: Implement Google Map service to facilitate place searches seamlessly.
 
 
-[X] **Place Information Enrichment via Chat-GPT**: Employ Chat-GPT to summarize reviews, providing detailed and user-friendly data to enhance decision-making.
+[X] **Place Information Enrichment via ChatGPT**: Employ ChatGPT to summarize reviews, providing detailed and user-friendly data to enhance decision-making.
 
-[X] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
+[ ] **Marker Customizability**: Develop a feature allowing users to customize the markers within the map for a personalized user experience.
 
 [X] **Top Restaurant List** : Create list of top Restaurant to explore.
 
 [  ] **Sharing**: Enable sharing of restaurant lists and open reviews to only close friends to enhance the credibility of the reviews
 
-[  ] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
+[X] **Integration with Google Map App**: Allow users to save places directly to SIKU via sharing from the Google Map app, ensuring smooth inter-application operation.
 
 ...
 ...
