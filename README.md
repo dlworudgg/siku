@@ -1,10 +1,19 @@
 # SIKU
-## Restaurant List Management and Shraing Feature for Google Maps Saved Places Application Development
+## AI Generated Restaurant Information Mobile App Development 
 
 ### SIKU CURRENT STATUS
+Firebase
+* Authentication, Firestore Database, Storage, Functions
 
+Data
+* Python, Airflow, Selenium, OpenAI API, Google Maps API
 
-#### Overall
+Mobile App
+* Flutter, Dart
+
+Web App
+* Next.js, React, Typescript
+
 
 #### Video
 
@@ -15,7 +24,8 @@
 ![Jul-23-2024 20-05-02 part3](https://github.com/user-attachments/assets/fb21ba7d-a42e-49cc-aae1-459fee072048)
 
 
-#### Structure
+#### App Structure
+
 ```
 lib
   ├─pages
@@ -62,8 +72,6 @@ lib
   ```
 
 
-
-#### Login and Searching
 
 ###  Project Objective
 
