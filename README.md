@@ -15,7 +15,8 @@ Web App
 * Next.js, React, Typescript
 
 
-#### Video
+#### Video (Please wait for a second to load)
+
 
 ![Jul-23-2024 19-54-45 part1](https://github.com/user-attachments/assets/46e037f5-9ebc-4f05-a2b2-36d96135b0de)
 
