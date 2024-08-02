@@ -1,4 +1,4 @@
-![Aug-02-2024 15-59-59](https://github.com/user-attachments/assets/e3803700-3b37-4eb7-815a-ff82c3a7ac05)# SIKU
+# SIKU
 ## AI Generated Restaurant Information Mobile App Development 
 
 ### SIKU CURRENT STATUS
