@@ -1,4 +1,4 @@
-# SIKU
+![Aug-02-2024 15-59-59](https://github.com/user-attachments/assets/e3803700-3b37-4eb7-815a-ff82c3a7ac05)# SIKU
 ## AI Generated Restaurant Information Mobile App Development 
 
 ### SIKU CURRENT STATUS
@@ -17,14 +17,13 @@ Web App
 
 #### Video (Please wait for a second to load)
 
+![Aug-02-2024 15-59-59](https://github.com/user-attachments/assets/9e54998b-921e-4c62-99d9-e67bcf0fadc7)
 
-![Jul-23-2024 19-54-45 part1](https://github.com/user-attachments/assets/46e037f5-9ebc-4f05-a2b2-36d96135b0de)
+![Aug-02-2024 16-05-21](https://github.com/user-attachments/assets/69000640-9826-461a-b4e7-d460acabfe7f)
 
-![Jul-23-2024 19-58-43 part2](https://github.com/user-attachments/assets/4ba2a02a-d67e-498c-8c96-f5daf5cb66d5)
+![Aug-02-2024 16-07-28](https://github.com/user-attachments/assets/ca99ef0b-7f7a-4665-9af1-9889e3950e9b)
 
-![Jul-23-2024 20-05-02 part3](https://github.com/user-attachments/assets/fb21ba7d-a42e-49cc-aae1-459fee072048)
 
-<img width="331" alt="image" src="https://github.com/user-attachments/assets/3aa08a3d-bc7b-4067-aa50-fe3abbdae9d5">
 
 #### App Structure
 
