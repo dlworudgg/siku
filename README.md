@@ -24,6 +24,7 @@ Web App
 
 ![Jul-23-2024 20-05-02 part3](https://github.com/user-attachments/assets/fb21ba7d-a42e-49cc-aae1-459fee072048)
 
+<img width="331" alt="image" src="https://github.com/user-attachments/assets/3aa08a3d-bc7b-4067-aa50-fe3abbdae9d5">
 
 #### App Structure
 
